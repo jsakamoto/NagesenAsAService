@@ -1,0 +1,60 @@
+﻿@using NagesenAsAService.Controllers
+@{
+    ViewBag.AppTitle = "Nagesen as a Service";
+}<!DOCTYPE html>
+<html>
+<head prefix="og: http://ogp.me/ns#">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta property="og:title" content="@ViewBag.AppTitle" />
+    <meta property="og:description" content="@Localize.appDescription" />
+    <meta property="og:url" content="@Url.AppUrl()" />
+    <meta property="og:image" content="@Url.AppUrl()/Content/images/ogpimage.png" />@* The size of ogpimage.png for facebook is 200px x 200px. *@
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="@Url.AppUrl()/Content/images/twittercard-image.png">@* The size of twittercard-image.png for twitter card is 120px x 120px. *@
+    <meta name="keywords" content="@Localize.appKeywords" />
+    <meta name="description" content="@Localize.appDescription" />
+
+    <title>@ViewBag.AppTitle</title>
+    @Styles.Render("~/content/css")
+</head>
+<body>
+    <header>
+        @RenderSection("headerLeft", required: false)
+        <span>
+            @ViewBag.AppTitle
+        </span>
+    </header>
+    <div class="main">
+        @RenderBody()
+    </div>
+    <script>
+        var _begin = Date.now();
+    </script>
+    @{
+        var useCDN = DefaultController._Random.Next() % 2 == 0;
+        if (useCDN)
+        {
+            <text>
+                @Scripts.Render("~/bundles/jquery")
+                @Scripts.Render("~/bundles/chartjs")
+                @Scripts.Render("~/bundles/angularjs")
+                @Scripts.Render("~/bundles/jquery.signalR")
+            </text>
+        }
+        else
+        {
+            <text>@Scripts.Render("~/bundles/js")</text>
+        }
+    }
+    <script src="~/Scripts/Box2dWeb-2.1.a.3.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script>
+        var _end = Date.now();
+        var _elapse = (_end - _begin);
+        $.post('/LogPerformance', {useCDN:@(useCDN?"true":"false"),elapse:_elapse});
+    </script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,3 @@
+@helper Render(string data, int scale=3, string cssClass=""){
+	<img src="@Href("~/QRCodeImage.cshtml", new{data, scale})" alt="@data" class="@cssClass"/>
+}

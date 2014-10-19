@@ -1,0 +1,8 @@
+*.suo
+*.user
+bin/
+obj/
+App_Data/
+/packages
+/testresults
+/SignalYN/custom.appSettings.config

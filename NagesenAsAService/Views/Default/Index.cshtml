@@ -1,0 +1,31 @@
+﻿<div class="home-page">
+    @*<div>
+            @QRCode.Render(Url.AppUrl(), scale: 10, cssClass: "qr-code")
+        </div>*@
+
+    <div class="app-description">
+        @Localize.appDescription
+    </div>
+
+    <form action="room">
+        <p>
+            Enter room number.
+        </p>
+        <p>
+            <input type="number" value="" name="id" autofocus required class="room-number" />
+        </p>
+        <p>
+            <input type="submit" value="Enter" class="btn btn-primary" />
+        </p>
+    </form>
+
+    <p>
+        <a href="@Url.Action("CreateNewRoom")">or Create New Room</a>
+    </p>
+</div>
+
+@section scripts{
+    <script>
+        $(function () { $.get('/WarmUp', { _: $.now() }); });
+    </script>
+}

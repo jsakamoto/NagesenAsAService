@@ -1,0 +1,34 @@
+@using System.Text;
+@using System.Drawing.Imaging;
+@using ThoughtWorks.QRCode.Codec;
+@{
+	var data = Request["data"];
+    var scale = int.Parse(Request["scale"]);
+
+    var qrEncoder = new QRCodeEncoder { 
+        QRCodeEncodeMode = QRCodeEncoder.ENCODE_MODE.BYTE,
+        QRCodeErrorCorrect = QRCodeEncoder.ERROR_CORRECTION.M,
+		QRCodeVersion = 7,
+        QRCodeScale = scale
+    };
+
+    var textEncoding = Encoding.UTF8;
+    var dataLength = qrEncoder.QRCodeEncodeMode == QRCodeEncoder.ENCODE_MODE.BYTE ? textEncoding.GetByteCount(data) : data.Length;
+
+    var q = from row in QRVerToDataSize.Table
+            where row.ErrorCorrect == qrEncoder.QRCodeErrorCorrect
+            where (
+                qrEncoder.QRCodeEncodeMode == QRCodeEncoder.ENCODE_MODE.NUMERIC ? row.Numeric :
+                qrEncoder.QRCodeEncodeMode == QRCodeEncoder.ENCODE_MODE.ALPHA_NUMERIC ? row.AlphaNumeric :
+                row.Byte) >= dataLength
+            select row;
+    qrEncoder.QRCodeVersion = q.First().Version;
+
+	var image = qrEncoder.Encode(data, textEncoding);
+
+    Response.Clear();
+    Response.ContentType = "image/gif";
+    image.Save(Response.OutputStream, ImageFormat.Gif);
+    Response.Flush();
+    Response.End();
+}

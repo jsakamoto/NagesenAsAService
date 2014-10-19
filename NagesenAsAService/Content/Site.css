@@ -1,0 +1,144 @@
+﻿* {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    background-repeat: no-repeat;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    /* display: none; <- Crashes Chrome on hover */
+    -webkit-appearance: none;
+    margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+body {
+    background-color: #fff;
+    text-align: center;
+    font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+}
+
+header {
+    height: 3em;
+    line-height: 3em;
+    display: block;
+    background-color: #eee;
+    font-weight: bold;
+    position: relative;
+}
+
+#canvas {
+    width: auto;
+    height: auto;
+    border: solid 2px #ccc;
+    border-top: none;
+}
+
+header a.go-home {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background-image: url(images/back.png);
+    background-size: contain;
+    opacity: 0.5;
+}
+
+    header a.go-home:hover {
+        opacity: 0.3;
+    }
+
+.main {
+    margin-top: 10px;
+    display: inline-block;
+    width: 85%;
+}
+
+    .main * {
+        width: 100%;
+    }
+
+.app-description {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 95%;
+    background-color: #fff;
+    border-radius: 4px 4px;
+    text-align: left;
+    padding: 0px 8px;
+}
+
+    .app-description:after {
+        display: block;
+        content: "";
+        clear: both;
+    }
+
+.qr-code {
+    width: auto;
+    zoom: 0.2;
+}
+
+a {
+    color: rgb(18, 132, 255);
+    text-decoration: none;
+}
+
+input.btn-primary {
+    background-color: rgb(18, 132, 255);
+    border: none;
+    color: white;
+    height: 2.5em;
+    border-radius: 4px 4px;
+}
+
+input.room-number {
+    outline: none;
+    border: none;
+    border-bottom: solid 1px #ccc;
+    font-size: 150%;
+}
+
+
+
+/* room page */
+
+/* room page - room number */
+.room-number-container div {
+    width: 110px;
+}
+
+.room-number-container {
+    width: auto;
+    display: inline-block;
+    position: relative;
+}
+
+.room-page .room-number {
+    font-size: 150%;
+    font-weight: bold;
+}
+
+.room-page .qrcode-of-roomurl {
+    width: 52px;
+    position: absolute;
+    top: 0;
+    left: -60px;
+    z-index: 1;
+    -moz-transition: all linear 0.3s;
+    -o-transition: all linear 0.3s;
+    -webkit-transition: all linear 0.3s;
+    transition: all linear 0.3s;
+}
+
+    .room-page .qrcode-of-roomurl.zoom {
+        width: 270px;
+        left: -80px;
+    }
+
+.room-page .short-url {
+    margin-top: 0px;
+    color: rgb(18, 132, 255);
+    font-weight: bold;
+}

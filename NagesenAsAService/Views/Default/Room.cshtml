@@ -1,0 +1,30 @@
+﻿@model Room
+@{
+    var urlOfThisRoom = Model.Url;
+}
+@section headerLeft{
+    <a href="/" class="go-home"></a>
+}
+
+<div ng-app="theApp" ng-controller="roomController as ctrl" class="room-page">
+    <div ng-bind="title"></div>
+
+    <div>
+        <canvas id="canvas" width="800" height="600"></canvas>
+    </div>
+
+    <div>
+        <a ng-click="ctrl.Throw(0)">Throw Type 0</a>
+    </div>
+    <div>
+        <a ng-click="ctrl.Throw(1)">Throw Type 1</a>
+    </div>
+
+</div>
+@section scripts{
+    <script>
+        var _app = _app || {};
+        _app.roomNumber = @Model.RoomNumber;
+    </script>
+    <script src="~/app.js"></script>
+}
