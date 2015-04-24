@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Helpers;
 using NagesenAsAService.Models;
 using Microsoft.AspNet.SignalR;
+using Microsoft.AspNet.SignalR.Hubs;
 
 namespace NagesenAsAService.Controllers
 {
@@ -26,6 +27,11 @@ namespace NagesenAsAService.Controllers
 
         public void Throw(int roomNumber, int typeOfZeni)
         {
+            Throw(roomNumber, typeOfZeni, this.Clients);
+        }
+
+        public static void Throw(int roomNumber, int typeOfZeni, IHubConnectionContext<dynamic> clients)
+        {
             var db = new AppDbContext();
             if (typeOfZeni == 0)
                 db.Database.ExecuteSqlCommand(
@@ -37,7 +43,7 @@ namespace NagesenAsAService.Controllers
             var throwPoint = default(double);
             lock (_Random) throwPoint = _Random.NextDouble();
             var data = new { throwPoint, typeOfZeni };
-            Clients.Group(roomNumber.ToString()).Throw(data);
+            clients.Group(roomNumber.ToString()).Throw(data);
         }
     }
 }

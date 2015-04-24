@@ -7,17 +7,19 @@
         @Localize.appDescription
     </div>
 
-    <form action="room">
+    <div ng-app="app" ng-controller="indexController as ctrl">
         <p>
             Enter room number.
         </p>
         <p>
-            <input type="number" value="" name="id" autofocus required class="room-number" />
+            <input type="number" value="" autofocus required class="room-number" ng-model="roomNumber" />
         </p>
         <p>
-            <input type="submit" value="Enter" class="btn btn-primary" />
+            <a ng-href="/Room/{{roomNumber}}" ng-class="'btn btn-primary ' + (roomNumber.toString().length != 4 ? 'disabled' : '')">
+                Enter
+            </a>
         </p>
-    </form>
+    </div>
 
     <p>
         <a href="@Url.Action("CreateNewRoom")">or Create New Room</a>
@@ -28,4 +30,5 @@
     <script>
         $(function () { $.get('/WarmUp', { _: $.now() }); });
     </script>
+    <script src="~/Views/Default/Index.js"></script>
 }

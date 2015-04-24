@@ -85,12 +85,19 @@ a {
     text-decoration: none;
 }
 
-input.btn-primary {
-    background-color: rgb(18, 132, 255);
-    border: none;
-    color: white;
-    height: 2.5em;
-    border-radius: 4px 4px;
+    a.btn-primary,
+    input.btn-primary {
+        display: block;
+        background-color: rgb(18, 132, 255);
+        border: none;
+        color: white;
+        height: 2.5em;
+        line-height: 2.5em;
+        border-radius: 4px 4px;
+    }
+
+.btn-primary.disabled {
+    background-color: #ccc;
 }
 
 input.room-number {
@@ -142,3 +149,5 @@ input.room-number {
     color: rgb(18, 132, 255);
     font-weight: bold;
 }
+
+/* controller page */

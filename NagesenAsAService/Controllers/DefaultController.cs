@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.SignalR;
 using NagesenAsAService.Models;
 using Newtonsoft.Json.Linq;
 
@@ -54,14 +55,31 @@ namespace NagesenAsAService.Controllers
             });
             this.Db.SaveChanges();
 
-            return RedirectToAction("Room", new { id = newRoomNumber });
+            var boxUrl = Url.RouteUrl("Room", new { action = "Box", id = newRoomNumber });
+            return Redirect(boxUrl);
         }
 
-        public ActionResult Room(int id)
+        public ActionResult Box(int id)
         {
             var room = this.Db.Rooms
                 .Single(_ => _.RoomNumber == id);
             return View(room);
+        }
+
+        public ActionResult Controller(int id)
+        {
+            var room = this.Db.Rooms
+                .Single(_ => _.RoomNumber == id);
+            return View(room);
+        }
+
+        [HttpPut]
+        public ActionResult Throw(int id, int typeOfCoin)
+        {
+            var hubContext = GlobalHost.ConnectionManager.GetHubContext<DefaultHub>();
+            DefaultHub.Throw(id, typeOfCoin, hubContext.Clients);
+
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
         public ActionResult WarmUp()
