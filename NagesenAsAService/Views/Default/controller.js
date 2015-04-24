@@ -15,6 +15,13 @@ var NaaS;
             this.$scope.countOfDis += price;
             this.$http.put(location.pathname + '/throw', { typeOfCoin: 1 /* Dis */ });
         };
+        NagesenControllerController.prototype.resetCounter = function () {
+            if (!confirm('投げ銭とDisをリセットしますか？')) {
+                return;
+            }
+            this.$scope.countOfCoin = 0;
+            this.$scope.countOfDis = 0;
+        };
         return NagesenControllerController;
     })();
     var theApp = angular.module('theApp', []);

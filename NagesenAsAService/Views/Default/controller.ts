@@ -19,14 +19,22 @@
             this.$http = $http;
         }
 
-        public countUpCoin(price: number) {
+        public countUpCoin(price: number): void {
             this.$scope.countOfCoin += price;
             this.$http.put(location.pathname + '/throw', { typeOfCoin: CoinType.Like });
         }
 
-        public countUpDis(price: number) {
+        public countUpDis(price: number): void {
             this.$scope.countOfDis += price;
             this.$http.put(location.pathname + '/throw', { typeOfCoin: CoinType.Dis });
+        }
+
+        public resetCounter(): void {
+            if (!confirm('投げ銭とDisをリセットしますか？')) {
+                return;
+            }
+            this.$scope.countOfCoin = 0;
+            this.$scope.countOfDis = 0;
         }
     }
 
