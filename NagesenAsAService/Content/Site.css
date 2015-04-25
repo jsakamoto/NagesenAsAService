@@ -13,9 +13,14 @@ input::-webkit-inner-spin-button {
 }
 
 body {
-    background-color: #fff;
     text-align: center;
     font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+    background-image: url(images/bg.png);
+    background-repeat:repeat;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 header {
@@ -30,7 +35,7 @@ header {
 #canvas {
     width: auto;
     height: auto;
-    border: solid 2px #ccc;
+    border: solid 1px red;
     border-top: none;
 }
 
