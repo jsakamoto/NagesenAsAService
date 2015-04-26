@@ -1,0 +1,10 @@
+﻿body {
+    background-image: url(images/bg.png);
+}
+
+#canvas {
+    width: auto;
+    height: auto;
+    border: solid 1px red;
+    border-top: none;
+}

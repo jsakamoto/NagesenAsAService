@@ -15,8 +15,7 @@ input::-webkit-inner-spin-button {
 body {
     text-align: center;
     font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-    background-image: url(images/bg.png);
-    background-repeat:repeat;
+    background-repeat: repeat;
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
@@ -32,28 +31,21 @@ header {
     position: relative;
 }
 
-#canvas {
-    width: auto;
-    height: auto;
-    border: solid 1px red;
-    border-top: none;
-}
-
-header a.go-home {
-    display: inline-block;
-    width: 32px;
-    height: 32px;
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    background-image: url(images/back.png);
-    background-size: contain;
-    opacity: 0.5;
-}
-
-    header a.go-home:hover {
-        opacity: 0.3;
+    header a.go-home {
+        display: inline-block;
+        width: 32px;
+        height: 32px;
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background-image: url(images/back.png);
+        background-size: contain;
+        opacity: 0.5;
     }
+
+        header a.go-home:hover {
+            opacity: 0.3;
+        }
 
 .main {
     margin-top: 10px;

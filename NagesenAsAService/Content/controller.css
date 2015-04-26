@@ -1,4 +1,8 @@
-﻿.animated {
+﻿body {
+    background-image: url(images/bg.png);
+}
+
+.animated {
     -webkit-animation-duration: 0.1s;
     -moz-animation-duration: 0.1s;
     -o-animation-duration: 0.1s;

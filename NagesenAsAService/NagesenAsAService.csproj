@@ -151,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="app.js" />
+    <Content Include="Content\box.css" />
     <Content Include="Content\controller.css" />
     <Content Include="Content\images\back.png" />
     <Content Include="Content\images\bg.png" />
