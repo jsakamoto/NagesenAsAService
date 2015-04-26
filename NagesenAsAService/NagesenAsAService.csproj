@@ -156,6 +156,7 @@
     <Content Include="Content\images\back.png" />
     <Content Include="Content\images\bg.png" />
     <Content Include="Content\images\coin.png" />
+    <Content Include="Content\images\settings.png" />
     <Content Include="Content\images\stone.png" />
     <Content Include="Content\normalize.css" />
     <Content Include="Content\Site.css" />
@@ -200,9 +201,11 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Code\Bitly.cs" />
     <Compile Include="Code\Logging\UnhandledExceptionLogger.cs" />
+    <Compile Include="Code\TrackingAuthMiddleware.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\DefaultHub.cs" />
     <Compile Include="Extensions\CollectionExtension.cs" />
+    <Compile Include="Extensions\ConvertExtension.cs" />
     <Compile Include="Extensions\StringExtension.cs" />
     <Compile Include="Extensions\UrlHelperExtension.cs" />
     <Compile Include="Global.asax.cs">
@@ -215,6 +218,7 @@
     </Compile>
     <Compile Include="Code\Logging\SendMailListener.cs" />
     <Compile Include="Code\Logging\LogToFileListener.cs" />
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AppDbContext.cs" />
     <Compile Include="Models\Room.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -231,6 +235,7 @@
     <Content Include="Views\Default\Controller.cshtml" />
     <Content Include="Views\Default\Index.js.map" />
     <Content Include="Views\Default\controller.js.map" />
+    <Content Include="Views\Default\Settings.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

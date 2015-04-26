@@ -1,9 +1,18 @@
 ﻿@model Room
 @{
     var urlOfThisRoom = Model.Url;
+    var isOwner = Model.OwnerUserID == this.User.Identity.Name;
+
+}
+@section head {
+    @Styles.Render("~/content/box-css")
 }
 @section headerLeft{
     <a href="/" class="go-home"></a>
+    @if (isOwner)
+    {
+        <a href="@Url.RouteUrl("Room", new { id = Model.RoomNumber, action = "Settings" })" class="go-settings"></a>
+    }
 }
 
 <div ng-app="theApp" ng-controller="roomController as ctrl" class="room-page">

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.SignalR;
@@ -49,6 +50,7 @@ namespace NagesenAsAService.Controllers
             this.Db.Rooms.Add(new Room
             {
                 RoomNumber = newRoomNumber,
+                OwnerUserID = this.User.Identity.Name,
                 Title = "Room Number: " + newRoomNumber.ToString(),
                 Url = urlOfThisRoom,
                 ShortUrl = shortUrlOfThisRoom
@@ -66,6 +68,32 @@ namespace NagesenAsAService.Controllers
             return View(room);
         }
 
+        [HttpGet]
+        public ActionResult Settings(int id)
+        {
+            var room = this.Db.Rooms
+                .Single(_ => _.RoomNumber == id);
+            var isOwner = room.OwnerUserID == this.User.Identity.Name;
+            if (isOwner == false) return HttpNotFound();
+
+            return View(room);
+        }
+
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<ActionResult> Settings(int id, string twitterHashtag)
+        {
+            var room = this.Db.Rooms
+                .Single(_ => _.RoomNumber == id);
+            var isOwner = room.OwnerUserID == this.User.Identity.Name;
+            if (isOwner == false) return HttpNotFound();
+
+            room.TwitterHashtag = twitterHashtag;
+
+            await this.Db.SaveChangesAsync();
+
+            return RedirectToRoute("Room", new { id, action = "Box" });
+        }
+
         public ActionResult Controller(int id)
         {
             var room = this.Db.Rooms
@@ -80,6 +108,14 @@ namespace NagesenAsAService.Controllers
             DefaultHub.Throw(id, typeOfCoin, hubContext.Clients);
 
             return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
+
+        [HttpGet, OutputCache(Duration = 0, NoStore = true)]
+        public ActionResult TwitterHashtag(int id)
+        {
+            var room = this.Db.Rooms
+                .Single(_ => _.RoomNumber == id);
+            return Json(new { twitterHashtag = room.TwitterHashtag }, JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult WarmUp()

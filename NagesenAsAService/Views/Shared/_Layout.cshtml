@@ -26,6 +26,7 @@
         <span>
             @ViewBag.AppTitle
         </span>
+        @RenderSection("headerRight", required: false)
     </header>
     <div class="main">
         @RenderBody()

@@ -18,7 +18,12 @@ namespace NagesenAsAService.Models
 
         public string ShortUrl { get; set; }
 
+        public string OwnerUserID { get; set; }
+
         public string Title { get; set; }
+
+        [DisplayFormat(ConvertEmptyStringToNull = false)]
+        public string TwitterHashtag { get; set; }
 
         public int CountOfNageSen { get; set; }
 
@@ -31,6 +36,7 @@ namespace NagesenAsAService.Models
 
         public Room()
         {
+            this.TwitterHashtag = "";
             this.CreatedAt = DateTime.UtcNow;
         }
     }

@@ -2,6 +2,23 @@
     background-image: url(images/bg.png);
 }
 
+header a.go-settings {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background-image: url(images/settings.png);
+    background-size: contain;
+    opacity: 0.5;
+}
+
+    header a.go-settings:hover {
+        opacity: 0.3;
+    }
+
+
 #canvas {
     width: auto;
     height: auto;

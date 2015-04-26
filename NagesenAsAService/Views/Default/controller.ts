@@ -36,6 +36,18 @@
             this.$scope.countOfCoin = 0;
             this.$scope.countOfDis = 0;
         }
+
+        public tweet(): void {
+            var text = `この枠に${this.$scope.countOfCoin}円分の投げ銭と${this.$scope.countOfDis}Disをしました☆`;
+            var url = 'https://twitter.com/share?';
+            url += 'text=' + encodeURIComponent(text);
+            this.$http
+                .get(location.pathname + '/TwitterHashtag')
+                .success(data => {
+                url += '&hashtags=' + encodeURIComponent((<any>data).twitterHashtag);
+                window.open(url, 'tweet');
+            });
+        }
     }
 
     var theApp = angular.module('theApp', []);
