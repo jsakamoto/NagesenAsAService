@@ -1,10 +1,15 @@
-﻿module NaaS {
+﻿interface Window {
+    postMessage(data: any): void;
+}
+module NaaS {
     class WorkerTimer {
+        private timerID: number;
 
         public OnMessage(e: MessageEvent): void {
-            //console.dir(e.data);
             switch (e.data.cmd) {
                 case 'Start': this.Start(e.data.fps);
+                    break;
+                case 'Stop': this.Stop();
                     break;
                 case 'Enqueue': this.Enqueue(e.data.data);
                     break;
@@ -12,13 +17,22 @@
         }
 
         private Start(fps: number): void {
-            self.setInterval(() => {
-                self.postMessage({ cmd: 'Interval' }, null);
-            }, 1000 / fps);
+            if (this.timerID == null) {
+                this.timerID = self.setInterval(() => {
+                    self.postMessage({ cmd: 'Interval' });
+                }, 1000 / fps);
+            }
+        }
+
+        private Stop(): void {
+            if (this.timerID != null) {
+                self.clearInterval(this.timerID);
+                this.timerID = null;
+            }
         }
 
         private Enqueue(data: any): void {
-            self.postMessage({ cmd: 'Enqueue', data }, null);
+            self.postMessage({ cmd: 'Enqueue', data });
         }
     }
 

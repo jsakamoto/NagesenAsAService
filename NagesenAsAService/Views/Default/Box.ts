@@ -108,7 +108,6 @@ module NaaS {
 
             this.worker = new Worker('/Views/Default/BoxWorker.js');
             this.worker.addEventListener('message', this.OnWorkerMessage.bind(this));
-            this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
         }
 
         private OnThrow(data: ThrowingData): void {
@@ -135,6 +134,7 @@ module NaaS {
                 circleRadius,
                 coinAsset.image);
             (new Audio(coinAsset.seUrl)).play();
+            this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
         }
 
         private getDebugDraw() {
@@ -163,7 +163,8 @@ module NaaS {
             this.world.Step(1 / this.frameRate, 10, 10);
             //this.world.DrawDebugData();
             this.world.ClearForces();
-            this.render();
+            var isAwake = this.render();
+            if (isAwake == false) this.worker.postMessage({ cmd: 'Stop' });
         }
 
         private createFixedBox(x: number, y: number, width: number, height: number) {
@@ -202,11 +203,13 @@ module NaaS {
             world.CreateBody(bodyDef).CreateFixture(fixDef);
         }
 
-        private render(): void {
+        private render(): boolean {
             this.context.clearRect(0, 0, this.worldWidth, this.worldHeight);
 
+            var isAwake = false;
             for (var bodyItem = this.world.GetBodyList(); bodyItem; bodyItem = bodyItem.GetNext()) {
                 if (bodyItem.GetType() == b2.Body.b2_dynamicBody) {
+                    isAwake = isAwake || bodyItem.IsAwake();
                     var pos = bodyItem.GetPosition();
 
                     this.context.save();
@@ -222,6 +225,7 @@ module NaaS {
                     this.context.restore();
                 }
             }
+            return isAwake;
         }
     }
 

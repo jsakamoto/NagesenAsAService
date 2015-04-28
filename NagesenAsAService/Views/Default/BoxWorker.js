@@ -8,18 +8,29 @@ var NaaS;
                 case 'Start':
                     this.Start(e.data.fps);
                     break;
+                case 'Stop':
+                    this.Stop();
+                    break;
                 case 'Enqueue':
                     this.Enqueue(e.data.data);
                     break;
             }
         };
         WorkerTimer.prototype.Start = function (fps) {
-            self.setInterval(function () {
-                self.postMessage({ cmd: 'Interval' }, null);
-            }, 1000 / fps);
+            if (this.timerID == null) {
+                this.timerID = self.setInterval(function () {
+                    self.postMessage({ cmd: 'Interval' });
+                }, 1000 / fps);
+            }
+        };
+        WorkerTimer.prototype.Stop = function () {
+            if (this.timerID != null) {
+                self.clearInterval(this.timerID);
+                this.timerID = null;
+            }
         };
         WorkerTimer.prototype.Enqueue = function (data) {
-            self.postMessage({ cmd: 'Enqueue', data: data }, null);
+            self.postMessage({ cmd: 'Enqueue', data: data });
         };
         return WorkerTimer;
     })();

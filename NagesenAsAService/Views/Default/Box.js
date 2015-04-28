@@ -68,7 +68,6 @@ var NaaS;
             this.initWorld();
             this.worker = new Worker('/Views/Default/BoxWorker.js');
             this.worker.addEventListener('message', this.OnWorkerMessage.bind(this));
-            this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
         }
         RoomController.prototype.OnThrow = function (data) {
             this.worker.postMessage({ cmd: 'Enqueue', data: data });
@@ -88,6 +87,7 @@ var NaaS;
             var circleRadius = coinAsset.imageRadius;
             this.createCircle(this.world, circleRadius + (0 | ((this.worldWidth - 2 * circleRadius) * data.throwPoint)), -circleRadius, circleRadius, coinAsset.image);
             (new Audio(coinAsset.seUrl)).play();
+            this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
         };
         RoomController.prototype.getDebugDraw = function () {
             var debugDraw = new b2.DebugDraw();
@@ -109,7 +109,9 @@ var NaaS;
             this.world.Step(1 / this.frameRate, 10, 10);
             //this.world.DrawDebugData();
             this.world.ClearForces();
-            this.render();
+            var isAwake = this.render();
+            if (isAwake == false)
+                this.worker.postMessage({ cmd: 'Stop' });
         };
         RoomController.prototype.createFixedBox = function (x, y, width, height) {
             var bodyDef = new b2.BodyDef;
@@ -143,8 +145,10 @@ var NaaS;
         };
         RoomController.prototype.render = function () {
             this.context.clearRect(0, 0, this.worldWidth, this.worldHeight);
+            var isAwake = false;
             for (var bodyItem = this.world.GetBodyList(); bodyItem; bodyItem = bodyItem.GetNext()) {
                 if (bodyItem.GetType() == b2.Body.b2_dynamicBody) {
+                    isAwake = isAwake || bodyItem.IsAwake();
                     var pos = bodyItem.GetPosition();
                     this.context.save();
                     var userData = bodyItem.GetUserData();
@@ -158,6 +162,7 @@ var NaaS;
                     this.context.restore();
                 }
             }
+            return isAwake;
         };
         return RoomController;
     })();
