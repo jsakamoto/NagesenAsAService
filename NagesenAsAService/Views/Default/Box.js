@@ -66,9 +66,24 @@ var NaaS;
                 $scope.title = r.title;
             }); });
             this.initWorld();
-            this.runWorld();
+            this.worker = new Worker('/Views/Default/BoxWorker.js');
+            this.worker.addEventListener('message', this.OnWorkerMessage.bind(this));
+            this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
         }
         RoomController.prototype.OnThrow = function (data) {
+            this.worker.postMessage({ cmd: 'Enqueue', data: data });
+        };
+        RoomController.prototype.OnWorkerMessage = function (e) {
+            switch (e.data.cmd) {
+                case 'Interval':
+                    this.stepWorld();
+                    break;
+                case 'Enqueue':
+                    this.OnEnqueueThrowing(e.data.data);
+                    break;
+            }
+        };
+        RoomController.prototype.OnEnqueueThrowing = function (data) {
             var coinAsset = CoinAssets[data.typeOfZeni];
             var circleRadius = coinAsset.imageRadius;
             this.createCircle(this.world, circleRadius + (0 | ((this.worldWidth - 2 * circleRadius) * data.throwPoint)), -circleRadius, circleRadius, coinAsset.image);
@@ -90,14 +105,11 @@ var NaaS;
             this.createFixedBox(this.worldWidth - 2, 0, 2.0, this.worldHeight);
             this.world.SetDebugDraw(this.getDebugDraw());
         };
-        RoomController.prototype.runWorld = function () {
-            var _this = this;
-            window.setInterval(function () {
-                _this.world.Step(1 / _this.frameRate, 10, 10);
-                //this.world.DrawDebugData();
-                _this.world.ClearForces();
-                _this.render();
-            }, 1000 / this.frameRate);
+        RoomController.prototype.stepWorld = function () {
+            this.world.Step(1 / this.frameRate, 10, 10);
+            //this.world.DrawDebugData();
+            this.world.ClearForces();
+            this.render();
         };
         RoomController.prototype.createFixedBox = function (x, y, width, height) {
             var bodyDef = new b2.BodyDef;

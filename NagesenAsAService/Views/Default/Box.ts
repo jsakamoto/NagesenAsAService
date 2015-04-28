@@ -85,6 +85,7 @@ module NaaS {
         private worldHeight: number;
         private worldScale = 30.0;
         private frameRate = 60;
+        private worker: Worker;
 
         constructor($scope: IScope) {
 
@@ -104,10 +105,28 @@ module NaaS {
             }));
 
             this.initWorld();
-            this.runWorld();
+
+            this.worker = new Worker('/Views/Default/BoxWorker.js');
+            this.worker.addEventListener('message', this.OnWorkerMessage.bind(this));
+            this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
         }
 
         private OnThrow(data: ThrowingData): void {
+            this.worker.postMessage({ cmd: 'Enqueue', data });
+        }
+
+        private OnWorkerMessage(e: MessageEvent): void {
+            switch (e.data.cmd) {
+                case 'Interval':
+                    this.stepWorld();
+                    break;
+                case 'Enqueue':
+                    this.OnEnqueueThrowing(e.data.data);
+                    break;
+            }
+        }
+
+        private OnEnqueueThrowing(data: ThrowingData) {
             var coinAsset = CoinAssets[data.typeOfZeni];
             var circleRadius = coinAsset.imageRadius;
             this.createCircle(this.world,
@@ -140,13 +159,11 @@ module NaaS {
             this.world.SetDebugDraw(this.getDebugDraw());
         }
 
-        private runWorld() {
-            window.setInterval(() => {
-                this.world.Step(1 / this.frameRate, 10, 10);
-                //this.world.DrawDebugData();
-                this.world.ClearForces();
-                this.render();
-            }, 1000 / this.frameRate);
+        private stepWorld() {
+            this.world.Step(1 / this.frameRate, 10, 10);
+            //this.world.DrawDebugData();
+            this.world.ClearForces();
+            this.render();
         }
 
         private createFixedBox(x: number, y: number, width: number, height: number) {
