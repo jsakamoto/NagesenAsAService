@@ -1,5 +1,5 @@
-﻿/// <reference path="scripts/typings/signalr/signalr.d.ts" />
-/// <reference path="scripts/typings/angularjs/angular.d.ts" />
+﻿/// <reference path="../../scripts/typings/signalr/signalr.d.ts" />
+/// <reference path="../../scripts/typings/angularjs/angular.d.ts" />
 interface Window {
     _app: { roomNumber: number };
 }

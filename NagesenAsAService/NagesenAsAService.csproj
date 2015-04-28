@@ -150,7 +150,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="app.js" />
+    <Content Include="Views\Default\Box.js" />
     <Content Include="Content\box.css" />
     <Content Include="Content\controller.css" />
     <Content Include="Content\images\back.png" />
@@ -164,7 +164,7 @@
     <Content Include="favicon.png" />
     <Content Include="Global.asax" />
     <Content Include="onerror.html" />
-    <Content Include="app.js.map" />
+    <Content Include="Views\Default\Box.js.map" />
     <Content Include="robots.txt" />
     <Content Include="Scripts\angular-mocks.js" />
     <Content Include="Scripts\angular.js" />
@@ -247,7 +247,7 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="app.ts" />
+    <TypeScriptCompile Include="Views\Default\Box.ts" />
     <TypeScriptCompile Include="Scripts\typings\angularjs\angular-animate.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angularjs\angular-cookies.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angularjs\angular-mocks.d.ts" />

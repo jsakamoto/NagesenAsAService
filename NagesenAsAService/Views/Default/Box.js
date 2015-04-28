@@ -1,5 +1,5 @@
-/// <reference path="scripts/typings/signalr/signalr.d.ts" />
-/// <reference path="scripts/typings/angularjs/angular.d.ts" />
+/// <reference path="../../scripts/typings/signalr/signalr.d.ts" />
+/// <reference path="../../scripts/typings/angularjs/angular.d.ts" />
 var b2;
 (function (b2) {
     b2.Vec2 = Box2D.Common.Math.b2Vec2;
@@ -152,4 +152,4 @@ var NaaS;
     var theApp = angular.module('theApp', []);
     theApp.controller('roomController', RoomController);
 })(NaaS || (NaaS = {}));
-//# sourceMappingURL=app.js.map
+//# sourceMappingURL=Box.js.map
