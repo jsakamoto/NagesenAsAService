@@ -2,6 +2,13 @@
     background-image: url(images/bg.png);
 }
 
+#controller {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 .animated {
     -webkit-animation-duration: 0.1s;
     -moz-animation-duration: 0.1s;

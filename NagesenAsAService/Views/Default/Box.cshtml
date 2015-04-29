@@ -2,21 +2,22 @@
 @{
     var urlOfThisRoom = Model.Url;
     var isOwner = Model.OwnerUserID == this.User.Identity.Name;
-
 }
 @section head {
     @Styles.Render("~/content/box-css")
 }
-@section headerLeft{
+@section headerLeft {
     <a href="/" class="go-home"></a>
     @if (isOwner)
     {
         <a href="@Url.RouteUrl("Room", new { id = Model.RoomNumber, action = "Settings" })" class="go-settings"></a>
     }
 }
+@section headerRight {
+    @Html.Partial("_ShareBox", Model)
+}
 
 <div ng-app="theApp" ng-controller="roomController as ctrl" class="room-page">
-    <div ng-bind="title"></div>
 
     <div>
         <canvas id="canvas" width="800" height="540"></canvas>
@@ -24,9 +25,7 @@
 
 </div>
 @section scripts{
-    <script>
-        var _app = _app || {};
-        _app.roomNumber = @Model.RoomNumber;
-    </script>
+    @Html.Partial("_AppInfoJS", Model)
     <script src="~/Views/Default/Box.js"></script>
+    <script src="~/Scripts/sharebox.js"></script>
 }

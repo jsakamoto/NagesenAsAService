@@ -16,10 +16,17 @@ body {
     text-align: center;
     font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     background-repeat: repeat;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+}
+
+.modal-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.4);
+    z-index: 1;
+    display: none;
 }
 
 header {
@@ -71,11 +78,6 @@ header {
         content: "";
         clear: both;
     }
-
-.qr-code {
-    width: auto;
-    zoom: 0.2;
-}
 
 a {
     color: rgb(18, 132, 255);

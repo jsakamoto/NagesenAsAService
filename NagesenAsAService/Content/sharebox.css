@@ -1,0 +1,82 @@
+﻿
+/* "Share" box, QR code */
+.room-url {
+    color: #0026ff;
+}
+
+.share-box.active .header {
+    position: relative;
+}
+
+.share-box {
+    background-color: white;
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    height: 130px;
+    width: 130px;
+    margin: auto;
+    margin-left: 25px;
+    zoom: 0.2;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.qr-code {
+    display: block;
+    width: auto;
+}
+
+.share-box .room-url,
+.share-box #buttonTweet {
+    display: none;
+}
+
+.share-box.active {
+    box-shadow: rgba(0,0,0,0.4) 0 0 3px 4px;
+    -ms-zoom: 1;
+    zoom: 1;
+    top: 80px;
+    bottom: auto;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    padding: 20px 0;
+    height: 490px;
+    width: 560px;
+    cursor: default;
+}
+
+    .share-box.active .room-url {
+        display: inline-block;
+        font-size: 36px;
+    }
+
+    .share-box.active #buttonTweet {
+        padding: 5px 0;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        width: 100px;
+        text-align: center;
+        cursor: pointer;
+        box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.3);
+        -webkit-appearance: button;
+        display: inline-block;
+        border-color: #1ab2e8;
+        color: #fff;
+        background-color: #1ab2e8;
+        margin-left: 8px;
+        margin-top: -10px;
+        position: relative;
+        top: 0;
+    }
+
+    .share-box.active .qr-code {
+        zoom: 3;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 10px;
+        margin: auto;
+    }

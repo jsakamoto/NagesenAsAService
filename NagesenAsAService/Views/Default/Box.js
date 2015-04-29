@@ -62,7 +62,7 @@ var NaaS;
             this.worldHeight = canvas.height;
             this.hub = $.connection.hub.createHubProxy('DefaultHub');
             this.hub.on('Throw', this.OnThrow.bind(this));
-            $.connection.hub.start().then(function () { return _this.hub.invoke('EnterRoom', window._app.roomNumber); }).then(function (r) { return $scope.$apply(function () {
+            $.connection.hub.start().then(function () { return _this.hub.invoke('EnterRoom', _app.roomNumber); }).then(function (r) { return $scope.$apply(function () {
                 $scope.title = r.title;
             }); });
             this.initWorld();

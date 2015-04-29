@@ -1,0 +1,7 @@
+﻿@model Room
+<script>
+    var _app = _app || {};
+    _app.roomNumber = @Model.RoomNumber;
+    _app.controllerUrl = '@(Url.AppUrl() + Url.RouteUrl("Room", new { id = Model.RoomNumber, action = UrlParameter.Optional }))';
+    _app.twitterHashtagUrl = '@(Url.AppUrl() + Url.RouteUrl("Room", new { id = Model.RoomNumber, action = "TwitterHashtag" }))';
+</script>

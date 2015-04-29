@@ -40,9 +40,11 @@ namespace NagesenAsAService
                 "~/Content/normalize.css",
                 "~/Content/site.css"));
             bundles.Add(new StyleBundle("~/content/box-css").Include(
-                "~/Content/box.css"));
+                "~/Content/box.css",
+                "~/Content/sharebox.css"));
             bundles.Add(new StyleBundle("~/content/controller-css").Include(
-                "~/Content/controller.css"));
+                "~/Content/controller.css",
+                "~/Content/sharebox.css"));
         }
     }
 }

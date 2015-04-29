@@ -1,0 +1,13 @@
+﻿@model Room
+<span> - Room #@Model.RoomNumber</span>
+    |
+<span class="room-url">@Model.ShortUrl</span>
+    |
+<div class="share-box">
+    <div class="header">
+        <span class="room-url">@Model.ShortUrl</span>
+        <input type="button" value="Tweet" id="buttonTweet" />
+    </div>
+    @QRCode.Render(Model.ShortUrl, scale: 5, cssClass: "qr-code")
+</div>
+

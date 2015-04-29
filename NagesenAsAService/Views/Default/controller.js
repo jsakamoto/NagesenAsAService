@@ -26,7 +26,7 @@ var NaaS;
             var text = "この枠に" + this.$scope.countOfCoin + "円分の投げ銭と" + this.$scope.countOfDis + "Disをしました☆";
             var url = 'https://twitter.com/share?';
             url += 'text=' + encodeURIComponent(text);
-            this.$http.get(location.pathname + '/TwitterHashtag').success(function (data) {
+            this.$http.get(_app.twitterHashtagUrl).success(function (data) {
                 url += '&hashtags=' + encodeURIComponent(data.twitterHashtag);
                 window.open(url, 'tweet');
             });

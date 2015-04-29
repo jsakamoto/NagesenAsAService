@@ -42,7 +42,7 @@
             var url = 'https://twitter.com/share?';
             url += 'text=' + encodeURIComponent(text);
             this.$http
-                .get(location.pathname + '/TwitterHashtag')
+                .get(_app.twitterHashtagUrl)
                 .success(data => {
                 url += '&hashtags=' + encodeURIComponent((<any>data).twitterHashtag);
                 window.open(url, 'tweet');

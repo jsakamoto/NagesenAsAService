@@ -1,8 +1,10 @@
 ﻿/// <reference path="../../scripts/typings/signalr/signalr.d.ts" />
 /// <reference path="../../scripts/typings/angularjs/angular.d.ts" />
-interface Window {
-    _app: { roomNumber: number };
-}
+declare var _app: {
+    roomNumber: number;
+    controllerUrl: string;
+    twitterHashtagUrl: string
+};
 
 module b2 {
     export import Vec2 = Box2D.Common.Math.b2Vec2;
@@ -99,7 +101,7 @@ module NaaS {
 
             $.connection.hub
                 .start()
-                .then(() => this.hub.invoke('EnterRoom', window._app.roomNumber))
+                .then(() => this.hub.invoke('EnterRoom', _app.roomNumber))
                 .then(r => $scope.$apply(() => {
                 $scope.title = (<any>r).title;
             }));

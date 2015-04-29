@@ -38,11 +38,11 @@ namespace NagesenAsAService.Controllers
                 .ToEnumerable(r => r.Next(100, 10000))
                 .First(n => this.Db.Rooms.Any(room => room.RoomNumber == n) == false);
 
-            var urlOfThisRoom = Url.AppUrl() + Url.Action("Room", new { id = newRoomNumber });
+            var urlOfThisRoom = Url.AppUrl() + Url.RouteUrl("Room", new { id = newRoomNumber, action = UrlParameter.Optional });
             var bitly = Bitly.Default;
             var shortUrlOfThisRoom = bitly.Status == Bitly.StatusType.Available ?
 #if DEBUG
-            bitly.ShortenUrl("http://nagesen.azurewebsites.net/Room/" + newRoomNumber.ToString()) : "";
+            bitly.ShortenUrl("http://nagesen.azurewebsites.net/Room/" + newRoomNumber.ToString()) : "http://j.mp/1bD9vPr";
 #else
             bitly.ShortenUrl(urlOfThisRoom) : "";
 #endif
