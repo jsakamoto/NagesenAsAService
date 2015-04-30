@@ -1,12 +1,5 @@
 ﻿/// <reference path="../../scripts/typings/signalr/signalr.d.ts" />
 /// <reference path="../../scripts/typings/angularjs/angular.d.ts" />
-declare var _app: {
-    roomNumber: number;
-    controllerUrl: string;
-    twitterHashtagUrl: string;
-    apiBaseUrl: string;
-};
-
 module b2 {
     export import Vec2 = Box2D.Common.Math.b2Vec2;
     export import BodyDef = Box2D.Dynamics.b2BodyDef;
@@ -239,6 +232,7 @@ module NaaS.Box {
 module NaaS.Settings {
     interface IScope extends ng.IScope {
         twitterHashtag: string;
+        allowDisCoin: boolean;
     }
 
     class SettingsController {
@@ -249,6 +243,7 @@ module NaaS.Settings {
             this.$http.get(_app.apiBaseUrl + '/Settings')
                 .then(e => {
                 this.$scope.twitterHashtag = (<IScope>e.data).twitterHashtag;
+                this.$scope.allowDisCoin = (<IScope>e.data).allowDisCoin;
                 $('#settings-dialog, .modal-mask')
                     .fadeIn('normal', _=> {
                     $('#settings-dialog *[autofocus]').focus();

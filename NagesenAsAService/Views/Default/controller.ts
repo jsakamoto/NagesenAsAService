@@ -7,6 +7,7 @@
     interface INagesenControllerScope extends ng.IScope {
         countOfCoin: number;
         countOfDis: number;
+        allowDisCoin: boolean;
     }
 
     class NagesenControllerController {
@@ -16,29 +17,29 @@
             this.$scope = $scope;
             this.$scope.countOfCoin = 0;
             this.$scope.countOfDis = 0;
+            this.$scope.allowDisCoin = _app.allowDisCoin;
             this.$http = $http;
         }
 
         public countUpCoin(price: number): void {
             this.$scope.countOfCoin += price;
-            this.$http.put(location.pathname + '/throw', { typeOfCoin: CoinType.Like });
+            this.$http
+                .put(location.pathname + '/throw', { typeOfCoin: CoinType.Like })
+                .then(e => this.$scope.allowDisCoin = (<any>e.data).allowDisCoin);
         }
 
         public countUpDis(price: number): void {
             this.$scope.countOfDis += price;
-            this.$http.put(location.pathname + '/throw', { typeOfCoin: CoinType.Dis });
-        }
-
-        public resetCounter(): void {
-            if (!confirm('投げ銭とDisをリセットしますか？')) {
-                return;
-            }
-            this.$scope.countOfCoin = 0;
-            this.$scope.countOfDis = 0;
+            this.$http
+                .put(location.pathname + '/throw', { typeOfCoin: CoinType.Dis })
+                .then(e => this.$scope.allowDisCoin = (<any>e.data).allowDisCoin);
         }
 
         public tweet(): void {
-            var text = `この枠に${this.$scope.countOfCoin}円分の投げ銭と${this.$scope.countOfDis}Disをしました☆`;
+            var text =
+                `この枠に${this.$scope.countOfCoin}円分の投げ銭` +
+                (this.$scope.allowDisCoin ? `と${this.$scope.countOfDis}Dis` : '') +
+                `をしました☆`;
             var url = 'https://twitter.com/share?';
             url += 'text=' + encodeURIComponent(text);
             this.$http

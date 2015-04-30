@@ -25,6 +25,8 @@ namespace NagesenAsAService.Models
         [DisplayFormat(ConvertEmptyStringToNull = false)]
         public string TwitterHashtag { get; set; }
 
+        public bool AllowDisCoin { get; set; }
+
         public int CountOfNageSen { get; set; }
 
         public int CountOfAoriSen { get; set; }

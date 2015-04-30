@@ -2,13 +2,6 @@
     background-image: url(images/bg.png);
 }
 
-#controller {
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
 .animated {
     -webkit-animation-duration: 0.1s;
     -moz-animation-duration: 0.1s;
@@ -87,18 +80,10 @@
     margin: 0 auto;
     position: relative;
     width: 640px;
-}
-
-#result {
-    clear: both;
-}
-
-#coin,
-#stone {
-    margin: 10px 10px 0;
-    background-repeat: no-repeat;
-    background-size: contain;
-    cursor: pointer;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 #coin {
@@ -107,29 +92,42 @@
 
 #stone {
     background-image: url(images/stone.png);
+    display: none;
+}
+
+.dis-coin.allow #stone {
+    display: inline-block;
 }
 
 .item {
-    float: left;
-    width: 46.875%;
+    margin: 10px 10px 0;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 40%;
+    display: inline-block;
 }
 
-img {
-    width: 100%;
+    .item img {
+        width: 100%;
+        cursor: pointer;
+    }
+
+#buttons {
+    margin-top: 2em;
 }
 
-#container button,
-#buttons input {
-    padding: 5px 0;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    width: 100px;
-    background-color: #eee;
-    text-align: center;
-    cursor: pointer;
-    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.3);
-    -webkit-appearance: button;
-}
+    #container button,
+    #buttons input {
+        padding: 5px 0;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        width: 100px;
+        background-color: #eee;
+        text-align: center;
+        cursor: pointer;
+        box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.3);
+        -webkit-appearance: button;
+    }
 
 input#buttonTweet {
     border-color: #1ab2e8;
@@ -142,59 +140,6 @@ input#buttonTweet {
     color: #fff;
     border-color: #555;
     background-color: #333;
-}
-
-#buttonBox,
-#result li,
-#buttons input {
-    position: absolute;
-}
-
-#buttonBox {
-    top: 10px;
-    left: 800px;
-    width: 125px;
-    height: 590px;
-    text-align: center;
-}
-
-    #buttonBox div {
-        margin-top: 5px;
-        margin-bottom: 15px;
-    }
-
-#btn_reset {
-    margin-left: -50px;
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-}
-
-#result li {
-    bottom: -40px;
-    width: 50%;
-    text-align: center;
-    list-style: none;
-}
-
-#resultYen {
-    left: 0;
-}
-
-#resultDis {
-    right: 0;
-}
-
-#buttons input {
-    bottom: -100px;
-}
-
-#buttonReset {
-    left: 0;
-}
-
-#buttonTweet {
-    right: 0;
 }
 
 @media screen and (min-width: 701px) {
@@ -228,24 +173,7 @@ input#buttonTweet {
     }
 
     .item {
-        float: none;
         width: 100%;
-    }
-
-    #result li {
-        bottom: -30px;
-    }
-
-    #buttons input {
-        bottom: -65px;
-    }
-
-    input#buttonReset {
-        left: -50px;
-    }
-
-    input#buttonTweet {
-        right: -50px;
     }
 }
 

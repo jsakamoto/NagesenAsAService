@@ -185,6 +185,7 @@ var NaaS;
                 var _this = this;
                 this.$http.get(_app.apiBaseUrl + '/Settings').then(function (e) {
                     _this.$scope.twitterHashtag = e.data.twitterHashtag;
+                    _this.$scope.allowDisCoin = e.data.allowDisCoin;
                     $('#settings-dialog, .modal-mask').fadeIn('normal', function (_) {
                         $('#settings-dialog *[autofocus]').focus();
                     });

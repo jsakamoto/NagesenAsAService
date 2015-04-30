@@ -25,11 +25,18 @@
 
     <div id="settings-dialog" ng-controller="settingsController as ctrl">
         <form class="form">
-            @Html.AntiForgeryToken();
+            @Html.AntiForgeryToken()
             <h2>Settings</h2>
-            <div>
-                <span>Twitter Hashtag #</span>
-                <input type="text" name="twitterHashtag" ng-model="twitterHashtag" autofocus />
+            <div class="field-container">
+                <label for="twitterHashtag">Twitter Hashtag #</label>
+                <input type="text" name="twitterHashtag" id="twitterHashtag" ng-model="twitterHashtag" autofocus />
+            </div>
+            <div class="field-container">
+                <label for="allowDisCoin">
+                    <input type="checkbox" name="allowDisCoin" id="allowDisCoin" value="true" ng-model="allowDisCoin" />
+                    <input type="hidden" name="allowDisCoin" value="false" />
+                    Allow "Dis" coin
+                </label>
             </div>
             <div class="buttons">
                 <input type="button" value="OK" class="btn btn-primary" ng-click="ctrl.OK()" />

@@ -56,6 +56,11 @@ header a.go-settings {
         margin: 2em;
     }
 
+    #settings-dialog .field-container {
+        margin-bottom: 0.7em;
+        text-align: left;
+    }
+
     #settings-dialog .buttons {
         margin-top: 1em;
         text-align: right;

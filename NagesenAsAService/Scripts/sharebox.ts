@@ -3,6 +3,7 @@
     controllerUrl: string;
     twitterHashtagUrl: string;
     apiBaseUrl: string;
+    allowDisCoin: boolean;
 };
 
 module NaaS {

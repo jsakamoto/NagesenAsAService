@@ -76,12 +76,13 @@ namespace NagesenAsAService.Controllers
 
             return Json(new
             {
-                twitterHashtag = room.TwitterHashtag
+                twitterHashtag = room.TwitterHashtag,
+                allowDisCoin = room.AllowDisCoin
             }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPut, ValidateAntiForgeryToken]
-        public async Task<ActionResult> Settings(int id, string twitterHashtag)
+        public async Task<ActionResult> Settings(int id, string twitterHashtag, bool allowDisCoin)
         {
             var room = this.Db.Rooms
                 .Single(_ => _.RoomNumber == id);
@@ -89,6 +90,7 @@ namespace NagesenAsAService.Controllers
             if (isOwner == false) return HttpNotFound();
 
             room.TwitterHashtag = twitterHashtag;
+            room.AllowDisCoin = allowDisCoin;
 
             await this.Db.SaveChangesAsync();
 
@@ -108,7 +110,13 @@ namespace NagesenAsAService.Controllers
             var hubContext = GlobalHost.ConnectionManager.GetHubContext<DefaultHub>();
             DefaultHub.Throw(id, typeOfCoin, hubContext.Clients);
 
-            return new HttpStatusCodeResult(HttpStatusCode.OK);
+            var room = this.Db.Rooms
+                .Single(_ => _.RoomNumber == id);
+
+            return Json(new
+            {
+                allowDisCoin = room.AllowDisCoin
+            }); 
         }
 
         [HttpGet, OutputCache(Duration = 0, NoStore = true)]
