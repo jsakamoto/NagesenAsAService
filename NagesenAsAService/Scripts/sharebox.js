@@ -2,8 +2,8 @@ var NaaS;
 (function (NaaS) {
     // "Share" box and QR Code - UI effect
     $(function () {
-        $('.modal-mask,.share-box').click(function () {
-            $('.share-box').toggleClass('active');
+        $(document).on('click', '.modal-mask.active,.share-box', function () {
+            $('.share-box,.modal-mask').toggleClass('active');
             $('.modal-mask').fadeToggle();
         });
         $('.share-box #buttonTweet').click(function (e) {

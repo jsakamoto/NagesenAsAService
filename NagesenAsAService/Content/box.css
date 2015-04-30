@@ -25,3 +25,49 @@ header a.go-settings {
     border: solid 1px red;
     border-top: none;
 }
+
+#settings-dialog {
+    position: fixed;
+    z-index: 2;
+    top: 50%;
+    left: 0;
+    background-color: white;
+    -moz-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -o-transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    box-shadow: rgba(0,0,0,0.4) 0 4px 3px;
+    display: none;
+}
+
+    #settings-dialog * {
+        width: auto;
+    }
+
+    #settings-dialog h2 {
+        margin-top: 0;
+        text-align: left;
+    }
+
+    #settings-dialog .form {
+        display: inline-block;
+        width: auto;
+        margin: 2em;
+    }
+
+    #settings-dialog .buttons {
+        margin-top: 1em;
+        text-align: right;
+    }
+
+        #settings-dialog .buttons .btn {
+            border: none;
+            display: inline-block;
+            width: 6em;
+            height: 2em;
+            line-height: 2em;
+            margin: 0;
+            padding: 0;
+            border-radius: 4px;
+        }

@@ -3,7 +3,8 @@
 declare var _app: {
     roomNumber: number;
     controllerUrl: string;
-    twitterHashtagUrl: string
+    twitterHashtagUrl: string;
+    apiBaseUrl: string;
 };
 
 module b2 {
@@ -18,7 +19,7 @@ module b2 {
     export import DebugDraw = Box2D.Dynamics.b2DebugDraw;
 }
 
-module NaaS {
+module NaaS.Box {
     const enum CoinType {
         Like,
         Dis
@@ -233,4 +234,54 @@ module NaaS {
 
     var theApp = angular.module('theApp', []);
     theApp.controller('roomController', RoomController);
+}
+
+module NaaS.Settings {
+    interface IScope extends ng.IScope {
+        twitterHashtag: string;
+    }
+
+    class SettingsController {
+        constructor(private $scope: IScope, private $http: ng.IHttpService) {
+        }
+
+        public DoModal(): void {
+            this.$http.get(_app.apiBaseUrl + '/Settings')
+                .then(e => {
+                this.$scope.twitterHashtag = (<IScope>e.data).twitterHashtag;
+                $('#settings-dialog, .modal-mask')
+                    .fadeIn('normal', _=> {
+                    $('#settings-dialog *[autofocus]').focus();
+                });
+            });
+        }
+
+        public OK(): void {
+            this.$http.put(_app.apiBaseUrl + '/Settings',
+                $('#settings-dialog .form').serialize(),
+                { headers: { 'content-type': 'application/x-www-form-urlencoded' } }
+                ).then(_ => this.Close());
+        }
+
+        public Cancel(): void {
+            this.Close();
+        }
+
+        private Close(): void {
+            $('#settings-dialog, .modal-mask').fadeOut();
+        }
+    }
+
+    var theApp = angular.module('theApp');
+    theApp.controller('settingsController', SettingsController);
+
+    $(() => {
+        $('#lnk-settings').click(function (e) {
+            e.preventDefault();
+            angular
+                .element(document.getElementById('settings-dialog'))
+                .controller()
+                .DoModal();
+        });
+    });
 }

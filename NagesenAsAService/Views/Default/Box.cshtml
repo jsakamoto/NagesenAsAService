@@ -10,20 +10,35 @@
     <a href="/" class="go-home"></a>
     @if (isOwner)
     {
-        <a href="@Url.RouteUrl("Room", new { id = Model.RoomNumber, action = "Settings" })" class="go-settings"></a>
+        <a href="@Url.RouteUrl("Room", new { id = Model.RoomNumber, action = "Settings" })" id="lnk-settings" class="go-settings"></a>
     }
 }
 @section headerRight {
     @Html.Partial("_ShareBox", Model)
 }
 
-<div ng-app="theApp" ng-controller="roomController as ctrl" class="room-page">
+<div ng-app="theApp" class="room-page">
 
-    <div>
+    <div ng-controller="roomController as ctrl">
         <canvas id="canvas" width="800" height="540"></canvas>
     </div>
 
+    <div id="settings-dialog" ng-controller="settingsController as ctrl">
+        <form class="form">
+            @Html.AntiForgeryToken();
+            <h2>Settings</h2>
+            <div>
+                <span>Twitter Hashtag #</span>
+                <input type="text" name="twitterHashtag" ng-model="twitterHashtag" autofocus />
+            </div>
+            <div class="buttons">
+                <input type="button" value="OK" class="btn btn-primary" ng-click="ctrl.OK()" />
+                <input type="button" value="Cancel" class="btn btn-default" ng-click="ctrl.Cancel()" />
+            </div>
+        </form>
+    </div>
 </div>
+
 @section scripts{
     @Html.Partial("_AppInfoJS", Model)
     <script src="~/Views/Default/Box.js"></script>

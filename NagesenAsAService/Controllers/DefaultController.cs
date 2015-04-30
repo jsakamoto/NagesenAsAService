@@ -73,13 +73,14 @@ namespace NagesenAsAService.Controllers
         {
             var room = this.Db.Rooms
                 .Single(_ => _.RoomNumber == id);
-            var isOwner = room.OwnerUserID == this.User.Identity.Name;
-            if (isOwner == false) return HttpNotFound();
 
-            return View(room);
+            return Json(new
+            {
+                twitterHashtag = room.TwitterHashtag
+            }, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPost, ValidateAntiForgeryToken]
+        [HttpPut, ValidateAntiForgeryToken]
         public async Task<ActionResult> Settings(int id, string twitterHashtag)
         {
             var room = this.Db.Rooms
@@ -91,7 +92,7 @@ namespace NagesenAsAService.Controllers
 
             await this.Db.SaveChangesAsync();
 
-            return RedirectToRoute("Room", new { id, action = "Box" });
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
         public ActionResult Controller(int id)

@@ -20,7 +20,7 @@
     margin-left: 25px;
     zoom: 0.2;
     cursor: pointer;
-    z-index: 2;
+    z-index: 0;
 }
 
 .qr-code {
@@ -46,6 +46,7 @@
     height: 490px;
     width: 560px;
     cursor: default;
+    z-index: 2;
 }
 
     .share-box.active .room-url {

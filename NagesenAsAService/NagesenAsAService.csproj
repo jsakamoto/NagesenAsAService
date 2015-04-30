@@ -151,7 +151,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\sharebox.css" />
-    <Content Include="Scripts\sharebox.js" />
+    <Content Include="Scripts\sharebox.js">
+      <DependentUpon>sharebox.ts</DependentUpon>
+    </Content>
     <Content Include="Content\box.css" />
     <Content Include="Content\controller.css" />
     <Content Include="Content\images\back.png" />
@@ -246,11 +248,12 @@
     <Content Include="Views\Default\controller.js.map">
       <DependentUpon>controller.ts</DependentUpon>
     </Content>
-    <Content Include="Views\Default\Settings.cshtml" />
     <Content Include="Views\Default\BoxWorker.js.map">
       <DependentUpon>BoxWorker.ts</DependentUpon>
     </Content>
-    <Content Include="Scripts\sharebox.js.map" />
+    <Content Include="Scripts\sharebox.js.map">
+      <DependentUpon>sharebox.ts</DependentUpon>
+    </Content>
     <Content Include="Views\Shared\_ShareBox.cshtml" />
     <Content Include="Views\Shared\_AppInfoJS.cshtml" />
     <None Include="Web.Debug.config">

@@ -1,15 +1,16 @@
 ﻿declare var _app: {
     roomNumber: number;
     controllerUrl: string;
-    twitterHashtagUrl: string
+    twitterHashtagUrl: string;
+    apiBaseUrl: string;
 };
 
 module NaaS {
 
     // "Share" box and QR Code - UI effect
     $(() => {
-        $('.modal-mask,.share-box').click(function () {
-            $('.share-box').toggleClass('active');
+        $(document).on('click', '.modal-mask.active,.share-box', function () {
+            $('.share-box,.modal-mask').toggleClass('active');
             $('.modal-mask').fadeToggle();
         });
 
