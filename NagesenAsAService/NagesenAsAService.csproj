@@ -152,7 +152,6 @@
   <ItemGroup>
     <Content Include="Content\sharebox.css" />
     <Content Include="Scripts\sharebox.js" />
-    <Content Include="Views\Default\Box.js" />
     <Content Include="Content\box.css" />
     <Content Include="Content\controller.css" />
     <Content Include="Content\images\back.png" />
@@ -166,7 +165,6 @@
     <Content Include="favicon.png" />
     <Content Include="Global.asax" />
     <Content Include="onerror.html" />
-    <Content Include="Views\Default\Box.js.map" />
     <Content Include="robots.txt" />
     <Content Include="Scripts\angular-mocks.js" />
     <Content Include="Scripts\angular.js" />
@@ -185,9 +183,15 @@
     <Content Include="Scripts\jquery-2.1.1.min.js" />
     <Content Include="Scripts\jquery.signalR-2.1.2.js" />
     <Content Include="Scripts\jquery.signalR-2.1.2.min.js" />
-    <Content Include="Views\Default\BoxWorker.js" />
-    <Content Include="Views\Default\controller.js" />
-    <Content Include="Views\Default\Index.js" />
+    <Content Include="Views\Default\BoxWorker.js">
+      <DependentUpon>BoxWorker.ts</DependentUpon>
+    </Content>
+    <Content Include="Views\Default\controller.js">
+      <DependentUpon>controller.ts</DependentUpon>
+    </Content>
+    <Content Include="Views\Default\Index.js">
+      <DependentUpon>Index.ts</DependentUpon>
+    </Content>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>
@@ -236,10 +240,16 @@
     <Content Include="Views\Default\Box.cshtml" />
     <Content Include="Scripts\jquery-2.1.1.min.map" />
     <Content Include="Views\Default\Controller.cshtml" />
-    <Content Include="Views\Default\Index.js.map" />
-    <Content Include="Views\Default\controller.js.map" />
+    <Content Include="Views\Default\Index.js.map">
+      <DependentUpon>Index.ts</DependentUpon>
+    </Content>
+    <Content Include="Views\Default\controller.js.map">
+      <DependentUpon>controller.ts</DependentUpon>
+    </Content>
     <Content Include="Views\Default\Settings.cshtml" />
-    <Content Include="Views\Default\BoxWorker.js.map" />
+    <Content Include="Views\Default\BoxWorker.js.map">
+      <DependentUpon>BoxWorker.ts</DependentUpon>
+    </Content>
     <Content Include="Scripts\sharebox.js.map" />
     <Content Include="Views\Shared\_ShareBox.cshtml" />
     <Content Include="Views\Shared\_AppInfoJS.cshtml" />
@@ -256,6 +266,12 @@
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\sharebox.ts" />
     <TypeScriptCompile Include="Views\Default\Box.ts" />
+    <Content Include="Views\Default\Box.js">
+      <DependentUpon>Box.ts</DependentUpon>
+    </Content>
+    <Content Include="Views\Default\Box.js.map">
+      <DependentUpon>Box.ts</DependentUpon>
+    </Content>
     <TypeScriptCompile Include="Scripts\typings\angularjs\angular-animate.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angularjs\angular-cookies.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\angularjs\angular-mocks.d.ts" />
