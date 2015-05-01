@@ -38,15 +38,10 @@ module NaaS {
                 `この枠に${this.$scope.countOfCoin}円分の投げ銭` +
                 (this.$scope.allowDisCoin ? `と${this.$scope.countOfDis}Dis` : '') +
                 `をしました☆`;
-            var url = 'https://twitter.com/share?';
+            var url = _app.apiBaseUrl + '/TwitterShare?';
             url += 'text=' + encodeURIComponent(text);
             url += '&url=' + encodeURIComponent(_app.apiBaseUrl + '/screenshot');
-            this.$http
-                .get(_app.twitterHashtagUrl)
-                .success(data => {
-                url += '&hashtags=' + encodeURIComponent((<any>data).twitterHashtag);
-                window.open(url, 'tweet');
-            });
+            window.open(url);
         }
     }
 

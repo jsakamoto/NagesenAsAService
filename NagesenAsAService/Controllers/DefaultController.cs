@@ -162,6 +162,25 @@ namespace NagesenAsAService.Controllers
             );
         }
 
+        [HttpGet]
+        public ActionResult TwitterShare(int id, string text, string url)
+        {
+            var twitterHashtag = this.Db.Rooms
+                .Where(room => room.RoomNumber == id)
+                .Select(room => room.TwitterHashtag)
+                .First() ?? "";
+
+            var twitterSharUrl = "https://twitter.com/share?";
+            twitterSharUrl += "text=" + HttpUtility.UrlEncode(text);
+            twitterSharUrl += "&url=" + HttpUtility.UrlEncode(url);
+            if (twitterHashtag != "")
+            {
+                twitterSharUrl += "&hashtags=" + HttpUtility.UrlEncode(twitterHashtag);
+            }
+            
+            return Redirect(twitterSharUrl);
+        }
+
         public ActionResult WarmUp()
         {
             var bitly = Bitly.Default;
