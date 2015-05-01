@@ -154,6 +154,33 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\favicons\android-chrome-144x144.png" />
+    <Content Include="Content\favicons\android-chrome-192x192.png" />
+    <Content Include="Content\favicons\android-chrome-36x36.png" />
+    <Content Include="Content\favicons\android-chrome-48x48.png" />
+    <Content Include="Content\favicons\android-chrome-72x72.png" />
+    <Content Include="Content\favicons\android-chrome-96x96.png" />
+    <Content Include="Content\favicons\apple-touch-icon-114x114.png" />
+    <Content Include="Content\favicons\apple-touch-icon-120x120.png" />
+    <Content Include="Content\favicons\apple-touch-icon-144x144.png" />
+    <Content Include="Content\favicons\apple-touch-icon-152x152.png" />
+    <Content Include="Content\favicons\apple-touch-icon-180x180.png" />
+    <Content Include="Content\favicons\apple-touch-icon-57x57.png" />
+    <Content Include="Content\favicons\apple-touch-icon-60x60.png" />
+    <Content Include="Content\favicons\apple-touch-icon-72x72.png" />
+    <Content Include="Content\favicons\apple-touch-icon-76x76.png" />
+    <Content Include="Content\favicons\apple-touch-icon-precomposed.png" />
+    <Content Include="Content\favicons\apple-touch-icon.png" />
+    <Content Include="Content\favicons\browserconfig.xml" />
+    <Content Include="Content\favicons\favicon-16x16.png" />
+    <Content Include="Content\favicons\favicon-32x32.png" />
+    <Content Include="Content\favicons\favicon-96x96.png" />
+    <Content Include="Content\favicons\favicon.ico" />
+    <Content Include="Content\favicons\mstile-144x144.png" />
+    <Content Include="Content\favicons\mstile-150x150.png" />
+    <Content Include="Content\favicons\mstile-310x150.png" />
+    <Content Include="Content\favicons\mstile-310x310.png" />
+    <Content Include="Content\favicons\mstile-70x70.png" />
     <Content Include="Content\images\qrcode.png" />
     <Content Include="Content\sharebox.css" />
     <Content Include="Scripts\html2canvas.js" />
@@ -186,6 +213,7 @@
       <LastGenOutput>AppSettings.cs</LastGenOutput>
     </Content>
     <Content Include="Scripts\angular.min.js.map" />
+    <Content Include="Content\favicons\manifest.json" />
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-2.1.1.min.js" />

@@ -7,14 +7,36 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
     <meta property="og:title" content="@ViewBag.AppTitle" />
     <meta property="og:description" content="@Localize.appDescription" />
     <meta property="og:url" content="@Url.AppUrl()" />
     <meta property="og:image" content="@Url.AppUrl()/Content/images/ogpimage.png" />@* The size of ogpimage.png for facebook is 200px x 200px. *@
     <meta name="twitter:card" content="summary">
     <meta name="twitter:image" content="@Url.AppUrl()/Content/images/twittercard-image.png">@* The size of twittercard-image.png for twitter card is 120px x 120px. *@
+
     <meta name="keywords" content="@Localize.appKeywords" />
     <meta name="description" content="@Localize.appDescription" />
+
+    <link rel="apple-touch-icon" sizes="57x57" href="~/Content/favicons/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="~/Content/favicons/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="~/Content/favicons/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="~/Content/favicons/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="~/Content/favicons/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="~/Content/favicons/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="~/Content/favicons/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="~/Content/favicons/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/Content/favicons/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="~/Content/favicons/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="~/Content/favicons/android-chrome-192x192.png" sizes="192x192">
+    <link rel="icon" type="image/png" href="~/Content/favicons/favicon-96x96.png" sizes="96x96">
+    <link rel="icon" type="image/png" href="~/Content/favicons/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="~/Content/favicons/manifest.json">
+    <link rel="shortcut icon" href="~/Content/favicons/favicon.ico">
+    <meta name="msapplication-TileColor" content="#ffc40d">
+    <meta name="msapplication-TileImage" content="~/Content/favicons/mstile-144x144.png">
+    <meta name="msapplication-config" content="~/Content/favicons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
 
     <title>@ViewBag.AppTitle</title>
     @Styles.Render("~/content/css")
