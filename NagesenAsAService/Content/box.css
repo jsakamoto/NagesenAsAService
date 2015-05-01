@@ -18,6 +18,46 @@ header a.go-settings {
         opacity: 0.3;
     }
 
+.main {
+    width: auto;
+}
+
+#box {
+    position: relative;
+    width: 800px;
+}
+
+#score-box {
+    background-color: rgba(0,0,0,0.3);
+    width: 6em;
+    position: absolute;
+    left: 680px;
+    -moz-transition: all linear 0.2s;
+    -o-transition: all linear 0.2s;
+    -webkit-transition: all linear 0.2s;
+    transition: all linear 0.2s;
+}
+
+@media screen and (max-width: 800px) {
+    #score-box {
+        left: 1em;
+    }
+}
+
+#score-box .count-of-coin {
+    text-align: right;
+    padding: 0.3em;
+    color: white;
+    font-size: 95%;
+}
+
+    #score-box .count-of-coin.dis {
+        display: none;
+    }
+
+#score-box.dis-coin.allow .count-of-coin.dis {
+    display: block;
+}
 
 #canvas {
     width: auto;

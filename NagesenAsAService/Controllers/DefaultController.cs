@@ -105,10 +105,10 @@ namespace NagesenAsAService.Controllers
         }
 
         [HttpPut]
-        public ActionResult Throw(int id, CoinType typeOfCoin)
+        public async Task<ActionResult> Throw(int id, CoinType typeOfCoin)
         {
             var hubContext = GlobalHost.ConnectionManager.GetHubContext<DefaultHub>();
-            DefaultHub.Throw(id, typeOfCoin, hubContext.Clients);
+            await DefaultHub.Throw(id, typeOfCoin, hubContext.Clients);
 
             var room = this.Db.Rooms
                 .Single(_ => _.RoomNumber == id);

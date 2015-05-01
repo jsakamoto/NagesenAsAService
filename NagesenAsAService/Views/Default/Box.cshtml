@@ -19,7 +19,17 @@
 
 <div ng-app="theApp" class="room-page">
 
-    <div ng-controller="roomController as ctrl">
+    <div id="box" ng-controller="roomController as ctrl">
+
+        <div id="score-box" ng-class="'dis-coin '+ (allowDisCoin ? 'allow' : 'deny')">
+            <div class="count-of-coin like">
+                <span ng-bind="countOfLike|number"></span> Yen
+            </div>
+            <div class="count-of-coin dis">
+                <span ng-bind="countOfDis|number"></span> Dis
+            </div>
+        </div>
+
         <canvas id="canvas" width="800" height="540"></canvas>
     </div>
 

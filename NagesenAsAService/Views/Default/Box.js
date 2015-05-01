@@ -56,6 +56,7 @@ var NaaS;
         var RoomController = (function () {
             function RoomController($scope) {
                 var _this = this;
+                this.$scope = $scope;
                 this.worldScale = 30.0;
                 this.frameRate = 60;
                 var canvas = document.getElementById('canvas');
@@ -65,12 +66,17 @@ var NaaS;
                 this.hub = $.connection.hub.createHubProxy('DefaultHub');
                 this.hub.on('Throw', this.OnThrow.bind(this));
                 $.connection.hub.start().then(function () { return _this.hub.invoke('EnterRoom', _app.roomNumber); }).then(function (r) { return $scope.$apply(function () {
-                    $scope.title = r.title;
+                    _this.$scope.allowDisCoin = r.allowDisCoin;
+                    _this.$scope.countOfLike = r.countOfLike;
+                    _this.$scope.countOfDis = r.countOfDis;
                 }); });
                 this.initWorld();
                 this.worker = new Worker('/Views/Default/BoxWorker.js');
                 this.worker.addEventListener('message', this.OnWorkerMessage.bind(this));
             }
+            RoomController.prototype.UpdateSettings = function (settings) {
+                this.$scope.allowDisCoin = settings.allowDisCoin;
+            };
             RoomController.prototype.OnThrow = function (data) {
                 this.worker.postMessage({ cmd: 'Enqueue', data: data });
             };
@@ -85,11 +91,16 @@ var NaaS;
                 }
             };
             RoomController.prototype.OnEnqueueThrowing = function (data) {
+                var _this = this;
                 var coinAsset = CoinAssets[data.typeOfCoin];
                 var circleRadius = coinAsset.imageRadius;
                 this.createCircle(this.world, circleRadius + (0 | ((this.worldWidth - 2 * circleRadius) * data.throwPoint)), -circleRadius, circleRadius, coinAsset.image);
                 (new Audio(coinAsset.seUrl)).play();
                 this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
+                this.$scope.$apply(function () {
+                    _this.$scope.countOfLike = Math.max(_this.$scope.countOfLike, data.countOfLike);
+                    _this.$scope.countOfDis = Math.max(_this.$scope.countOfDis, data.countOfDis);
+                });
             };
             RoomController.prototype.getDebugDraw = function () {
                 var debugDraw = new b2.DebugDraw();
@@ -168,12 +179,10 @@ var NaaS;
             };
             return RoomController;
         })();
+        Box.RoomController = RoomController;
         var theApp = angular.module('theApp', []);
         theApp.controller('roomController', RoomController);
-    })(Box = NaaS.Box || (NaaS.Box = {}));
-})(NaaS || (NaaS = {}));
-var NaaS;
-(function (NaaS) {
+    })(Box || (Box = {}));
     var Settings;
     (function (Settings) {
         var SettingsController = (function () {
@@ -193,7 +202,11 @@ var NaaS;
             };
             SettingsController.prototype.OK = function () {
                 var _this = this;
-                this.$http.put(_app.apiBaseUrl + '/Settings', $('#settings-dialog .form').serialize(), { headers: { 'content-type': 'application/x-www-form-urlencoded' } }).then(function (_) { return _this.Close(); });
+                this.$http.put(_app.apiBaseUrl + '/Settings', $('#settings-dialog .form').serialize(), { headers: { 'content-type': 'application/x-www-form-urlencoded' } }).then(function (_) {
+                    var roomController = angular.element(document.getElementById('box')).controller();
+                    roomController.UpdateSettings(_this.$scope);
+                    _this.Close();
+                });
             };
             SettingsController.prototype.Cancel = function () {
                 this.Close();
@@ -211,6 +224,6 @@ var NaaS;
                 angular.element(document.getElementById('settings-dialog')).controller().DoModal();
             });
         });
-    })(Settings = NaaS.Settings || (NaaS.Settings = {}));
+    })(Settings || (Settings = {}));
 })(NaaS || (NaaS = {}));
 //# sourceMappingURL=Box.js.map
