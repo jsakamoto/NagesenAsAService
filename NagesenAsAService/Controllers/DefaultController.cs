@@ -10,6 +10,7 @@ using System.Web.Mvc;
 using Microsoft.AspNet.SignalR;
 using NagesenAsAService.Models;
 using Newtonsoft.Json.Linq;
+using Toolbelt.Web;
 
 namespace NagesenAsAService.Controllers
 {
@@ -42,7 +43,7 @@ namespace NagesenAsAService.Controllers
             var bitly = Bitly.Default;
             var shortUrlOfThisRoom = bitly.Status == Bitly.StatusType.Available ?
 #if DEBUG
-            bitly.ShortenUrl("http://nagesen.azurewebsites.net/Room/" + newRoomNumber.ToString()) : "http://j.mp/1bD9vPr";
+ bitly.ShortenUrl("http://nagesen.azurewebsites.net/Room/" + newRoomNumber.ToString()) : "http://j.mp/1bD9vPr";
 #else
             bitly.ShortenUrl(urlOfThisRoom) : "";
 #endif
@@ -116,7 +117,7 @@ namespace NagesenAsAService.Controllers
             return Json(new
             {
                 allowDisCoin = room.AllowDisCoin
-            }); 
+            });
         }
 
         [HttpGet, OutputCache(Duration = 0, NoStore = true)]
@@ -125,6 +126,40 @@ namespace NagesenAsAService.Controllers
             var room = this.Db.Rooms
                 .Single(_ => _.RoomNumber == id);
             return Json(new { twitterHashtag = room.TwitterHashtag }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> ScreenShot(int id, string imageDataUrl)
+        {
+            var image = Convert.FromBase64String(imageDataUrl.Split(',').Last());
+            await this.Db.Database.ExecuteSqlCommandAsync(
+                @"UPDATE Rooms SET 
+                ScreenSnapshot = @p1,
+                UpdateScreenSnapshotAt = GETDATE()
+                FROM Rooms WHERE RoomNumber = @p0",
+                id, image);
+
+            return new HttpStatusCodeResult(HttpStatusCode.OK);
+        }
+
+        [HttpGet]
+        public ActionResult ScreenShot(int id)
+        {
+            var updateScreenSnapshotAt = this.Db.Rooms
+                .Where(room => room.RoomNumber == id)
+                .Select(room => room.UpdateScreenSnapshotAt)
+                .Single();
+
+            return new CacheableContentResult("image/png",
+                () =>
+                {
+                    return this.Db.Rooms
+                        .Where(room => room.RoomNumber == id)
+                        .Select(room => room.ScreenSnapshot)
+                        .Single();
+                },
+                lastModified: updateScreenSnapshotAt
+            );
         }
 
         public ActionResult WarmUp()

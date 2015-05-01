@@ -31,6 +31,10 @@ namespace NagesenAsAService.Models
 
         public int CountOfAoriSen { get; set; }
 
+        public byte[] ScreenSnapshot { get; set; }
+
+        public DateTime UpdateScreenSnapshotAt { get; set; }
+
         public DateTime CreatedAt { get; set; }
 
         [Timestamp]
@@ -39,6 +43,8 @@ namespace NagesenAsAService.Models
         public Room()
         {
             this.TwitterHashtag = "";
+            this.ScreenSnapshot = new byte[0];
+            this.UpdateScreenSnapshotAt = DateTime.UtcNow;
             this.CreatedAt = DateTime.UtcNow;
         }
     }

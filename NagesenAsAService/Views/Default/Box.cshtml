@@ -10,11 +10,12 @@
     <a href="/" class="go-home"></a>
     @if (isOwner)
     {
-        <a href="@Url.RouteUrl("Room", new { id = Model.RoomNumber, action = "Settings" })" id="lnk-settings" class="go-settings"></a>
+        <a href="#" id="lnk-settings" class="go-settings"></a>
     }
 }
 @section headerRight {
     @Html.Partial("_ShareBox", Model)
+    <a href="#" id="lnk-tweet">t</a>
 }
 
 <div ng-app="theApp" class="room-page">
@@ -58,6 +59,7 @@
 
 @section scripts{
     @Html.Partial("_AppInfoJS", Model)
+    <script src="~/Scripts/html2canvas.js"></script>
     <script src="~/Views/Default/Box.js"></script>
     <script src="~/Scripts/sharebox.js"></script>
 }

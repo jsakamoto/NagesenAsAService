@@ -44,6 +44,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="CacheableContentResult, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CacheableContentResult.1.0.0.0\lib\net40\CacheableContentResult.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="EntityFramework">
       <HintPath>..\packages\EntityFramework.6.1.1\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -151,6 +155,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\sharebox.css" />
+    <Content Include="Scripts\html2canvas.js" />
     <Content Include="Scripts\sharebox.js">
       <DependentUpon>sharebox.ts</DependentUpon>
     </Content>

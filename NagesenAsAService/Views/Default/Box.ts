@@ -13,6 +13,12 @@ module b2 {
     export import DebugDraw = Box2D.Dynamics.b2DebugDraw;
 }
 
+declare function html2canvas(element: HTMLElement, options?: {
+    onrendered?: (canvas: HTMLCanvasElement) => void;
+    height?: number;
+    width?: number;
+}): void;
+
 module NaaS {
     interface ISettingsScope extends ng.IScope {
         twitterHashtag: string;
@@ -88,7 +94,7 @@ module NaaS {
             private frameRate = 60;
             private worker: Worker;
 
-            constructor(private $scope: IScope) {
+            constructor(private $scope: IScope, private $http: ng.IHttpService) {
 
                 var canvas = <HTMLCanvasElement>document.getElementById('canvas');
                 this.context = canvas.getContext('2d');
@@ -178,7 +184,16 @@ module NaaS {
                 //this.world.DrawDebugData();
                 this.world.ClearForces();
                 var isAwake = this.render();
-                if (isAwake == false) this.worker.postMessage({ cmd: 'Stop' });
+                if (isAwake == false) {
+                    this.worker.postMessage({ cmd: 'Stop' });
+
+                    html2canvas(document.getElementById('box'), {
+                        height: 600,
+                        onrendered: canvas => {
+                            this.$http.post(_app.apiBaseUrl + '/ScreenShot', { imageDataUrl: canvas.toDataURL('image/png') });
+                        }
+                    });
+                }
             }
 
             private createFixedBox(x: number, y: number, width: number, height: number) {
@@ -241,10 +256,34 @@ module NaaS {
                 }
                 return isAwake;
             }
+
+            public tweet(): void {
+                var text =
+                    `この枠に${this.$scope.countOfLike}円分の投げ銭` +
+                    (this.$scope.allowDisCoin ? `と${this.$scope.countOfDis}Dis` : '') +
+                    `が集まりました☆`;
+                var url = 'https://twitter.com/share?';
+                url += 'text=' + encodeURIComponent(text);
+                url += '&url=' + encodeURIComponent(_app.apiBaseUrl + '/screenshot');
+                this.$http
+                    .get(_app.twitterHashtagUrl)
+                    .success(data => {
+                    url += '&hashtags=' + encodeURIComponent((<any>data).twitterHashtag);
+                    window.open(url, 'tweet');
+                });
+            }
         }
 
         var theApp = angular.module('theApp', []);
         theApp.controller('roomController', RoomController);
+
+        $(() => {
+            $('#lnk-tweet').click(function (e) {
+                e.preventDefault();
+                var roomController = <RoomController>angular.element(document.getElementById('box')).controller();
+                roomController.tweet();
+            });
+        });
     }
 
     module Settings {

@@ -1,4 +1,4 @@
-﻿body {
+﻿body, #box {
     background-image: url(images/bg.png);
 }
 
@@ -24,13 +24,14 @@ header a.go-settings {
 
 #box {
     position: relative;
-    width: 800px;
+    width: 802px;
 }
 
 #score-box {
     background-color: rgba(0,0,0,0.3);
     width: 6em;
     position: absolute;
+    top: 1em;
     left: 680px;
     -moz-transition: all linear 0.2s;
     -o-transition: all linear 0.2s;
@@ -66,6 +67,21 @@ header a.go-settings {
     border-top: none;
 }
 
+#lnk-tweet {
+    background-color: #1ab2e8;
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    margin: auto;
+    margin-left: 36px;
+    display: inline-block;
+    height: 28px;
+    line-height: 28px;
+    width: 28px;
+    color: white;
+}
+
+/* Settings */
 #settings-dialog {
     position: fixed;
     z-index: 2;

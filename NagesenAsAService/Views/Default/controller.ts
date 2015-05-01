@@ -40,6 +40,7 @@ module NaaS {
                 `をしました☆`;
             var url = 'https://twitter.com/share?';
             url += 'text=' + encodeURIComponent(text);
+            url += '&url=' + encodeURIComponent(_app.apiBaseUrl + '/screenshot');
             this.$http
                 .get(_app.twitterHashtagUrl)
                 .success(data => {
