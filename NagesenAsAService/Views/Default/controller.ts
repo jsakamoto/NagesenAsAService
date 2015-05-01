@@ -1,8 +1,6 @@
-﻿module NaaS {
-    const enum CoinType {
-        Like,
-        Dis
-    }
+﻿/// <reference path="../../scripts/typings/angularjs/angular.d.ts" />
+/// <reference path="CoinType.ts" />
+module NaaS {
 
     interface INagesenControllerScope extends ng.IScope {
         countOfCoin: number;

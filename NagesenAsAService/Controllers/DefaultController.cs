@@ -105,7 +105,7 @@ namespace NagesenAsAService.Controllers
         }
 
         [HttpPut]
-        public ActionResult Throw(int id, int typeOfCoin)
+        public ActionResult Throw(int id, CoinType typeOfCoin)
         {
             var hubContext = GlobalHost.ConnectionManager.GetHubContext<DefaultHub>();
             DefaultHub.Throw(id, typeOfCoin, hubContext.Clients);

@@ -188,6 +188,9 @@
     <Content Include="Views\Default\BoxWorker.js">
       <DependentUpon>BoxWorker.ts</DependentUpon>
     </Content>
+    <Content Include="Views\Default\CoinType.js">
+      <DependentUpon>CoinType.ts</DependentUpon>
+    </Content>
     <Content Include="Views\Default\controller.js">
       <DependentUpon>controller.ts</DependentUpon>
     </Content>
@@ -211,6 +214,7 @@
     <Compile Include="Code\Bitly.cs" />
     <Compile Include="Code\Logging\UnhandledExceptionLogger.cs" />
     <Compile Include="Code\TrackingAuthMiddleware.cs" />
+    <Compile Include="Controllers\CoinType.cs" />
     <Compile Include="Controllers\DefaultController.cs" />
     <Compile Include="Controllers\DefaultHub.cs" />
     <Compile Include="Extensions\CollectionExtension.cs" />
@@ -256,6 +260,9 @@
     </Content>
     <Content Include="Views\Shared\_ShareBox.cshtml" />
     <Content Include="Views\Shared\_AppInfoJS.cshtml" />
+    <Content Include="Views\Default\CoinType.js.map">
+      <DependentUpon>CoinType.ts</DependentUpon>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -287,6 +294,7 @@
     <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\signalr\signalr.d.ts" />
     <TypeScriptCompile Include="Views\Default\BoxWorker.ts" />
+    <TypeScriptCompile Include="Views\Default\CoinType.ts" />
     <TypeScriptCompile Include="Views\Default\controller.ts" />
     <TypeScriptCompile Include="Views\Default\Index.ts" />
   </ItemGroup>

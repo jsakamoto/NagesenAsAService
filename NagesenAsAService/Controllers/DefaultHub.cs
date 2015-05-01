@@ -25,15 +25,15 @@ namespace NagesenAsAService.Controllers
             };
         }
 
-        public void Throw(int roomNumber, int typeOfZeni)
+        public void Throw(int roomNumber, CoinType typeOfCoin)
         {
-            Throw(roomNumber, typeOfZeni, this.Clients);
+            Throw(roomNumber, typeOfCoin, this.Clients);
         }
 
-        public static void Throw(int roomNumber, int typeOfZeni, IHubConnectionContext<dynamic> clients)
+        public static void Throw(int roomNumber, CoinType typeOfCoin, IHubConnectionContext<dynamic> clients)
         {
             var db = new AppDbContext();
-            if (typeOfZeni == 0)
+            if (typeOfCoin == CoinType.Like)
                 db.Database.ExecuteSqlCommand(
                     "UPDATE Rooms SET CountOfNageSen = CountOfNageSen + 1 FROM Rooms WHERE RoomNumber = @p0", roomNumber);
             else
@@ -42,7 +42,7 @@ namespace NagesenAsAService.Controllers
 
             var throwPoint = default(double);
             lock (_Random) throwPoint = _Random.NextDouble();
-            var data = new { throwPoint, typeOfZeni };
+            var data = new { throwPoint, typeOfCoin };
             clients.Group(roomNumber.ToString()).Throw(data);
         }
     }
