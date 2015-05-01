@@ -3,11 +3,13 @@
     |
 <span class="room-url">@Model.ShortUrl</span>
     |
+<a href="#" class="qr-code-icon"></a>
+
 <div class="share-box">
     <div class="header">
         <span class="room-url">@Model.ShortUrl</span>
         <input type="button" value="Tweet" id="buttonTweet" />
     </div>
-    @QRCode.Render(Model.ShortUrl, scale: 5, cssClass: "qr-code")
+    @QRCode.Render(Model.ShortUrl, scale: 12, cssClass: "qr-code")
 </div>
 

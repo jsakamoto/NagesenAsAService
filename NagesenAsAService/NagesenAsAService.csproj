@@ -154,6 +154,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\images\qrcode.png" />
     <Content Include="Content\sharebox.css" />
     <Content Include="Scripts\html2canvas.js" />
     <Content Include="Scripts\sharebox.js">

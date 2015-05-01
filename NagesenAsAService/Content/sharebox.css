@@ -1,60 +1,33 @@
 ﻿
 /* "Share" box, QR code */
+
 .room-url {
     color: #0026ff;
 }
 
-.share-box.active .header {
-    position: relative;
+.qr-code-icon {
+    position: absolute;
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    margin-left: 4px;
+    background-color: white;
+    background-image: url(images/qrcode.png);
 }
 
 .share-box {
+    position: fixed;
+    top: 5em;
     background-color: white;
-    display: inline-block;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    height: 130px;
-    width: 130px;
-    margin: auto;
-    margin-left: 25px;
-    zoom: 0.2;
-    cursor: pointer;
-    z-index: 0;
-}
-
-.qr-code {
-    display: block;
-    width: auto;
-}
-
-.share-box .room-url,
-.share-box #buttonTweet {
+    z-index: 2;
+    width: 100%;
     display: none;
 }
 
-.share-box.active {
-    box-shadow: rgba(0,0,0,0.4) 0 0 3px 4px;
-    -ms-zoom: 1;
-    zoom: 1;
-    top: 80px;
-    bottom: auto;
-    left: 0;
-    right: 0;
-    margin-left: auto;
-    padding: 20px 0;
-    height: 490px;
-    width: 560px;
-    cursor: default;
-    z-index: 2;
-}
-
-    .share-box.active .room-url {
-        display: inline-block;
-        font-size: 36px;
-    }
-
-    .share-box.active #buttonTweet {
+    .share-box #buttonTweet {
         padding: 5px 0;
         border: 1px solid #ddd;
         border-radius: 6px;
@@ -73,11 +46,7 @@
         top: 0;
     }
 
-    .share-box.active .qr-code {
-        zoom: 3;
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: 10px;
-        margin: auto;
+    .share-box .room-url {
+        display: inline-block;
+        font-size: 32px;
     }
