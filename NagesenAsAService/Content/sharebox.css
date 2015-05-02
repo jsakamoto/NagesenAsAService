@@ -50,3 +50,26 @@
         display: inline-block;
         font-size: 32px;
     }
+
+/* header, title */
+#app-title:after {
+    content: ' - ';
+}
+
+.room-number:after,
+.room-url:after {
+    content: ' | ';
+    color: black;
+}
+
+@media screen and (max-width: 650px) {
+    #app-title {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .room-number {
+        display: none;
+    }
+}
