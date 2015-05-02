@@ -175,13 +175,14 @@
     <Content Include="Content\favicons\favicon-16x16.png" />
     <Content Include="Content\favicons\favicon-32x32.png" />
     <Content Include="Content\favicons\favicon-96x96.png" />
-    <Content Include="Content\favicons\favicon.ico" />
     <Content Include="Content\favicons\mstile-144x144.png" />
     <Content Include="Content\favicons\mstile-150x150.png" />
     <Content Include="Content\favicons\mstile-310x150.png" />
     <Content Include="Content\favicons\mstile-310x310.png" />
     <Content Include="Content\favicons\mstile-70x70.png" />
+    <Content Include="Content\images\ogpimage.png" />
     <Content Include="Content\images\qrcode.png" />
+    <Content Include="Content\images\twittercard-image.png" />
     <Content Include="Content\sharebox.css" />
     <Content Include="Scripts\html2canvas.js" />
     <Content Include="Scripts\sharebox.js">

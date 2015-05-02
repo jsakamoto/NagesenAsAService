@@ -69,8 +69,8 @@ header {
     font-size: 95%;
     background-color: #fff;
     border-radius: 4px 4px;
-    text-align: left;
-    padding: 0px 8px;
+    text-align: center;
+    padding: 0 8px;
 }
 
     .app-description:after {
