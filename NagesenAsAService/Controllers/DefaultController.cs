@@ -131,6 +131,13 @@ namespace NagesenAsAService.Controllers
         [HttpPost]
         public async Task<ActionResult> ScreenShot(int id, string imageDataUrl)
         {
+            var userID = this.User.Identity.Name;
+            var isOwner = this.Db.Rooms
+                .Where(_ => _.RoomNumber == id)
+                .Where(_ => _.OwnerUserID == userID)
+                .Any();
+            if (isOwner == false) return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+
             var image = Convert.FromBase64String(imageDataUrl.Split(',').Last());
             await this.Db.Database.ExecuteSqlCommandAsync(
                 @"UPDATE Rooms SET 

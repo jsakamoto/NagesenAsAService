@@ -127,12 +127,14 @@ var NaaS;
                 var isAwake = this.render();
                 if (isAwake == false) {
                     this.worker.postMessage({ cmd: 'Stop' });
-                    html2canvas(document.getElementById('box'), {
-                        height: 600,
-                        onrendered: function (canvas) {
-                            _this.$http.post(_app.apiBaseUrl + '/ScreenShot', { imageDataUrl: canvas.toDataURL('image/png') });
-                        }
-                    });
+                    if (_app.isOwner) {
+                        html2canvas(document.getElementById('box'), {
+                            height: 600,
+                            onrendered: function (canvas) {
+                                _this.$http.post(_app.apiBaseUrl + '/ScreenShot', { imageDataUrl: canvas.toDataURL('image/png') });
+                            }
+                        });
+                    }
                 }
             };
             RoomController.prototype.createFixedBox = function (x, y, width, height) {

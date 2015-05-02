@@ -4,6 +4,7 @@
     twitterHashtagUrl: string;
     apiBaseUrl: string;
     allowDisCoin: boolean;
+    isOwner: boolean;
 };
 
 module NaaS {

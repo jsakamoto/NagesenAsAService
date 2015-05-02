@@ -6,4 +6,5 @@
     _app.twitterHashtagUrl = '@(Url.AppUrl() + Url.RouteUrl("Room", new { id = Model.RoomNumber, action = "TwitterHashtag" }))';
     _app.apiBaseUrl = '@(Url.AppUrl() + Url.RouteUrl("Room", new { id = Model.RoomNumber, action = UrlParameter.Optional }).TrimEnd('/'))';
     _app.allowDisCoin = @Model.AllowDisCoin.ToString().ToLower();
+    _app.isOwner = @((Model.OwnerUserID == this.User.Identity.Name).ToString().ToLower());
 </script>
