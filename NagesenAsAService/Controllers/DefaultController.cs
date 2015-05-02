@@ -36,7 +36,7 @@ namespace NagesenAsAService.Controllers
         public ActionResult CreateNewRoom()
         {
             var newRoomNumber = _Random
-                .ToEnumerable(r => r.Next(100, 10000))
+                .ToEnumerable(r => r.Next(1000, 10000))
                 .First(n => this.Db.Rooms.Any(room => room.RoomNumber == n) == false);
 
             var urlOfThisRoom = Url.AppUrl() + Url.RouteUrl("Room", new { id = newRoomNumber, action = UrlParameter.Optional });
