@@ -22,7 +22,7 @@
     position: fixed;
     top: 5em;
     background-color: white;
-    z-index: 2;
+    z-index: 3;
     width: 100%;
     display: none;
 }

@@ -29,7 +29,7 @@ header a.go-settings {
 
 #score-box {
     background-color: rgba(0,0,0,0.3);
-    width: 6em;
+    width: 6.7em;
     position: absolute;
     top: 1em;
     left: 680px;
@@ -37,6 +37,7 @@ header a.go-settings {
     -o-transition: all linear 0.2s;
     -webkit-transition: all linear 0.2s;
     transition: all linear 0.2s;
+    z-index: 1;
 }
 
 @media screen and (max-width: 800px) {
@@ -50,10 +51,17 @@ header a.go-settings {
     padding: 0.3em;
     color: white;
     font-size: 95%;
+    background-size: 1.3em;
+    background-position: 0.3em center;
 }
+
+    #score-box .count-of-coin.like {
+        background-image: url(images/coin.png);
+    }
 
     #score-box .count-of-coin.dis {
         display: none;
+        background-image: url(images/stone.png);
     }
 
 #score-box.dis-coin.allow .count-of-coin.dis {
@@ -84,7 +92,7 @@ header a.go-settings {
 /* Settings */
 #settings-dialog {
     position: fixed;
-    z-index: 2;
+    z-index: 3;
     top: 50%;
     left: 0;
     background-color: white;
