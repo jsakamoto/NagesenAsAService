@@ -85,15 +85,16 @@ namespace NagesenAsAService.Controllers
         [HttpPut, ValidateAntiForgeryToken]
         public async Task<ActionResult> Settings(int id, string twitterHashtag, bool allowDisCoin)
         {
-            var room = this.Db.Rooms
-                .Single(_ => _.RoomNumber == id);
-            var isOwner = room.OwnerUserID == this.User.Identity.Name;
+            var isOwner = this.Db.Rooms
+                .Where(r => r.RoomNumber == id)
+                .Where(r => r.OwnerUserID == this.User.Identity.Name)
+                .Any();
             if (isOwner == false) return HttpNotFound();
 
-            room.TwitterHashtag = twitterHashtag;
-            room.AllowDisCoin = allowDisCoin;
-
-            await this.Db.SaveChangesAsync();
+            await this.Db.Database.ExecuteSqlCommandAsync(@"
+                UPDATE Rooms SET TwitterHashtag = @p1, AllowDisCoin = @p2
+                WHERE RoomNumber = @p0",
+                id, twitterHashtag, allowDisCoin);
 
             return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
@@ -184,7 +185,7 @@ namespace NagesenAsAService.Controllers
             {
                 twitterSharUrl += "&hashtags=" + HttpUtility.UrlEncode(twitterHashtag);
             }
-            
+
             return Redirect(twitterSharUrl);
         }
 
