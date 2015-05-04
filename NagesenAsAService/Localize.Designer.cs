@@ -61,6 +61,15 @@ namespace NagesenAsAService {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Allow &quot;Dis&quot; coin.
+        /// </summary>
+        public static string AllowDisCoin {
+            get {
+                return ResourceManager.GetString("AllowDisCoin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 投げ銭というカタチでリアルタイムで発表者を評価するWebアプリ「投げ銭BOX」のSaaSです。.
         /// </summary>
         public static string appDescription {
@@ -75,6 +84,87 @@ namespace NagesenAsAService {
         public static string appKeywords {
             get {
                 return ResourceManager.GetString("appKeywords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        public static string Cancel {
+            get {
+                return ResourceManager.GetString("Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter.
+        /// </summary>
+        public static string Enter {
+            get {
+                return ResourceManager.GetString("Enter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter room number..
+        /// </summary>
+        public static string EnterRoomNumber {
+            get {
+                return ResourceManager.GetString("EnterRoomNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Oops... the room number #{0} is no longer available..
+        /// </summary>
+        public static string OopsTheRoomNumberIsNoLongerAvailable {
+            get {
+                return ResourceManager.GetString("OopsTheRoomNumberIsNoLongerAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to or Create New Room.
+        /// </summary>
+        public static string OrCreateNewRoom {
+            get {
+                return ResourceManager.GetString("OrCreateNewRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to or create your own new room from &lt;a id=&quot;btn-create-new-room&quot; class=&quot;no-effects&quot;&gt;click here.&lt;/a&gt;.
+        /// </summary>
+        public static string OrCreateYourOwnNewRoomFromClickHere {
+            get {
+                return ResourceManager.GetString("OrCreateYourOwnNewRoomFromClickHere", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please &lt;a href=&apos;{0}&apos;&gt;go back to home&lt;/a&gt; and enter correct room number,.
+        /// </summary>
+        public static string PleaseGoBackToHomeAndEnterCorrectRoomNumber {
+            get {
+                return ResourceManager.GetString("PleaseGoBackToHomeAndEnterCorrectRoomNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        public static string Settings {
+            get {
+                return ResourceManager.GetString("Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Twitter Hashtag.
+        /// </summary>
+        public static string TwitterHashtag {
+            get {
+                return ResourceManager.GetString("TwitterHashtag", resourceCulture);
             }
         }
     }

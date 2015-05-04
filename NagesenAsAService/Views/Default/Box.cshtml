@@ -37,21 +37,23 @@
     <div id="settings-dialog" ng-controller="settingsController as ctrl">
         <form class="form">
             @Html.AntiForgeryToken()
-            <h2>Settings</h2>
+
+            <h2>@Localize.Settings</h2>
+
             <div class="field-container">
-                <label for="twitterHashtag">Twitter Hashtag #</label>
+                <label for="twitterHashtag">@Localize.TwitterHashtag #</label>
                 <input type="text" name="twitterHashtag" id="twitterHashtag" ng-model="twitterHashtag" autofocus />
             </div>
             <div class="field-container">
                 <label for="allowDisCoin">
                     <input type="checkbox" name="allowDisCoin" id="allowDisCoin" value="true" ng-model="allowDisCoin" />
                     <input type="hidden" name="allowDisCoin" value="false" />
-                    Allow "Dis" coin
+                    @Localize.AllowDisCoin
                 </label>
             </div>
             <div class="buttons">
                 <input type="button" value="OK" class="btn btn-primary" ng-click="ctrl.OK()" />
-                <input type="button" value="Cancel" class="btn btn-default" ng-click="ctrl.Cancel()" />
+                <input type="button" value="@Localize.Cancel" class="btn btn-default" ng-click="ctrl.Cancel()" />
             </div>
         </form>
     </div>

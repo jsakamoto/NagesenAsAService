@@ -65,7 +65,12 @@ namespace NagesenAsAService.Controllers
         public ActionResult Box(int id)
         {
             var room = this.Db.Rooms
-                .Single(_ => _.RoomNumber == id);
+                .SingleOrDefault(_ => _.RoomNumber == id);
+
+            if (room == null)
+            {
+                return View("UnavailableRoomNumber");
+            }
             return View(room);
         }
 
@@ -102,7 +107,12 @@ namespace NagesenAsAService.Controllers
         public ActionResult Controller(int id)
         {
             var room = this.Db.Rooms
-                .Single(_ => _.RoomNumber == id);
+                .SingleOrDefault(_ => _.RoomNumber == id);
+            
+            if (room == null)
+            {
+                return View("UnavailableRoomNumber");
+            }
             return View(room);
         }
 

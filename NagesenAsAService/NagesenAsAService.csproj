@@ -298,6 +298,7 @@
     <Content Include="Views\Default\CoinType.js.map">
       <DependentUpon>CoinType.ts</DependentUpon>
     </Content>
+    <Content Include="Views\Default\UnavailableRoomNumber.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -337,6 +338,7 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Localize.ja.resx" />
     <EmbeddedResource Include="Localize.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Localize.Designer.cs</LastGenOutput>

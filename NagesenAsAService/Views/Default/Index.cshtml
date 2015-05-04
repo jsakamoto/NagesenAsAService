@@ -9,20 +9,20 @@
 
     <div ng-app="app" ng-controller="indexController as ctrl">
         <p>
-            Enter room number.
+            @Localize.EnterRoomNumber
         </p>
         <p>
             <input type="number" value="" autofocus required class="room-number" ng-model="roomNumber" />
         </p>
         <p>
             <a ng-href="/Room/{{roomNumber}}" ng-class="'btn btn-primary ' + (roomNumber.toString().length != 4 ? 'disabled' : '')">
-                Enter
+                @Localize.Enter
             </a>
         </p>
     </div>
 
     <p>
-        <a href="@Url.Action("CreateNewRoom")">or Create New Room</a>
+        <a href="@Url.Action("CreateNewRoom")">@Localize.OrCreateNewRoom</a>
     </p>
 </div>
 

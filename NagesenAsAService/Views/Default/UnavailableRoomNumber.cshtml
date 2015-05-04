@@ -1,0 +1,37 @@
+﻿@section headerLeft{
+    <a href="/" class="go-home"></a>
+}
+
+<style>
+    .face-mark {
+        font-size: 200%;
+    }
+
+    #btn-create-new-room {
+        cursor: pointer;
+    }
+
+    .social-buttons .twitter-share-button {
+        display: none;
+    }
+</style>
+
+<div class="room-page">
+    <form method="post" action="@Url.Action("CreateNewRoom")">
+        @Html.AntiForgeryToken()
+        <p class="face-mark">:(</p>
+        <p>@Localize.OopsTheRoomNumberIsNoLongerAvailable.FormatBy(ViewContext.RouteData.Values["id"])</p>
+        <p>@Html.Raw(Localize.PleaseGoBackToHomeAndEnterCorrectRoomNumber.FormatBy(@Url.Content("~/")))</p>
+        <p>@Html.Raw(Localize.OrCreateYourOwnNewRoomFromClickHere)</p>
+    </form>
+</div>
+
+@section scripts{
+    <script>
+        $(function () {
+            $('#btn-create-new-room').click(function () {
+                $(this).closest('form').submit();
+            });
+        });
+    </script>
+}

@@ -118,39 +118,33 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AllowDisCoin" xml:space="preserve">
-    <value>Allow "Dis" coin</value>
-  </data>
-  <data name="appDescription" xml:space="preserve">
-    <value>投げ銭というカタチでリアルタイムで発表者を評価するWebアプリ「投げ銭BOX」のSaaSです。</value>
-  </data>
-  <data name="appKeywords" xml:space="preserve">
-    <value>投げ銭,投げ銭 as a Service,投げ銭BOX,投げ銭BOX as a Service,NaaS</value>
+    <value>"Dis" 銭を許可</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>キャンセル</value>
   </data>
   <data name="Enter" xml:space="preserve">
-    <value>Enter</value>
+    <value>入場</value>
   </data>
   <data name="EnterRoomNumber" xml:space="preserve">
-    <value>Enter room number.</value>
+    <value>4桁の「部屋番号」を入力</value>
   </data>
   <data name="OopsTheRoomNumberIsNoLongerAvailable" xml:space="preserve">
-    <value>Oops... the room number #{0} is no longer available.</value>
+    <value>部屋番号 #{0} の部屋は無いか、既に期限切れです。</value>
   </data>
   <data name="OrCreateNewRoom" xml:space="preserve">
-    <value>or Create New Room</value>
+    <value>または新しい部屋を作る</value>
   </data>
   <data name="OrCreateYourOwnNewRoomFromClickHere" xml:space="preserve">
-    <value>or create your own new room from &lt;a id="btn-create-new-room" class="no-effects"&gt;click here.&lt;/a&gt;</value>
+    <value>又は&lt;a id="btn-create-new-room" class="no-effects"&gt;ここをクリックして&lt;/a&gt;自分の部屋を新しく作成してください。</value>
   </data>
   <data name="PleaseGoBackToHomeAndEnterCorrectRoomNumber" xml:space="preserve">
-    <value>Please &lt;a href='{0}'&gt;go back to home&lt;/a&gt; and enter correct room number,</value>
+    <value>&lt;a href='{0}'&gt;ホームに戻って&lt;/a&gt;正しい部屋番号を入力しなおすか、</value>
   </data>
   <data name="Settings" xml:space="preserve">
-    <value>Settings</value>
+    <value>設定</value>
   </data>
   <data name="TwitterHashtag" xml:space="preserve">
-    <value>Twitter Hashtag</value>
+    <value>Twitter ハッシュタグ</value>
   </data>
 </root>
