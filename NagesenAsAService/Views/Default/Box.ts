@@ -278,6 +278,8 @@ module NaaS {
                 var roomController = <RoomController>angular.element(document.getElementById('box')).controller();
                 roomController.tweet();
             });
+
+            $(window).on('beforeunload', e => _app.localize.IfYouLeaveThisPageYouLostCoinsImage);
         });
     }
 

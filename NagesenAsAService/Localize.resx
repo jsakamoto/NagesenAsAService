@@ -153,4 +153,7 @@
   <data name="TwitterHashtag" xml:space="preserve">
     <value>Twitter Hashtag</value>
   </data>
+  <data name="IfYouLeaveThisPageYouLostCoinsImage" xml:space="preserve">
+    <value>If you leave this page, you lost coins image.</value>
+  </data>
 </root>

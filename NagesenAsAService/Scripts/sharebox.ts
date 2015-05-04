@@ -5,6 +5,9 @@
     apiBaseUrl: string;
     allowDisCoin: boolean;
     isOwner: boolean;
+    localize: {
+        IfYouLeaveThisPageYouLostCoinsImage: string;
+    };
 };
 
 module NaaS {

@@ -115,6 +115,15 @@ namespace NagesenAsAService {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to If you leave this page, you lost coins image..
+        /// </summary>
+        public static string IfYouLeaveThisPageYouLostCoinsImage {
+            get {
+                return ResourceManager.GetString("IfYouLeaveThisPageYouLostCoinsImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Oops... the room number #{0} is no longer available..
         /// </summary>
         public static string OopsTheRoomNumberIsNoLongerAvailable {

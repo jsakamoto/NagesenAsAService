@@ -129,6 +129,9 @@
   <data name="EnterRoomNumber" xml:space="preserve">
     <value>4桁の「部屋番号」を入力</value>
   </data>
+  <data name="IfYouLeaveThisPageYouLostCoinsImage" xml:space="preserve">
+    <value>このページを離れると、現在表示されている銭画像はクリアされます。</value>
+  </data>
   <data name="OopsTheRoomNumberIsNoLongerAvailable" xml:space="preserve">
     <value>部屋番号 #{0} の部屋は無いか、既に期限切れです。</value>
   </data>

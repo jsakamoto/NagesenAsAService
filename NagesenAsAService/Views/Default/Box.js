@@ -205,6 +205,7 @@ var NaaS;
                 var roomController = angular.element(document.getElementById('box')).controller();
                 roomController.tweet();
             });
+            $(window).on('beforeunload', function (e) { return _app.localize.IfYouLeaveThisPageYouLostCoinsImage; });
         });
     })(Box || (Box = {}));
     var Settings;

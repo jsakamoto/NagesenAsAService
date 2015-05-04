@@ -61,6 +61,11 @@
 
 @section scripts{
     @Html.Partial("_AppInfoJS", Model)
+    <script>
+        var _app = _app || {};
+        _app.localize = _app.localize || {};
+        _app.localize.IfYouLeaveThisPageYouLostCoinsImage = '@Localize.IfYouLeaveThisPageYouLostCoinsImage';
+    </script>
     <script src="~/Scripts/html2canvas.js"></script>
     <script src="~/Views/Default/Box.js"></script>
     <script src="~/Scripts/sharebox.js"></script>
