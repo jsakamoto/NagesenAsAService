@@ -158,7 +158,7 @@ namespace NagesenAsAService.Controllers
                 .Select(room => room.UpdateScreenSnapshotAt)
                 .Single();
 
-            return new CacheableContentResult("image/png",
+            return new CacheableContentResult("image/jpeg",
                 () =>
                 {
                     return this.Db.Rooms
@@ -166,7 +166,9 @@ namespace NagesenAsAService.Controllers
                         .Select(room => room.ScreenSnapshot)
                         .Single();
                 },
-                lastModified: updateScreenSnapshotAt
+                lastModified: updateScreenSnapshotAt,
+                cacheability: HttpCacheability.Public,
+                etag: id.ToString()
             );
         }
 

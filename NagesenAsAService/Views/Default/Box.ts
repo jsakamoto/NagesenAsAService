@@ -188,9 +188,8 @@ module NaaS {
                     this.worker.postMessage({ cmd: 'Stop' });
                     if (_app.isOwner) {
                         html2canvas(document.getElementById('box'), {
-                            height: 600,
                             onrendered: canvas => {
-                                this.$http.post(_app.apiBaseUrl + '/ScreenShot', { imageDataUrl: canvas.toDataURL('image/png') });
+                                this.$http.post(_app.apiBaseUrl + '/ScreenShot', { imageDataUrl: canvas.toDataURL('image/jpeg', 0.6) });
                             }
                         });
                     }

@@ -129,9 +129,8 @@ var NaaS;
                     this.worker.postMessage({ cmd: 'Stop' });
                     if (_app.isOwner) {
                         html2canvas(document.getElementById('box'), {
-                            height: 600,
                             onrendered: function (canvas) {
-                                _this.$http.post(_app.apiBaseUrl + '/ScreenShot', { imageDataUrl: canvas.toDataURL('image/png') });
+                                _this.$http.post(_app.apiBaseUrl + '/ScreenShot', { imageDataUrl: canvas.toDataURL('image/jpeg', 0.6) });
                             }
                         });
                     }
