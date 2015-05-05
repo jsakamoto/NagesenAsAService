@@ -156,4 +156,7 @@
   <data name="IfYouLeaveThisPageYouLostCoinsImage" xml:space="preserve">
     <value>If you leave this page, you lost coins image.</value>
   </data>
+  <data name="TheRoomWillExpireAfter7days" xml:space="preserve">
+    <value>The room will expire after 7 days.</value>
+  </data>
 </root>

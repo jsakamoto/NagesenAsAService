@@ -147,6 +147,9 @@
   <data name="Settings" xml:space="preserve">
     <value>設定</value>
   </data>
+  <data name="TheRoomWillExpireAfter7days" xml:space="preserve">
+    <value>作成した部屋は、作成から7日後に期限切れになり、削除されます。</value>
+  </data>
   <data name="TwitterHashtag" xml:space="preserve">
     <value>Twitter ハッシュタグ</value>
   </data>

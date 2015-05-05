@@ -108,7 +108,11 @@ input.room-number {
     padding: 0.1em 0.5em;
 }
 
-
+.warning-of-expiration {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #888;
+}
 
 /* room page */
 

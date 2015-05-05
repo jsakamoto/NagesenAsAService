@@ -169,6 +169,15 @@ namespace NagesenAsAService {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The room will expire after 7 days..
+        /// </summary>
+        public static string TheRoomWillExpireAfter7days {
+            get {
+                return ResourceManager.GetString("TheRoomWillExpireAfter7days", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Twitter Hashtag.
         /// </summary>
         public static string TwitterHashtag {

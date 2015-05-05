@@ -22,7 +22,12 @@
     </div>
 
     <p>
-        <a href="@Url.Action("CreateNewRoom")">@Localize.OrCreateNewRoom</a>
+        <div>
+            <a href="@Url.Action("CreateNewRoom")">@Localize.OrCreateNewRoom</a>
+        </div>
+        <div class="warning-of-expiration">
+            @Localize.TheRoomWillExpireAfter7days
+        </div>
     </p>
 </div>
 
