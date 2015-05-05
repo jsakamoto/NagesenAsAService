@@ -10,7 +10,6 @@ namespace NagesenAsAService
         {
             bundles.Add(new ScriptBundle("~/bundles/js").Include(
                 "~/Scripts/jquery-{version}.js",
-                "~/Scripts/chart.js",
                 "~/Scripts/angular.js",
                 "~/Scripts/jquery.signalR-{version}.js"
                 ));
@@ -21,7 +20,6 @@ namespace NagesenAsAService
                 CdnFallbackExpression = "window.jQuery"
             }.Include("~/Scripts/jquery-{version}.js"));
 
-            bundles.Add(new ScriptBundle("~/bundles/chartjs").Include("~/Scripts/chart.js"));
             bundles.Add(new ScriptBundle("~/bundles/angularjs")
             {
                 CdnPath = "//ajax.googleapis.com/ajax/libs/angularjs/1.2.24/angular.min.js",
@@ -34,11 +32,18 @@ namespace NagesenAsAService
                 CdnFallbackExpression = "window.jQuery.connection"
             }.Include("~/Scripts/jquery.signalR-{version}.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/box-js").Include(
+                "~/Scripts/Box2dWeb-2.1.a.3.js",
+                "~/Scripts/html2canvas.js",
+                "~/Views/Default/Box.js"));
+
             bundles.UseCdn = true;
 
             bundles.Add(new StyleBundle("~/content/css").Include(
                 "~/Content/normalize.css",
                 "~/Content/site.css"));
+            bundles.Add(new StyleBundle("~/content/index-css").Include(
+                "~/Content/footer.css"));
             bundles.Add(new StyleBundle("~/content/box-css").Include(
                 "~/Content/box.css",
                 "~/Content/sharebox.css"));

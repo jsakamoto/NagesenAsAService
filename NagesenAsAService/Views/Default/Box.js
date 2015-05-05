@@ -15,6 +15,7 @@ var b2;
 })(b2 || (b2 = {}));
 var NaaS;
 (function (NaaS) {
+    var theApp = angular.module('theApp', []);
     var Box;
     (function (Box) {
         var CoinAsset = (function () {
@@ -197,8 +198,7 @@ var NaaS;
             return RoomController;
         })();
         Box.RoomController = RoomController;
-        var theApp = angular.module('theApp', []);
-        theApp.controller('roomController', RoomController);
+        theApp.controller('roomController', ['$scope', '$http', RoomController]);
         $(function () {
             $('#lnk-tweet').click(function (e) {
                 e.preventDefault();
@@ -241,8 +241,7 @@ var NaaS;
             };
             return SettingsController;
         })();
-        var theApp = angular.module('theApp');
-        theApp.controller('settingsController', SettingsController);
+        theApp.controller('settingsController', ['$scope', '$http', SettingsController]);
         $(function () {
             $('#lnk-settings').click(function (e) {
                 e.preventDefault();

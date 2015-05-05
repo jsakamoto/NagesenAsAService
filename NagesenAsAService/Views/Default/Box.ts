@@ -24,6 +24,7 @@ module NaaS {
         twitterHashtag: string;
         allowDisCoin: boolean;
     }
+    var theApp = angular.module('theApp', []);
 
     module Box {
         class CoinAsset {
@@ -269,8 +270,7 @@ module NaaS {
             }
         }
 
-        var theApp = angular.module('theApp', []);
-        theApp.controller('roomController', RoomController);
+        theApp.controller('roomController', ['$scope', '$http', RoomController]);
 
         $(() => {
             $('#lnk-tweet').click(function (e) {
@@ -321,8 +321,7 @@ module NaaS {
             }
         }
 
-        var theApp = angular.module('theApp');
-        theApp.controller('settingsController', SettingsController);
+        theApp.controller('settingsController', ['$scope','$http', SettingsController]);
 
         $(() => {
             $('#lnk-settings').click(function (e) {

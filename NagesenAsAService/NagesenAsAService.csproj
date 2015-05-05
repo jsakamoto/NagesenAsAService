@@ -180,7 +180,14 @@
     <Content Include="Content\favicons\mstile-310x150.png" />
     <Content Include="Content\favicons\mstile-310x310.png" />
     <Content Include="Content\favicons\mstile-70x70.png" />
+    <Content Include="Content\footer.css" />
     <Content Include="Content\images\ogpimage.png" />
+    <Content Include="Content\images\powered-by\angularjs-g-16.png" />
+    <Content Include="Content\images\powered-by\aspnet-g-16.png" />
+    <Content Include="Content\images\powered-by\azure-webapps-g-16.png" />
+    <Content Include="Content\images\powered-by\github-g-16.png" />
+    <Content Include="Content\images\powered-by\real-favicon-gen-g-16.png" />
+    <Content Include="Content\images\powered-by\typescript-g-16.png" />
     <Content Include="Content\images\qrcode.png" />
     <Content Include="Content\images\twittercard-image.png" />
     <Content Include="Content\sharebox.css" />

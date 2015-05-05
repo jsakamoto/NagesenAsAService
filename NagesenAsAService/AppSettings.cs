@@ -14,6 +14,19 @@ namespace NagesenAsAService
             }
         }
 
+        public static class App
+        {
+            public static string SrcProvider
+            {
+                get { return ConfigurationManager.AppSettings["App.SrcProvider"]; }
+            }
+
+            public static string SrcUrl
+            {
+                get { return ConfigurationManager.AppSettings["App.SrcUrl"]; }
+            }
+        }
+
         public static class Errormail
         {
             public static string From
