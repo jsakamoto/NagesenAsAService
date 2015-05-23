@@ -160,7 +160,7 @@ namespace NagesenAsAService.Controllers
             return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
-        [HttpGet]
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Head)]
         public ActionResult ScreenShot(int id)
         {
             var updateScreenSnapshotAt = this.Db.Rooms
@@ -171,7 +171,10 @@ namespace NagesenAsAService.Controllers
             return new CacheableContentResult("image/jpeg",
                 () =>
                 {
-                    return this.Db.Rooms
+                    if (Request.HttpMethod == "HEAD")
+                        return new byte[0];
+                    else
+                        return this.Db.Rooms
                         .Where(room => room.RoomNumber == id)
                         .Select(room => room.ScreenSnapshot)
                         .Single();
