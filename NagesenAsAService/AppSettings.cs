@@ -45,6 +45,20 @@ namespace NagesenAsAService
             }
         }
 
+        public static class SignalR
+        {
+            public static class BackPlane
+            {
+                public static class AzureServiceBus
+                {
+                    public static string ConnectionString
+                    {
+                        get { return ConfigurationManager.AppSettings["SignalR.BackPlane.AzureServiceBus.ConnectionString"]; }
+                    }
+                }
+            }
+        }
+
         public static class Site
         {
             public static string Timezone
