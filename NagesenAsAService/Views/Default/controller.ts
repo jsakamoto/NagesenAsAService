@@ -58,4 +58,10 @@ $(() => {
             $(this).removeClass();
         });
     });
+    $(document)
+        .on('touchmove touchend gesturestart gesturechange gestureend', e=> { e.preventDefault(); })
+        .on('touchstart', function (e) {
+        e.preventDefault();
+        $(e.target).click();
+    });
 });

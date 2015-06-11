@@ -1,4 +1,8 @@
-﻿body {
+﻿* {
+    -ms-touch-action: none;
+    touch-action: none;
+}
+body {
     background-image: url(images/bg.png);
 }
 
