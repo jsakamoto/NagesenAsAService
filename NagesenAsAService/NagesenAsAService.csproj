@@ -203,6 +203,7 @@
     <Content Include="Content\images\powered-by\real-favicon-gen-g-16.png" />
     <Content Include="Content\images\powered-by\typescript-g-16.png" />
     <Content Include="Content\images\qrcode.png" />
+    <Content Include="Content\images\UnavailableRoomNumber.jpg" />
     <Content Include="Content\images\twittercard-image.png" />
     <Content Include="Content\sharebox.css" />
     <Content Include="Scripts\html2canvas.js" />
