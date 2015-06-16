@@ -108,7 +108,7 @@ namespace NagesenAsAService.Controllers
         {
             var room = this.Db.Rooms
                 .SingleOrDefault(_ => _.RoomNumber == id);
-            
+
             if (room == null)
             {
                 return View("UnavailableRoomNumber");
@@ -166,23 +166,40 @@ namespace NagesenAsAService.Controllers
             var updateScreenSnapshotAt = this.Db.Rooms
                 .Where(room => room.RoomNumber == id)
                 .Select(room => room.UpdateScreenSnapshotAt)
-                .Single();
+                .SingleOrDefault();
 
-            return new CacheableContentResult("image/jpeg",
-                () =>
-                {
-                    if (Request.HttpMethod == "HEAD")
-                        return new byte[0];
-                    else
-                        return this.Db.Rooms
-                        .Where(room => room.RoomNumber == id)
-                        .Select(room => room.ScreenSnapshot)
-                        .Single();
-                },
-                lastModified: updateScreenSnapshotAt,
-                cacheability: HttpCacheability.Public,
-                etag: id.ToString()
-            );
+            if (updateScreenSnapshotAt == default(DateTime))
+            {
+                return new CacheableContentResult("image/jpeg",
+                    () =>
+                    {
+                        if (Request.HttpMethod == "HEAD")
+                            return new byte[0];
+                        else
+                            return System.IO.File.ReadAllBytes(Server.MapPath("~/Content/images/UnavailableRoomNumber.jpg"));
+                    },
+                    cacheability: HttpCacheability.Public,
+                    etag: id.ToString()
+                );
+            }
+            else
+            {
+                return new CacheableContentResult("image/jpeg",
+                    () =>
+                    {
+                        if (Request.HttpMethod == "HEAD")
+                            return new byte[0];
+                        else
+                            return this.Db.Rooms
+                            .Where(room => room.RoomNumber == id)
+                            .Select(room => room.ScreenSnapshot)
+                            .Single();
+                    },
+                    lastModified: updateScreenSnapshotAt,
+                    cacheability: HttpCacheability.Public,
+                    etag: id.ToString()
+                );
+            }
         }
 
         [HttpGet]
