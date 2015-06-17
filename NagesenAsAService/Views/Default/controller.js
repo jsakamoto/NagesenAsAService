@@ -1,5 +1,3 @@
-/// <reference path="../../scripts/typings/angularjs/angular.d.ts" />
-/// <reference path="CoinType.ts" />
 var NaaS;
 (function (NaaS) {
     var NagesenControllerController = (function () {
@@ -13,12 +11,12 @@ var NaaS;
         NagesenControllerController.prototype.countUpCoin = function (price) {
             var _this = this;
             this.$scope.countOfCoin += price;
-            this.$http.put(location.pathname + '/throw', { typeOfCoin: NaaS.CoinType.Like }).then(function (e) { return _this.$scope.allowDisCoin = e.data.allowDisCoin; });
+            this.$http.put(location.pathname + '/throw', { typeOfCoin: 0 /* Like */ }).then(function (e) { return _this.$scope.allowDisCoin = e.data.allowDisCoin; });
         };
         NagesenControllerController.prototype.countUpDis = function (price) {
             var _this = this;
             this.$scope.countOfDis += price;
-            this.$http.put(location.pathname + '/throw', { typeOfCoin: NaaS.CoinType.Dis }).then(function (e) { return _this.$scope.allowDisCoin = e.data.allowDisCoin; });
+            this.$http.put(location.pathname + '/throw', { typeOfCoin: 1 /* Dis */ }).then(function (e) { return _this.$scope.allowDisCoin = e.data.allowDisCoin; });
         };
         NagesenControllerController.prototype.tweet = function () {
             var text = ("この枠に" + this.$scope.countOfCoin + "円分の投げ銭") + (this.$scope.allowDisCoin ? "と" + this.$scope.countOfDis + "Dis" : '') + "をしました☆";

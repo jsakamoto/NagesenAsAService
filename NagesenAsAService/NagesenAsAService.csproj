@@ -205,8 +205,16 @@
     <Content Include="Content\images\qrcode.png" />
     <Content Include="Content\images\UnavailableRoomNumber.jpg" />
     <Content Include="Content\images\twittercard-image.png" />
+    <Content Include="Content\normalize.css" />
     <Content Include="Content\sharebox.css" />
+    <Content Include="Scripts\angular.js" />
+    <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\html2canvas.js" />
+    <Content Include="Scripts\html2canvas.min.js" />
+    <Content Include="Scripts\jquery.js" />
+    <Content Include="Scripts\jquery.min.js" />
+    <Content Include="Scripts\jquery.signalR.js" />
+    <Content Include="Scripts\jquery.signalR.min.js" />
     <Content Include="Scripts\sharebox.js">
       <DependentUpon>sharebox.ts</DependentUpon>
     </Content>
@@ -217,31 +225,20 @@
     <Content Include="Content\images\coin.png" />
     <Content Include="Content\images\settings.png" />
     <Content Include="Content\images\stone.png" />
-    <Content Include="Content\normalize.css" />
     <Content Include="Content\Site.css" />
     <Content Include="favicon.ico" />
     <Content Include="favicon.png" />
     <Content Include="Global.asax" />
     <Content Include="onerror.html" />
     <Content Include="robots.txt" />
-    <Content Include="Scripts\angular-mocks.js" />
-    <Content Include="Scripts\angular.js" />
-    <Content Include="Scripts\angular.min.js" />
     <Content Include="Scripts\Box2dWeb-2.1.a.3.js" />
-    <Content Include="Scripts\Box2dWeb-2.1.a.3.min.js" />
     <Content Include="QRCodeImage.cshtml" />
     <Content Include="App_Code\QRCode.cshtml" />
     <Content Include="AppSettings.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AppSettings.cs</LastGenOutput>
     </Content>
-    <Content Include="Scripts\angular.min.js.map" />
     <Content Include="Content\favicons\manifest.json" />
-    <None Include="Scripts\jquery-2.1.1.intellisense.js" />
-    <Content Include="Scripts\jquery-2.1.1.js" />
-    <Content Include="Scripts\jquery-2.1.1.min.js" />
-    <Content Include="Scripts\jquery.signalR-2.1.2.js" />
-    <Content Include="Scripts\jquery.signalR-2.1.2.min.js" />
     <Content Include="Views\Default\BoxWorker.js">
       <DependentUpon>BoxWorker.ts</DependentUpon>
     </Content>
@@ -301,7 +298,6 @@
     <Content Include="Views\Default\Index.cshtml" />
     <Content Include="Views\Web.config" />
     <Content Include="Views\Default\Box.cshtml" />
-    <Content Include="Scripts\jquery-2.1.1.min.map" />
     <Content Include="Views\Default\Controller.cshtml" />
     <Content Include="Views\Default\Index.js.map">
       <DependentUpon>Index.ts</DependentUpon>
@@ -321,6 +317,12 @@
       <DependentUpon>CoinType.ts</DependentUpon>
     </Content>
     <Content Include="Views\Default\UnavailableRoomNumber.cshtml" />
+    <Content Include="Scripts\angular.min.js.map">
+      <DependentUpon>angular.min.js</DependentUpon>
+    </Content>
+    <Content Include="Scripts\jquery.min.map">
+      <DependentUpon>jquery.min.js</DependentUpon>
+    </Content>
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -333,6 +335,9 @@
   </ItemGroup>
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\sharebox.ts" />
+    <TypeScriptCompile Include="Scripts\typings\angularjs\angular.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\box2d\box2dweb.d.ts" />
+    <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="Views\Default\Box.ts" />
     <Content Include="Views\Default\Box.js">
       <DependentUpon>Box.ts</DependentUpon>
@@ -340,16 +345,6 @@
     <Content Include="Views\Default\Box.js.map">
       <DependentUpon>Box.ts</DependentUpon>
     </Content>
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-animate.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-cookies.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-mocks.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-resource.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-route.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-sanitize.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-scenario.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\box2d\box2dweb.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\signalr\signalr.d.ts" />
     <TypeScriptCompile Include="Views\Default\BoxWorker.ts" />
     <TypeScriptCompile Include="Views\Default\CoinType.ts" />
@@ -371,6 +366,12 @@
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <TypeScriptRemoveComments>True</TypeScriptRemoveComments>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <TypeScriptRemoveComments>True</TypeScriptRemoveComments>
+  </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="Exists('$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets')" />
   <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />

@@ -59,7 +59,8 @@
         var _begin = Date.now();
     </script>
     @{
-        var useCDN = DefaultController._Random.Next() % 2 == 0;
+        // var useCDN = DefaultController._Random.Next() % 2 == 0;
+        var useCDN = false;
         if (useCDN)
         {
             <text>

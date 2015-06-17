@@ -1,5 +1,6 @@
 ﻿/// <reference path="../../scripts/typings/signalr/signalr.d.ts" />
 /// <reference path="../../scripts/typings/angularjs/angular.d.ts" />
+/// <reference path="../../scripts/typings/box2d/box2dweb.d.ts" />
 /// <reference path="CoinType.ts" />
 module b2 {
     export import Vec2 = Box2D.Common.Math.b2Vec2;
@@ -295,7 +296,7 @@ module NaaS {
                     this.$scope.twitterHashtag = (<ISettingsScope>e.data).twitterHashtag;
                     this.$scope.allowDisCoin = (<ISettingsScope>e.data).allowDisCoin;
                     $('#settings-dialog, .modal-mask')
-                        .fadeIn('normal', _=> {
+                        .fadeIn('normal',() => {
                         $('#settings-dialog *[autofocus]').focus();
                     });
                 });
@@ -321,7 +322,7 @@ module NaaS {
             }
         }
 
-        theApp.controller('settingsController', ['$scope','$http', SettingsController]);
+        theApp.controller('settingsController', ['$scope', '$http', SettingsController]);
 
         $(() => {
             $('#lnk-settings').click(function (e) {

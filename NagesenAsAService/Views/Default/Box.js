@@ -1,6 +1,3 @@
-/// <reference path="../../scripts/typings/signalr/signalr.d.ts" />
-/// <reference path="../../scripts/typings/angularjs/angular.d.ts" />
-/// <reference path="CoinType.ts" />
 var b2;
 (function (b2) {
     b2.Vec2 = Box2D.Common.Math.b2Vec2;
@@ -25,7 +22,6 @@ var NaaS;
                 this.seUrl = seUrl;
                 this.image = this.resizeImage(imageUrl, 2 * imageRadius);
             }
-            // 参考：http://elicon.blog57.fc2.com/blog-entry-109.html
             CoinAsset.prototype.resizeImage = function (src, new_size) {
                 var image_data = new Image();
                 var img0 = new Image();
@@ -123,7 +119,6 @@ var NaaS;
             RoomController.prototype.stepWorld = function () {
                 var _this = this;
                 this.world.Step(1 / this.frameRate, 10, 10);
-                //this.world.DrawDebugData();
                 this.world.ClearForces();
                 var isAwake = this.render();
                 if (isAwake == false) {
@@ -140,12 +135,10 @@ var NaaS;
             RoomController.prototype.createFixedBox = function (x, y, width, height) {
                 var bodyDef = new b2.BodyDef;
                 bodyDef.type = b2.Body.b2_staticBody;
-                // オブジェクトの設定
                 var fixDef = new b2.FixtureDef;
-                fixDef.density = 1.0; // 密度
-                fixDef.friction = 0.5; // 摩擦係数
-                fixDef.restitution = 0.4; // 反発係数
-                // 床の設置
+                fixDef.density = 1.0;
+                fixDef.friction = 0.5;
+                fixDef.restitution = 0.4;
                 fixDef.shape = new b2.PolygonShape;
                 var shape = fixDef.shape;
                 shape.SetAsBox(width / this.worldScale, height / this.worldScale);
@@ -155,13 +148,11 @@ var NaaS;
             RoomController.prototype.createCircle = function (world, x, y, r, img) {
                 var bodyDef = new b2.BodyDef;
                 bodyDef.type = b2.Body.b2_dynamicBody;
-                // オブジェクトの設定
                 var fixDef = new b2.FixtureDef;
-                fixDef.density = 100.0; // 密度
-                fixDef.friction = 0.5; // 摩擦係数
-                fixDef.restitution = 0.5; // 反発係数
+                fixDef.density = 100.0;
+                fixDef.friction = 0.5;
+                fixDef.restitution = 0.5;
                 fixDef.shape = new b2.CircleShape(r / this.worldScale);
-                // 円形オブジェクトの設置
                 bodyDef.position.x = x / this.worldScale;
                 bodyDef.position.y = y / this.worldScale;
                 bodyDef.userData = { img: img, r: r };
@@ -220,7 +211,7 @@ var NaaS;
                 this.$http.get(_app.apiBaseUrl + '/Settings').then(function (e) {
                     _this.$scope.twitterHashtag = e.data.twitterHashtag;
                     _this.$scope.allowDisCoin = e.data.allowDisCoin;
-                    $('#settings-dialog, .modal-mask').fadeIn('normal', function (_) {
+                    $('#settings-dialog, .modal-mask').fadeIn('normal', function () {
                         $('#settings-dialog *[autofocus]').focus();
                     });
                 });

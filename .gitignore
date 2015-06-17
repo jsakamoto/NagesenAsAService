@@ -5,5 +5,7 @@ obj/
 App_Data/
 /packages
 /testresults
-/SignalYN/custom.appSettings.config
-/NagesenAsAService/custom.appSettings.config
+.tscache/
+custom.appSettings.config
+bower_components/
+node_modules/

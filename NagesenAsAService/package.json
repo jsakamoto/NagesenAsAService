@@ -1,0 +1,19 @@
+{
+  "name": "NagesenAsAService",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "GNU GPLv2",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-bower-task": "^0.4.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-ts": "^4.2.0-beta.1",
+    "grunt-tsd": "^0.1.0",
+    "typescript": "^1.4.1"
+  }
+}

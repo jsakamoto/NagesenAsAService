@@ -1,0 +1,21 @@
+{
+  "version": "v4",
+  "repo": "borisyankov/DefinitelyTyped",
+  "ref": "master",
+  "path": "Scripts/typings",
+  "bundle": "Scripts/typings/tsd.d.ts",
+  "installed": {
+    "signalr/signalr.d.ts": {
+      "commit": "002a9a96b116bd3f9053ee1afa02c03636ffebb5"
+    },
+    "jquery/jquery.d.ts": {
+      "commit": "002a9a96b116bd3f9053ee1afa02c03636ffebb5"
+    },
+    "box2d/box2dweb.d.ts": {
+      "commit": "002a9a96b116bd3f9053ee1afa02c03636ffebb5"
+    },
+    "angularjs/angular.d.ts": {
+      "commit": "002a9a96b116bd3f9053ee1afa02c03636ffebb5"
+    }
+  }
+}

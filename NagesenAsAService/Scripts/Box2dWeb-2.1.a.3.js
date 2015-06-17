@@ -30,7 +30,7 @@ var Box2D = {};
             obj.__defineSetter__(p, cfg.set);
       }
    }
-   
+
    function emptyFn() {};
    a2j.inherit = function(cls, base) {
       var tmpCtr = cls;
@@ -38,13 +38,13 @@ var Box2D = {};
       cls.prototype = new emptyFn;
       cls.prototype.constructor = tmpCtr;
    };
-   
+
    a2j.generateCallback = function generateCallback(context, cb) {
       return function () {
          cb.apply(context, arguments);
       };
    };
-   
+
    a2j.NVector = function NVector(length) {
       if (length === undefined) length = 0;
       var tmp = new Array(length || 0);
@@ -52,18 +52,18 @@ var Box2D = {};
       tmp[i] = 0;
       return tmp;
    };
-   
+
    a2j.is = function is(o1, o2) {
       if (o1 === null) return false;
       if ((o2 instanceof Function) && (o1 instanceof o2)) return true;
       if ((o1.constructor.__implements != undefined) && (o1.constructor.__implements[o2])) return true;
       return false;
    };
-   
+
    a2j.parseUInt = function(v) {
       return Math.abs(parseInt(v));
    }
-   
+
 })(Box2D);
 
 //#TODO remove assignments from global namespace
@@ -6126,9 +6126,9 @@ Box2D.postDefs = [];
    b2World.prototype.RayCast = function (callback, point1, point2) {
       var __this = this;
       var broadPhase = __this.m_contactManager.m_broadPhase;
-      var output = new b2RayCastOutput;
 
       function RayCastWrapper(input, proxy) {
+         var output = new b2RayCastOutput;
          var userData = broadPhase.GetUserData(proxy);
          var fixture = (userData instanceof b2Fixture ? userData : null);
          var hit = fixture.RayCast(output, input);

@@ -1,6 +1,5 @@
 var NaaS;
 (function (NaaS) {
-    // "Share" box and QR Code - UI effect
     $(function () {
         $(document).on('click', '.qr-code-icon,.share-box,.modal-mask.active', function (e) {
             e.preventDefault();
