@@ -33,7 +33,7 @@ var NaaS;
             self.postMessage({ cmd: 'Enqueue', data: data });
         };
         return WorkerTimer;
-    })();
+    }());
     var workerTimer = new WorkerTimer();
     self.addEventListener('message', workerTimer.OnMessage.bind(workerTimer));
 })(NaaS || (NaaS = {}));
