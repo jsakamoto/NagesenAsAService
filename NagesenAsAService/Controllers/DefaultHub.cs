@@ -14,11 +14,11 @@ namespace NagesenAsAService.Controllers
     {
         private static Random _Random = new Random(DateTime.UtcNow.Millisecond);
 
-        public object EnterRoom(int roomNumber)
+        public async Task<object> EnterRoom(int roomNumber)
         {
-            Groups.Add(Context.ConnectionId, roomNumber.ToString());
-            var db = new AppDbContext();
-            var room = db.Rooms.First(r => r.RoomNumber == roomNumber);
+            await Groups.Add(Context.ConnectionId, roomNumber.ToString());
+            var repository = new AzureTableRoomRepository();
+            var room = await repository.FindRoomAsync(roomNumber);
 
             return new
             {
@@ -35,18 +35,20 @@ namespace NagesenAsAService.Controllers
 
         public static async Task Throw(int roomNumber, CoinType typeOfCoin, IHubConnectionContext<dynamic> clients)
         {
-            var db = new AppDbContext();
+            var repository = new AzureTableRoomRepository();
+            var room = await repository.FindRoomAsync(roomNumber);
             if (typeOfCoin == CoinType.Like)
-                await db.Database.ExecuteSqlCommandAsync(
-                    "UPDATE Rooms SET CountOfNageSen = CountOfNageSen + 10 FROM Rooms WHERE RoomNumber = @p0", roomNumber);
+            {
+                room.CountOfNageSen += 10;
+            }
             else
-                await db.Database.ExecuteSqlCommandAsync(
-                    "UPDATE Rooms SET CountOfAoriSen = CountOfAoriSen + 10 FROM Rooms WHERE RoomNumber = @p0", roomNumber);
+            {
+                room.CountOfAoriSen += 10;
+            }
+            await repository.UpdateRoomAsync(room);
+            // TODO: Prevent concurrent racings.
 
-            var countOfCoin = db.Rooms
-                .Where(room => room.RoomNumber == roomNumber)
-                .Select(room => new {room.CountOfNageSen, room.CountOfAoriSen })
-                .First();
+            var countOfCoin = new { room.CountOfNageSen, room.CountOfAoriSen };
 
             var throwPoint = default(double);
             lock (_Random) throwPoint = _Random.NextDouble();
