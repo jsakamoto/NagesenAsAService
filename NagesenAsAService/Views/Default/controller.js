@@ -25,7 +25,7 @@ var NaaS;
                 .then(function (e) { return _this.$scope.allowDisCoin = e.data.allowDisCoin; });
         };
         NagesenControllerController.prototype.tweet = function () {
-            var text = ("\u3053\u306E\u67A0\u306B" + this.$scope.countOfCoin + "\u5186\u5206\u306E\u6295\u3052\u92AD") +
+            var text = "\u3053\u306E\u67A0\u306B" + this.$scope.countOfCoin + "\u5186\u5206\u306E\u6295\u3052\u92AD" +
                 (this.$scope.allowDisCoin ? "\u3068" + this.$scope.countOfDis + "Dis" : '') +
                 "\u3092\u3057\u307E\u3057\u305F\u2606";
             var url = _app.apiBaseUrl + '/TwitterShare?';

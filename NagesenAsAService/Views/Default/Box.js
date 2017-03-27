@@ -194,7 +194,7 @@ var NaaS;
                 return isAwake;
             };
             RoomController.prototype.tweet = function () {
-                var text = ("\u3053\u306E\u67A0\u306B" + this.$scope.countOfLike + "\u5186\u5206\u306E\u6295\u3052\u92AD") +
+                var text = "\u3053\u306E\u67A0\u306B" + this.$scope.countOfLike + "\u5186\u5206\u306E\u6295\u3052\u92AD" +
                     (this.$scope.allowDisCoin ? "\u3068" + this.$scope.countOfDis + "Dis" : '') +
                     "\u304C\u96C6\u307E\u308A\u307E\u3057\u305F\u2606";
                 var url = _app.apiBaseUrl + '/TwitterShare?';
