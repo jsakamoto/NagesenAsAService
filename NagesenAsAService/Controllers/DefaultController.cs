@@ -215,8 +215,6 @@ namespace NagesenAsAService.Controllers
 
             var limit = DateTime.UtcNow.AddDays(-7);
             await this.Repository.SweepRoomsAsync(limit);
-            //var roomsToSweep = Repository.Rooms.Where(room => room.CreatedAt < limit).ToList();
-            //Repository.Rooms.RemoveRange(roomsToSweep);
 
             return new EmptyResult();
         }

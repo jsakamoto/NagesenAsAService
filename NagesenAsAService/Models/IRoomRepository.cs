@@ -12,6 +12,7 @@ namespace NagesenAsAService.Models
         Task AddRoomAsync(Room room);
         Task<Room> FindRoomAsync(int roomNumber);
         Task UpdateRoomAsync(Room room);
+        Task<Room> UpdateRoomAsync(int roomNumber, Action<Room> action);
         Task SweepRoomsAsync(DateTime limit);
     }
 }

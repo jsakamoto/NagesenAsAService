@@ -36,17 +36,17 @@ namespace NagesenAsAService.Controllers
         public static async Task Throw(int roomNumber, CoinType typeOfCoin, IHubConnectionContext<dynamic> clients)
         {
             var repository = new AzureTableRoomRepository();
-            var room = await repository.FindRoomAsync(roomNumber);
-            if (typeOfCoin == CoinType.Like)
+            var room = await repository.UpdateRoomAsync(roomNumber, (Room r) =>
             {
-                room.CountOfNageSen += 10;
-            }
-            else
-            {
-                room.CountOfAoriSen += 10;
-            }
-            await repository.UpdateRoomAsync(room);
-            // TODO: Prevent concurrent racings.
+                if (typeOfCoin == CoinType.Like)
+                {
+                    r.CountOfNageSen += 10;
+                }
+                else
+                {
+                    r.CountOfAoriSen += 10;
+                }
+            });
 
             var countOfCoin = new { room.CountOfNageSen, room.CountOfAoriSen };
 
