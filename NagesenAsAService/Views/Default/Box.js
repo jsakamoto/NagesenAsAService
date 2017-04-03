@@ -199,7 +199,7 @@ var NaaS;
                     "\u304C\u96C6\u307E\u308A\u307E\u3057\u305F\u2606";
                 var url = _app.apiBaseUrl + '/TwitterShare?';
                 url += 'text=' + encodeURIComponent(text);
-                url += '&url=' + encodeURIComponent(_app.apiBaseUrl + '/screenshot');
+                url += '&url=' + encodeURIComponent(_app.apiBaseUrl + '/screenshot/' + _app.sessionId);
                 window.open(url);
             };
             return RoomController;

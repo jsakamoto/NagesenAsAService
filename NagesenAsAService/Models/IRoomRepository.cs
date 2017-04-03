@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace NagesenAsAService.Models
 {
@@ -14,5 +11,7 @@ namespace NagesenAsAService.Models
         Task UpdateRoomAsync(Room room);
         Task<Room> UpdateRoomAsync(int roomNumber, Action<Room> action);
         Task SweepRoomsAsync(DateTime limit);
+        Task SaveScreenShotAsync(int roomNumber, byte[] image);
+        byte[] GetScreenShot(Guid sessionId);
     }
 }

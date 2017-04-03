@@ -40,7 +40,7 @@ module NaaS {
                 `をしました☆`;
             var url = _app.apiBaseUrl + '/TwitterShare?';
             url += 'text=' + encodeURIComponent(text);
-            url += '&url=' + encodeURIComponent(_app.apiBaseUrl + '/screenshot');
+            url += '&url=' + encodeURIComponent(_app.apiBaseUrl + '/screenshot/' + _app.sessionId);
             window.open(url);
         }
     }
@@ -55,13 +55,13 @@ $(() => {
             .removeClass()
             .addClass('slideOutUp animated')
             .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
-            $(this).removeClass();
-        });
+                $(this).removeClass();
+            });
     });
     $(document)
-        .on('touchmove touchend gesturestart gesturechange gestureend', e=> { e.preventDefault(); })
+        .on('touchmove touchend gesturestart gesturechange gestureend', e => { e.preventDefault(); })
         .on('touchstart', function (e) {
-        e.preventDefault();
-        $(e.target).click();
-    });
+            e.preventDefault();
+            $(e.target).click();
+        });
 });

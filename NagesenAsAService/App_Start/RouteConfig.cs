@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 
@@ -15,8 +12,8 @@ namespace NagesenAsAService
 
             routes.MapRoute(
                 name: "Room",
-                url: "Room/{id}/{action}",
-                defaults: new { controller = "Default", action = "Controller" }
+                url: "Room/{id}/{action}/{session}",
+                defaults: new { controller = "Default", action = "Controller", session = UrlParameter.Optional }
             );
 
             routes.MapRoute(

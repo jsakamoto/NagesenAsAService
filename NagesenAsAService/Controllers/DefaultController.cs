@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.SignalR;
 using NagesenAsAService.Models;
-using Newtonsoft.Json.Linq;
 using Toolbelt.Web;
 
 namespace NagesenAsAService.Controllers
@@ -140,22 +137,16 @@ namespace NagesenAsAService.Controllers
             if (isOwner == false) return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 
             var image = Convert.FromBase64String(imageDataUrl.Split(',').Last());
-            // TODO:
-            //await this.Repository.Database.ExecuteSqlCommandAsync(
-            //    @"UPDATE Rooms SET 
-            //    ScreenSnapshot = @p1,
-            //    UpdateScreenSnapshotAt = GETDATE()
-            //    FROM Rooms WHERE RoomNumber = @p0",
-            //    id, image);
+            await this.Repository.SaveScreenShotAsync(id, image);
 
             return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Head)]
-        public async Task<ActionResult> ScreenShot(int id)
+        public async Task<ActionResult> ScreenShot(int id, Guid session)
         {
             var room = await this.Repository.FindRoomAsync(id);
-            var updateScreenSnapshotAt = room.UpdateScreenSnapshotAt;
+            var updateScreenSnapshotAt = room?.UpdateScreenSnapshotAt ?? default(DateTime);
 
             if (updateScreenSnapshotAt == default(DateTime))
             {
@@ -180,10 +171,7 @@ namespace NagesenAsAService.Controllers
                             return new byte[0];
                         else
                         {
-                            // TODO:
-                            //return this.Repository.FindRoom(id)...
-                            return null;
-                            throw new NotImplementedException();
+                            return this.Repository.GetScreenShot(session) ?? System.IO.File.ReadAllBytes(Server.MapPath("~/Content/images/UnavailableRoomNumber.jpg"));
                         }
                     },
                     lastModified: updateScreenSnapshotAt,

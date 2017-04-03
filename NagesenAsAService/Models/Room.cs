@@ -14,6 +14,8 @@ namespace NagesenAsAService.Models
 
         public string OwnerUserID { get; set; }
 
+        public Guid SessionID { get; set; }
+
         public string Title { get; set; }
 
         [DisplayFormat(ConvertEmptyStringToNull = false)]
@@ -31,8 +33,9 @@ namespace NagesenAsAService.Models
 
         public Room()
         {
+            this.SessionID = Guid.NewGuid();
             this.TwitterHashtag = "";
-            this.UpdateScreenSnapshotAt = DateTime.UtcNow;
+            this.UpdateScreenSnapshotAt = default(DateTime);
             this.CreatedAt = DateTime.UtcNow;
         }
 

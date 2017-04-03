@@ -36,7 +36,7 @@ module NaaS {
                 public seUrl: string) {
                 this.image = this.resizeImage(imageUrl, 2 * imageRadius);
             }
-        
+
             // 参考：http://elicon.blog57.fc2.com/blog-entry-109.html
             private resizeImage(src: string, new_size: number): HTMLImageElement {
                 var image_data = new Image();
@@ -109,10 +109,10 @@ module NaaS {
                     .start()
                     .then(() => this.hub.invoke('EnterRoom', _app.roomNumber))
                     .then(r => $scope.$apply(() => {
-                    this.$scope.allowDisCoin = (<any>r).allowDisCoin;
-                    this.$scope.countOfLike = (<any>r).countOfLike;
-                    this.$scope.countOfDis = (<any>r).countOfDis;
-                }));
+                        this.$scope.allowDisCoin = (<any>r).allowDisCoin;
+                        this.$scope.countOfLike = (<any>r).countOfLike;
+                        this.$scope.countOfDis = (<any>r).countOfDis;
+                    }));
 
                 this.initWorld();
 
@@ -172,7 +172,7 @@ module NaaS {
                 this.world = new b2.World(
                     new b2.Vec2(0, 50), // 重力方向
                     true                 // Sleepの可否
-                    );
+                );
                 this.createFixedBox(0, 0, 2.0, this.worldHeight);
                 this.createFixedBox(0, this.worldHeight - 2, this.worldWidth, 2.0);
                 this.createFixedBox(this.worldWidth - 2, 0, 2.0, this.worldHeight);
@@ -265,7 +265,7 @@ module NaaS {
                     `が集まりました☆`;
                 var url = _app.apiBaseUrl + '/TwitterShare?';
                 url += 'text=' + encodeURIComponent(text);
-                url += '&url=' + encodeURIComponent(_app.apiBaseUrl + '/screenshot');
+                url += '&url=' + encodeURIComponent(_app.apiBaseUrl + '/screenshot/' + _app.sessionId);
                 window.open(url);
             }
         }
@@ -292,20 +292,20 @@ module NaaS {
             public DoModal(): void {
                 this.$http.get(_app.apiBaseUrl + '/Settings')
                     .then(e => {
-                    this.$scope.twitterHashtag = (<ISettingsScope>e.data).twitterHashtag;
-                    this.$scope.allowDisCoin = (<ISettingsScope>e.data).allowDisCoin;
-                    $('#settings-dialog, .modal-mask')
-                        .fadeIn('normal', _=> {
-                        $('#settings-dialog *[autofocus]').focus();
+                        this.$scope.twitterHashtag = (<ISettingsScope>e.data).twitterHashtag;
+                        this.$scope.allowDisCoin = (<ISettingsScope>e.data).allowDisCoin;
+                        $('#settings-dialog, .modal-mask')
+                            .fadeIn('normal', _ => {
+                                $('#settings-dialog *[autofocus]').focus();
+                            });
                     });
-                });
             }
 
             public OK(): void {
                 this.$http.put(_app.apiBaseUrl + '/Settings',
                     $('#settings-dialog .form').serialize(),
                     { headers: { 'content-type': 'application/x-www-form-urlencoded' } }
-                    ).then(_ => {
+                ).then(_ => {
                     var roomController = <Box.RoomController>angular.element(document.getElementById('box')).controller();
                     roomController.UpdateSettings(this.$scope);
                     this.Close();
@@ -321,7 +321,7 @@ module NaaS {
             }
         }
 
-        theApp.controller('settingsController', ['$scope','$http', SettingsController]);
+        theApp.controller('settingsController', ['$scope', '$http', SettingsController]);
 
         $(() => {
             $('#lnk-settings').click(function (e) {

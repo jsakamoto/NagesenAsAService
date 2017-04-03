@@ -1,5 +1,6 @@
 ﻿declare var _app: {
     roomNumber: number;
+    sessionId: string;
     controllerUrl: string;
     twitterHashtagUrl: string;
     apiBaseUrl: string;

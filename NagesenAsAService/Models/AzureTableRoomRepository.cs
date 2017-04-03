@@ -1,53 +1,61 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
+using System.IO;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Table;
 
 namespace NagesenAsAService.Models
 {
     public class AzureTableRoomRepository : IRoomRepository
     {
-        private CloudTable Rooms { get; set; }
+        private Lazy<CloudTable> Rooms { get; }
+
+        private Lazy<CloudBlobContainer> ScreenShots { get; }
 
         private Random RandomNumberGenerator { get; } = new Random();
 
         public AzureTableRoomRepository()
         {
-            this.Rooms = ConnectAzureTableStorage();
-        }
-
-        private static CloudTable ConnectAzureTableStorage()
-        {
             var connStr = ConfigurationManager.AppSettings["StorageConnectionString"];
             var storageAccount = CloudStorageAccount.Parse(connStr);
-            var tableClient = storageAccount.CreateCloudTableClient();
-            var table = tableClient.GetTableReference("NaaSRooms");
-            table.CreateIfNotExists();
-            return table;
+
+            this.Rooms = new Lazy<CloudTable>(() =>
+            {
+                var tableClient = storageAccount.CreateCloudTableClient();
+                var rooms = tableClient.GetTableReference("NaaSRooms");
+                rooms.CreateIfNotExists();
+                return rooms;
+            });
+
+            this.ScreenShots = new Lazy<CloudBlobContainer>(() =>
+            {
+                var blobClient = storageAccount.CreateCloudBlobClient();
+                var screenShots = blobClient.GetContainerReference("naasscreenshots");
+                screenShots.CreateIfNotExists();
+                return screenShots;
+            });
         }
 
         public bool RoomExists(int roomNumber)
         {
             var partitionKey = Room.RoomNumberToPartitionKey(roomNumber);
             var rowKey = Room.RoomNumberToRowKey(roomNumber);
-            var result = this.Rooms.Execute(TableOperation.Retrieve<Room>(partitionKey, rowKey));
+            var result = this.Rooms.Value.Execute(TableOperation.Retrieve<Room>(partitionKey, rowKey));
             return result.Result != null;
         }
 
         public Task AddRoomAsync(Room room)
         {
-            return this.Rooms.ExecuteAsync(TableOperation.Insert(room));
+            return this.Rooms.Value.ExecuteAsync(TableOperation.Insert(room));
         }
 
         public async Task<Room> FindRoomAsync(int roomNumber)
         {
             var partitionKey = Room.RoomNumberToPartitionKey(roomNumber);
             var rowKey = Room.RoomNumberToRowKey(roomNumber);
-            var result = await this.Rooms.ExecuteAsync(TableOperation.Retrieve<Room>(partitionKey, rowKey));
+            var result = await this.Rooms.Value.ExecuteAsync(TableOperation.Retrieve<Room>(partitionKey, rowKey));
             return result.Result as Room;
         }
 
@@ -76,7 +84,7 @@ namespace NagesenAsAService.Models
 
         public Task UpdateRoomAsync(Room room)
         {
-            return this.Rooms.ExecuteAsync(TableOperation.Replace(room));
+            return this.Rooms.Value.ExecuteAsync(TableOperation.Replace(room));
         }
 
         public async Task SweepRoomsAsync(DateTime limit)
@@ -84,10 +92,37 @@ namespace NagesenAsAService.Models
             var rangeQuery = new TableQuery<Room>()
                 .Where(TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.LessThan, limit));
 
-            var roomsToSwep = this.Rooms.ExecuteQuery(rangeQuery);
+            var roomsToSwep = this.Rooms.Value.ExecuteQuery(rangeQuery);
             foreach (var room in roomsToSwep)
             {
-                await this.Rooms.ExecuteAsync(TableOperation.Delete(room));
+                await this.Rooms.Value.ExecuteAsync(TableOperation.Delete(room));
+            }
+        }
+
+        public async Task SaveScreenShotAsync(int roomNumber, byte[] image)
+        {
+            var room = await this.FindRoomAsync(roomNumber);
+            room.UpdateScreenSnapshotAt = DateTime.UtcNow;
+            await this.UpdateRoomAsync(room);
+
+            var blockBlob = this.ScreenShots.Value.GetBlockBlobReference(room.SessionID.ToString("N"));
+            await blockBlob.UploadFromByteArrayAsync(image, 0, image.Length);
+        }
+
+        public byte[] GetScreenShot(Guid sessionId)
+        {
+            var blockBlob = this.ScreenShots.Value.GetBlockBlobReference(sessionId.ToString("N"));
+            using (var ms = new MemoryStream())
+            {
+                try
+                {
+                    blockBlob.DownloadToStream(ms);
+                }
+                catch (StorageException e) when (e.RequestInformation.HttpStatusCode == 404)
+                {
+                    return null;
+                }
+                return ms.ToArray();
             }
         }
     }
