@@ -8,3 +8,4 @@ App_Data/
 /SignalYN/custom.appSettings.config
 /NagesenAsAService/custom.appSettings.config
 .vs/
+node_modules/

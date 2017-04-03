@@ -1,7 +1,4 @@
-﻿/// <reference path="../../scripts/typings/signalr/signalr.d.ts" />
-/// <reference path="../../scripts/typings/angularjs/angular.d.ts" />
-/// <reference path="CoinType.ts" />
-module b2 {
+﻿module b2 {
     export import Vec2 = Box2D.Common.Math.b2Vec2;
     export import BodyDef = Box2D.Dynamics.b2BodyDef;
     export import Body = Box2D.Dynamics.b2Body;
@@ -36,7 +33,7 @@ module NaaS {
                 public seUrl: string) {
                 this.image = this.resizeImage(imageUrl, 2 * imageRadius);
             }
-        
+
             // 参考：http://elicon.blog57.fc2.com/blog-entry-109.html
             private resizeImage(src: string, new_size: number): HTMLImageElement {
                 var image_data = new Image();
@@ -85,7 +82,7 @@ module NaaS {
         }
 
         export class RoomController {
-            hub: HubProxy;
+            hub: SignalR.Hub.Proxy;
             context: CanvasRenderingContext2D;
             world: Box2D.Dynamics.b2World;
 
@@ -96,7 +93,6 @@ module NaaS {
             private worker: Worker;
 
             constructor(private $scope: IScope, private $http: ng.IHttpService) {
-
                 var canvas = <HTMLCanvasElement>document.getElementById('canvas');
                 this.context = canvas.getContext('2d');
                 this.worldWidth = canvas.width;
@@ -109,10 +105,10 @@ module NaaS {
                     .start()
                     .then(() => this.hub.invoke('EnterRoom', _app.roomNumber))
                     .then(r => $scope.$apply(() => {
-                    this.$scope.allowDisCoin = (<any>r).allowDisCoin;
-                    this.$scope.countOfLike = (<any>r).countOfLike;
-                    this.$scope.countOfDis = (<any>r).countOfDis;
-                }));
+                        this.$scope.allowDisCoin = (<any>r).allowDisCoin;
+                        this.$scope.countOfLike = (<any>r).countOfLike;
+                        this.$scope.countOfDis = (<any>r).countOfDis;
+                    }));
 
                 this.initWorld();
 
@@ -172,7 +168,7 @@ module NaaS {
                 this.world = new b2.World(
                     new b2.Vec2(0, 50), // 重力方向
                     true                 // Sleepの可否
-                    );
+                );
                 this.createFixedBox(0, 0, 2.0, this.worldHeight);
                 this.createFixedBox(0, this.worldHeight - 2, this.worldWidth, 2.0);
                 this.createFixedBox(this.worldWidth - 2, 0, 2.0, this.worldHeight);
@@ -292,20 +288,20 @@ module NaaS {
             public DoModal(): void {
                 this.$http.get(_app.apiBaseUrl + '/Settings')
                     .then(e => {
-                    this.$scope.twitterHashtag = (<ISettingsScope>e.data).twitterHashtag;
-                    this.$scope.allowDisCoin = (<ISettingsScope>e.data).allowDisCoin;
-                    $('#settings-dialog, .modal-mask')
-                        .fadeIn('normal', _=> {
-                        $('#settings-dialog *[autofocus]').focus();
+                        this.$scope.twitterHashtag = (<ISettingsScope>e.data).twitterHashtag;
+                        this.$scope.allowDisCoin = (<ISettingsScope>e.data).allowDisCoin;
+                        $('#settings-dialog, .modal-mask')
+                            .fadeIn('normal', _ => {
+                                $('#settings-dialog *[autofocus]').focus();
+                            });
                     });
-                });
             }
 
             public OK(): void {
                 this.$http.put(_app.apiBaseUrl + '/Settings',
                     $('#settings-dialog .form').serialize(),
                     { headers: { 'content-type': 'application/x-www-form-urlencoded' } }
-                    ).then(_ => {
+                ).then(_ => {
                     var roomController = <Box.RoomController>angular.element(document.getElementById('box')).controller();
                     roomController.UpdateSettings(this.$scope);
                     this.Close();
@@ -321,7 +317,7 @@ module NaaS {
             }
         }
 
-        theApp.controller('settingsController', ['$scope','$http', SettingsController]);
+        theApp.controller('settingsController', ['$scope', '$http', SettingsController]);
 
         $(() => {
             $('#lnk-settings').click(function (e) {

@@ -1,6 +1,4 @@
-﻿/// <reference path="../../scripts/typings/angularjs/angular.d.ts" />
-/// <reference path="CoinType.ts" />
-module NaaS {
+﻿module NaaS {
 
     interface INagesenControllerScope extends ng.IScope {
         countOfCoin: number;
@@ -55,13 +53,13 @@ $(() => {
             .removeClass()
             .addClass('slideOutUp animated')
             .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
-            $(this).removeClass();
-        });
+                $(this).removeClass();
+            });
     });
     $(document)
-        .on('touchmove touchend gesturestart gesturechange gestureend', e=> { e.preventDefault(); })
+        .on('touchmove touchend gesturestart gesturechange gestureend', e => { e.preventDefault(); })
         .on('touchstart', function (e) {
-        e.preventDefault();
-        $(e.target).click();
-    });
+            e.preventDefault();
+            $(e.target).click();
+        });
 });
