@@ -143,12 +143,12 @@ namespace NagesenAsAService.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Head)]
-        public async Task<ActionResult> ScreenShot(int id, Guid session)
+        public async Task<ActionResult> ScreenShot(int id, Guid? session)
         {
             var room = await this.Repository.FindRoomAsync(id);
-            var updateScreenSnapshotAt = room?.UpdateScreenSnapshotAt ?? default(DateTime);
+            var updateScreenSnapshotAt = room?.UpdateScreenSnapshotAt ?? DateTime.MaxValue;
 
-            if (updateScreenSnapshotAt == default(DateTime))
+            if (updateScreenSnapshotAt == DateTime.MaxValue || session.HasValue == false)
             {
                 return new CacheableContentResult("image/jpeg",
                     () =>
@@ -171,7 +171,7 @@ namespace NagesenAsAService.Controllers
                             return new byte[0];
                         else
                         {
-                            return this.Repository.GetScreenShot(session) ?? System.IO.File.ReadAllBytes(Server.MapPath("~/Content/images/UnavailableRoomNumber.jpg"));
+                            return this.Repository.GetScreenShot(session.Value) ?? System.IO.File.ReadAllBytes(Server.MapPath("~/Content/images/UnavailableRoomNumber.jpg"));
                         }
                     },
                     lastModified: updateScreenSnapshotAt,

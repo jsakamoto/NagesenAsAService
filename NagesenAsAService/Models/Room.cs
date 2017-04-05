@@ -35,7 +35,7 @@ namespace NagesenAsAService.Models
         {
             this.SessionID = Guid.NewGuid();
             this.TwitterHashtag = "";
-            this.UpdateScreenSnapshotAt = default(DateTime);
+            this.UpdateScreenSnapshotAt = DateTime.MaxValue;
             this.CreatedAt = DateTime.UtcNow;
         }
 
