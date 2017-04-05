@@ -31,6 +31,19 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptModuleKind>None</TypeScriptModuleKind>
+    <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+    <TypeScriptOutFile />
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptSourceMap>True</TypeScriptSourceMap>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -39,6 +52,19 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TypeScriptTarget>ES5</TypeScriptTarget>
+    <TypeScriptJSXEmit>None</TypeScriptJSXEmit>
+    <TypeScriptCompileOnSaveEnabled>True</TypeScriptCompileOnSaveEnabled>
+    <TypeScriptNoImplicitAny>False</TypeScriptNoImplicitAny>
+    <TypeScriptModuleKind>None</TypeScriptModuleKind>
+    <TypeScriptRemoveComments>False</TypeScriptRemoveComments>
+    <TypeScriptOutFile />
+    <TypeScriptOutDir />
+    <TypeScriptGeneratesDeclarations>False</TypeScriptGeneratesDeclarations>
+    <TypeScriptNoEmitOnError>True</TypeScriptNoEmitOnError>
+    <TypeScriptSourceMap>True</TypeScriptSourceMap>
+    <TypeScriptMapRoot />
+    <TypeScriptSourceRoot />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Antlr3.Runtime, Version=3.5.0.2, Culture=neutral, PublicKeyToken=eb42632606e9261f, processorArchitecture=MSIL">
@@ -334,6 +360,7 @@
       <DependentUpon>CoinType.ts</DependentUpon>
     </Content>
     <Content Include="Views\Default\UnavailableRoomNumber.cshtml" />
+    <Content Include="tsconfig.json" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -353,17 +380,6 @@
     <Content Include="Views\Default\Box.js.map">
       <DependentUpon>Box.ts</DependentUpon>
     </Content>
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-animate.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-cookies.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-mocks.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-resource.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-route.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-sanitize.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular-scenario.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\angularjs\angular.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\box2d\box2dweb.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
-    <TypeScriptCompile Include="Scripts\typings\signalr\signalr.d.ts" />
     <TypeScriptCompile Include="Views\Default\BoxWorker.ts" />
     <TypeScriptCompile Include="Views\Default\CoinType.ts" />
     <TypeScriptCompile Include="Views\Default\controller.ts" />

@@ -1,0 +1,13 @@
+{
+  "name": "nagesen-as-a-service",
+  "version": "1.0.0",
+  "description": "Nagesen as a Service",
+  "repository": "https://github.com/jsakamoto/NagesenAsAService",
+  "license": "GPL-2.0",
+  "devDependencies": {
+    "@types/angular": "^1.5.7",
+    "@types/box2d": "0.0.31",
+    "@types/jquery": "^2.0.41",
+    "@types/signalr": "^2.2.33"
+  }
+}

@@ -1,7 +1,4 @@
-﻿/// <reference path="../../scripts/typings/signalr/signalr.d.ts" />
-/// <reference path="../../scripts/typings/angularjs/angular.d.ts" />
-/// <reference path="CoinType.ts" />
-module b2 {
+﻿module b2 {
     export import Vec2 = Box2D.Common.Math.b2Vec2;
     export import BodyDef = Box2D.Dynamics.b2BodyDef;
     export import Body = Box2D.Dynamics.b2Body;
@@ -85,7 +82,7 @@ module NaaS {
         }
 
         export class RoomController {
-            hub: HubProxy;
+            hub: SignalR.Hub.Proxy;
             context: CanvasRenderingContext2D;
             world: Box2D.Dynamics.b2World;
 
@@ -96,7 +93,6 @@ module NaaS {
             private worker: Worker;
 
             constructor(private $scope: IScope, private $http: ng.IHttpService) {
-
                 var canvas = <HTMLCanvasElement>document.getElementById('canvas');
                 this.context = canvas.getContext('2d');
                 this.worldWidth = canvas.width;
