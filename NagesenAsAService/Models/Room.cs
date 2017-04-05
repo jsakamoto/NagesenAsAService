@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Web;
+using Microsoft.WindowsAzure.Storage.Table;
 
 namespace NagesenAsAService.Models
 {
-    public class Room
+    public class Room : TableEntity
     {
-        public int RoomID { get; set; }
-
-        [Index("IX_RoomNumber", IsUnique = true)]
         public int RoomNumber { get; set; }
 
         public string Url { get; set; }
@@ -19,6 +13,8 @@ namespace NagesenAsAService.Models
         public string ShortUrl { get; set; }
 
         public string OwnerUserID { get; set; }
+
+        public Guid SessionID { get; set; }
 
         public string Title { get; set; }
 
@@ -31,21 +27,27 @@ namespace NagesenAsAService.Models
 
         public int CountOfAoriSen { get; set; }
 
-        public byte[] ScreenSnapshot { get; set; }
-
         public DateTime UpdateScreenSnapshotAt { get; set; }
 
         public DateTime CreatedAt { get; set; }
 
-        [Timestamp]
-        public byte[] RowVersion { get; set; }
-
         public Room()
         {
+            this.SessionID = Guid.NewGuid();
             this.TwitterHashtag = "";
-            this.ScreenSnapshot = new byte[0];
-            this.UpdateScreenSnapshotAt = DateTime.UtcNow;
+            this.UpdateScreenSnapshotAt = DateTime.MaxValue;
             this.CreatedAt = DateTime.UtcNow;
         }
+
+        public Room(int roomNumber) : this()
+        {
+            this.RoomNumber = roomNumber;
+            this.PartitionKey = Room.RoomNumberToPartitionKey(roomNumber);
+            this.RowKey = Room.RoomNumberToRowKey(roomNumber);
+        }
+
+        public static string RoomNumberToPartitionKey(int roomNumber) => (roomNumber / 100).ToString();
+
+        public static string RoomNumberToRowKey(int roomNumber) => roomNumber.ToString("D4");
     }
 }

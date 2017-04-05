@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.SignalR;
 using NagesenAsAService.Models;
-using Newtonsoft.Json.Linq;
 using Toolbelt.Web;
 
 namespace NagesenAsAService.Controllers
@@ -20,11 +17,11 @@ namespace NagesenAsAService.Controllers
 
         public static Random _Random = new Random(DateTime.UtcNow.Millisecond);
 
-        public AppDbContext Db { get; set; }
+        public IRoomRepository Repository { get; set; }
 
         public DefaultController()
         {
-            this.Db = new AppDbContext();
+            this.Repository = new AzureTableRoomRepository();
         }
 
         // GET: Default
@@ -33,39 +30,36 @@ namespace NagesenAsAService.Controllers
             return View();
         }
 
-        public ActionResult CreateNewRoom()
+        public async Task<ActionResult> CreateNewRoom()
         {
             var newRoomNumber = _Random
                 .ToEnumerable(r => r.Next(1000, 10000))
-                .First(n => this.Db.Rooms.Any(room => room.RoomNumber == n) == false);
+                .First(n => this.Repository.RoomExists(n) == false);
 
             var urlOfThisRoom = Url.AppUrl() + Url.RouteUrl("Room", new { id = newRoomNumber, action = UrlParameter.Optional });
             var bitly = Bitly.Default;
             var shortUrlOfThisRoom = bitly.Status == Bitly.StatusType.Available ?
 #if DEBUG
- bitly.ShortenUrl("http://nagesen.azurewebsites.net/Room/" + newRoomNumber.ToString()) : "http://j.mp/1bD9vPr";
+            bitly.ShortenUrl("http://nagesen.azurewebsites.net/Room/" + newRoomNumber.ToString()) : "http://j.mp/1bD9vPr";
 #else
             bitly.ShortenUrl(urlOfThisRoom) : "";
 #endif
 
-            this.Db.Rooms.Add(new Room
+            await this.Repository.AddRoomAsync(new Room(newRoomNumber)
             {
-                RoomNumber = newRoomNumber,
                 OwnerUserID = this.User.Identity.Name,
                 Title = "Room Number: " + newRoomNumber.ToString(),
                 Url = urlOfThisRoom,
                 ShortUrl = shortUrlOfThisRoom
             });
-            this.Db.SaveChanges();
 
             var boxUrl = Url.RouteUrl("Room", new { action = "Box", id = newRoomNumber });
             return Redirect(boxUrl);
         }
 
-        public ActionResult Box(int id)
+        public async Task<ActionResult> Box(int id)
         {
-            var room = this.Db.Rooms
-                .SingleOrDefault(_ => _.RoomNumber == id);
+            var room = await this.Repository.FindRoomAsync(id);
 
             if (room == null)
             {
@@ -75,10 +69,9 @@ namespace NagesenAsAService.Controllers
         }
 
         [HttpGet]
-        public ActionResult Settings(int id)
+        public async Task<ActionResult> Settings(int id)
         {
-            var room = this.Db.Rooms
-                .Single(_ => _.RoomNumber == id);
+            var room = await this.Repository.FindRoomAsync(id);
 
             return Json(new
             {
@@ -90,24 +83,21 @@ namespace NagesenAsAService.Controllers
         [HttpPut, ValidateAntiForgeryToken]
         public async Task<ActionResult> Settings(int id, string twitterHashtag, bool allowDisCoin)
         {
-            var isOwner = this.Db.Rooms
-                .Where(r => r.RoomNumber == id)
-                .Where(r => r.OwnerUserID == this.User.Identity.Name)
-                .Any();
+            var room = await this.Repository.FindRoomAsync(id);
+            if (room == null) return HttpNotFound();
+            var isOwner = room.OwnerUserID == this.User.Identity.Name;
             if (isOwner == false) return HttpNotFound();
 
-            await this.Db.Database.ExecuteSqlCommandAsync(@"
-                UPDATE Rooms SET TwitterHashtag = @p1, AllowDisCoin = @p2
-                WHERE RoomNumber = @p0",
-                id, twitterHashtag, allowDisCoin);
+            room.TwitterHashtag = twitterHashtag;
+            room.AllowDisCoin = allowDisCoin;
+            await this.Repository.UpdateRoomAsync(room);
 
             return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
-        public ActionResult Controller(int id)
+        public async Task<ActionResult> Controller(int id)
         {
-            var room = this.Db.Rooms
-                .SingleOrDefault(_ => _.RoomNumber == id);
+            var room = await this.Repository.FindRoomAsync(id);
 
             if (room == null)
             {
@@ -122,8 +112,7 @@ namespace NagesenAsAService.Controllers
             var hubContext = GlobalHost.ConnectionManager.GetHubContext<DefaultHub>();
             await DefaultHub.Throw(id, typeOfCoin, hubContext.Clients);
 
-            var room = this.Db.Rooms
-                .Single(_ => _.RoomNumber == id);
+            var room = await this.Repository.FindRoomAsync(id);
 
             return Json(new
             {
@@ -132,10 +121,9 @@ namespace NagesenAsAService.Controllers
         }
 
         [HttpGet, OutputCache(Duration = 0, NoStore = true)]
-        public ActionResult TwitterHashtag(int id)
+        public async Task<ActionResult> TwitterHashtag(int id)
         {
-            var room = this.Db.Rooms
-                .Single(_ => _.RoomNumber == id);
+            var room = await this.Repository.FindRoomAsync(id);
             return Json(new { twitterHashtag = room.TwitterHashtag }, JsonRequestBehavior.AllowGet);
         }
 
@@ -143,32 +131,24 @@ namespace NagesenAsAService.Controllers
         public async Task<ActionResult> ScreenShot(int id, string imageDataUrl)
         {
             var userID = this.User.Identity.Name;
-            var isOwner = this.Db.Rooms
-                .Where(_ => _.RoomNumber == id)
-                .Where(_ => _.OwnerUserID == userID)
-                .Any();
+            var room = await this.Repository.FindRoomAsync(id);
+            if (room == null) return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+            var isOwner = room.OwnerUserID == userID;
             if (isOwner == false) return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
 
             var image = Convert.FromBase64String(imageDataUrl.Split(',').Last());
-            await this.Db.Database.ExecuteSqlCommandAsync(
-                @"UPDATE Rooms SET 
-                ScreenSnapshot = @p1,
-                UpdateScreenSnapshotAt = GETDATE()
-                FROM Rooms WHERE RoomNumber = @p0",
-                id, image);
+            await this.Repository.SaveScreenShotAsync(id, image);
 
             return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
         [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Head)]
-        public ActionResult ScreenShot(int id)
+        public async Task<ActionResult> ScreenShot(int id, Guid? session)
         {
-            var updateScreenSnapshotAt = this.Db.Rooms
-                .Where(room => room.RoomNumber == id)
-                .Select(room => room.UpdateScreenSnapshotAt)
-                .SingleOrDefault();
+            var room = await this.Repository.FindRoomAsync(id);
+            var updateScreenSnapshotAt = room?.UpdateScreenSnapshotAt ?? DateTime.MaxValue;
 
-            if (updateScreenSnapshotAt == default(DateTime))
+            if (updateScreenSnapshotAt == DateTime.MaxValue || session.HasValue == false)
             {
                 return new CacheableContentResult("image/jpeg",
                     () =>
@@ -190,10 +170,9 @@ namespace NagesenAsAService.Controllers
                         if (Request.HttpMethod == "HEAD")
                             return new byte[0];
                         else
-                            return this.Db.Rooms
-                            .Where(room => room.RoomNumber == id)
-                            .Select(room => room.ScreenSnapshot)
-                            .Single();
+                        {
+                            return this.Repository.GetScreenShot(session.Value) ?? System.IO.File.ReadAllBytes(Server.MapPath("~/Content/images/UnavailableRoomNumber.jpg"));
+                        }
                     },
                     lastModified: updateScreenSnapshotAt,
                     cacheability: HttpCacheability.Public,
@@ -203,13 +182,10 @@ namespace NagesenAsAService.Controllers
         }
 
         [HttpGet]
-        public ActionResult TwitterShare(int id, string text, string url)
+        public async Task<ActionResult> TwitterShare(int id, string text, string url)
         {
-            var twitterHashtag = this.Db.Rooms
-                .Where(room => room.RoomNumber == id)
-                .Select(room => room.TwitterHashtag)
-                .First() ?? "";
-
+            var room = await this.Repository.FindRoomAsync(id);
+            var twitterHashtag = room?.TwitterHashtag ?? "";
             var twitterSharUrl = "https://twitter.com/share?";
             twitterSharUrl += "text=" + HttpUtility.UrlEncode(text);
             twitterSharUrl += "&url=" + HttpUtility.UrlEncode(url);
@@ -221,14 +197,12 @@ namespace NagesenAsAService.Controllers
             return Redirect(twitterSharUrl);
         }
 
-        public ActionResult WarmUp()
+        public async Task<ActionResult> WarmUp()
         {
             var bitly = Bitly.Default;
 
             var limit = DateTime.UtcNow.AddDays(-7);
-            var roomsToSweep = Db.Rooms.Where(room => room.CreatedAt < limit).ToList();
-            Db.Rooms.RemoveRange(roomsToSweep);
-            Db.SaveChanges();
+            await this.Repository.SweepRoomsAsync(limit);
 
             return new EmptyResult();
         }
