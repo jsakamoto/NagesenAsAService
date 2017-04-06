@@ -42,11 +42,11 @@
 
             <div class="field-container">
                 <label for="twitterHashtag">@Localize.TwitterHashtag #</label>
-                <input type="text" name="twitterHashtag" id="twitterHashtag" ng-model="twitterHashtag" autofocus />
+                <input type="text" name="twitterHashtag" id="twitterHashtag" ng-model="ctrl.settings.twitterHashtag" autofocus />
             </div>
             <div class="field-container">
                 <label for="allowDisCoin">
-                    <input type="checkbox" name="allowDisCoin" id="allowDisCoin" value="true" ng-model="allowDisCoin" />
+                    <input type="checkbox" name="allowDisCoin" id="allowDisCoin" value="true" ng-model="ctrl.settings.allowDisCoin" />
                     <input type="hidden" name="allowDisCoin" value="false" />
                     @Localize.AllowDisCoin
                 </label>

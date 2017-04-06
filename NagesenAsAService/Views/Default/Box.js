@@ -215,16 +215,20 @@ var NaaS;
     var Settings;
     (function (Settings) {
         var SettingsController = (function () {
-            function SettingsController($scope, $http) {
-                this.$scope = $scope;
+            //public twitterHashtag: string;
+            //public allowDisCoin: boolean;
+            function SettingsController($http) {
                 this.$http = $http;
+                this.settings = {
+                    twitterHashtag: '',
+                    allowDisCoin: false
+                };
             }
             SettingsController.prototype.DoModal = function () {
                 var _this = this;
                 this.$http.get(_app.apiBaseUrl + '/Settings')
                     .then(function (e) {
-                    _this.$scope.twitterHashtag = e.data.twitterHashtag;
-                    _this.$scope.allowDisCoin = e.data.allowDisCoin;
+                    _this.settings = e.data;
                     $('#settings-dialog, .modal-mask')
                         .fadeIn('normal', function (_) {
                         $('#settings-dialog *[autofocus]').focus();
@@ -235,7 +239,7 @@ var NaaS;
                 var _this = this;
                 this.$http.put(_app.apiBaseUrl + '/Settings', $('#settings-dialog .form').serialize(), { headers: { 'content-type': 'application/x-www-form-urlencoded' } }).then(function (_) {
                     var roomController = angular.element(document.getElementById('box')).controller();
-                    roomController.UpdateSettings(_this.$scope);
+                    roomController.UpdateSettings(_this.settings);
                     _this.Close();
                 });
             };
@@ -247,7 +251,7 @@ var NaaS;
             };
             return SettingsController;
         }());
-        theApp.controller('settingsController', ['$scope', '$http', SettingsController]);
+        theApp.controller('settingsController', ['$http', SettingsController]);
         $(function () {
             $('#lnk-settings').click(function (e) {
                 e.preventDefault();

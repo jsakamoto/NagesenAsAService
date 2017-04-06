@@ -17,10 +17,12 @@ declare function html2canvas(element: HTMLElement, options?: {
 }): void;
 
 namespace NaaS {
-    interface ISettingsScope extends ng.IScope {
+
+    interface Settings {
         twitterHashtag: string;
         allowDisCoin: boolean;
     }
+
     var theApp = angular.module('theApp', []);
 
     namespace Box {
@@ -116,7 +118,7 @@ namespace NaaS {
                 this.worker.addEventListener('message', this.OnWorkerMessage.bind(this));
             }
 
-            public UpdateSettings(settings: ISettingsScope): void {
+            public UpdateSettings(settings: Settings): void {
                 this.$scope.allowDisCoin = settings.allowDisCoin;
             }
 
@@ -282,14 +284,20 @@ namespace NaaS {
     namespace Settings {
 
         class SettingsController {
-            constructor(private $scope: ISettingsScope, private $http: ng.IHttpService) {
+
+            public settings: Settings;
+
+            constructor(private $http: ng.IHttpService) {
+                this.settings = {
+                    twitterHashtag: '',
+                    allowDisCoin: false
+                };
             }
 
             public DoModal(): void {
                 this.$http.get(_app.apiBaseUrl + '/Settings')
-                    .then(e => {
-                        this.$scope.twitterHashtag = (<ISettingsScope>e.data).twitterHashtag;
-                        this.$scope.allowDisCoin = (<ISettingsScope>e.data).allowDisCoin;
+                    .then((e: any) => {
+                        this.settings = e.data;
                         $('#settings-dialog, .modal-mask')
                             .fadeIn('normal', _ => {
                                 $('#settings-dialog *[autofocus]').focus();
@@ -303,7 +311,7 @@ namespace NaaS {
                     { headers: { 'content-type': 'application/x-www-form-urlencoded' } }
                 ).then(_ => {
                     var roomController = <Box.RoomController>angular.element(document.getElementById('box')).controller();
-                    roomController.UpdateSettings(this.$scope);
+                    roomController.UpdateSettings(this.settings);
                     this.Close();
                 });
             }
@@ -317,7 +325,7 @@ namespace NaaS {
             }
         }
 
-        theApp.controller('settingsController', ['$scope', '$http', SettingsController]);
+        theApp.controller('settingsController', ['$http', SettingsController]);
 
         $(() => {
             $('#lnk-settings').click(function (e) {
