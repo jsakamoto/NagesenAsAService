@@ -77,7 +77,7 @@ namespace NaaS {
             countOfDis: number;
         }
 
-        interface IScope extends ng.IScope {
+        interface RoomState {
             allowDisCoin: boolean;
             countOfLike: number;
             countOfDis: number;
@@ -94,7 +94,9 @@ namespace NaaS {
             private frameRate = 60;
             private worker: Worker;
 
-            constructor(private $scope: IScope, private $http: ng.IHttpService) {
+            public state: RoomState;
+
+            constructor(private $scope: ng.IScope, private $http: ng.IHttpService) {
                 var canvas = <HTMLCanvasElement>document.getElementById('canvas');
                 this.context = canvas.getContext('2d');
                 this.worldWidth = canvas.width;
@@ -106,10 +108,8 @@ namespace NaaS {
                 $.connection.hub
                     .start()
                     .then(() => this.hub.invoke('EnterRoom', _app.roomNumber))
-                    .then(r => $scope.$apply(() => {
-                        this.$scope.allowDisCoin = (<any>r).allowDisCoin;
-                        this.$scope.countOfLike = (<any>r).countOfLike;
-                        this.$scope.countOfDis = (<any>r).countOfDis;
+                    .then((roomState: RoomState) => $scope.$apply(() => {
+                        this.state = roomState;
                     }));
 
                 this.initWorld();
@@ -119,7 +119,7 @@ namespace NaaS {
             }
 
             public UpdateSettings(settings: Settings): void {
-                this.$scope.allowDisCoin = settings.allowDisCoin;
+                this.state.allowDisCoin = settings.allowDisCoin;
             }
 
             private OnThrow(data: ThrowingData): void {
@@ -151,8 +151,8 @@ namespace NaaS {
                 this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
 
                 this.$scope.$apply(() => {
-                    this.$scope.countOfLike = Math.max(this.$scope.countOfLike, data.countOfLike);
-                    this.$scope.countOfDis = Math.max(this.$scope.countOfDis, data.countOfDis);
+                    this.state.countOfLike = Math.max(this.state.countOfLike, data.countOfLike);
+                    this.state.countOfDis = Math.max(this.state.countOfDis, data.countOfDis);
                 });
             }
 
@@ -258,8 +258,8 @@ namespace NaaS {
 
             public tweet(): void {
                 var text =
-                    `この枠に${this.$scope.countOfLike}円分の投げ銭` +
-                    (this.$scope.allowDisCoin ? `と${this.$scope.countOfDis}Dis` : '') +
+                    `この枠に${this.state.countOfLike}円分の投げ銭` +
+                    (this.state.allowDisCoin ? `と${this.state.countOfDis}Dis` : '') +
                     `が集まりました☆`;
                 var url = _app.apiBaseUrl + '/TwitterShare?';
                 url += 'text=' + encodeURIComponent(text);
