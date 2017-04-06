@@ -1,7 +1,8 @@
 ﻿interface Window {
     postMessage(data: any): void;
 }
-module NaaS {
+
+namespace NaaS {
     class WorkerTimer {
         private timerID: number;
 

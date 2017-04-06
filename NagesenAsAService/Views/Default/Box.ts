@@ -1,4 +1,4 @@
-﻿module b2 {
+﻿namespace b2 {
     export import Vec2 = Box2D.Common.Math.b2Vec2;
     export import BodyDef = Box2D.Dynamics.b2BodyDef;
     export import Body = Box2D.Dynamics.b2Body;
@@ -16,14 +16,14 @@ declare function html2canvas(element: HTMLElement, options?: {
     width?: number;
 }): void;
 
-module NaaS {
+namespace NaaS {
     interface ISettingsScope extends ng.IScope {
         twitterHashtag: string;
         allowDisCoin: boolean;
     }
     var theApp = angular.module('theApp', []);
 
-    module Box {
+    namespace Box {
         class CoinAsset {
             public image: HTMLImageElement;
 
@@ -279,7 +279,7 @@ module NaaS {
         });
     }
 
-    module Settings {
+    namespace Settings {
 
         class SettingsController {
             constructor(private $scope: ISettingsScope, private $http: ng.IHttpService) {

@@ -1,4 +1,4 @@
-﻿module NaaS {
+﻿namespace NaaS {
 
     interface INagesenControllerScope extends ng.IScope {
         countOfCoin: number;

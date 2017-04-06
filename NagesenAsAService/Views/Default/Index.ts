@@ -1,4 +1,4 @@
-﻿module NaaS {
+﻿namespace NaaS {
     var app = angular.module('app', []);
     app.controller('indexController', function ($scope: any) {
         $scope.roomNumber = null;

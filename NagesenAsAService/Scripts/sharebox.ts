@@ -11,7 +11,7 @@
     };
 };
 
-module NaaS {
+namespace NaaS {
 
     // "Share" box and QR Code - UI effect
     $(() => {
