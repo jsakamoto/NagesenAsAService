@@ -62,18 +62,35 @@ var NaaS;
                 this.context = canvas.getContext('2d');
                 this.worldWidth = canvas.width;
                 this.worldHeight = canvas.height;
-                this.hub = $.connection.hub.createHubProxy('DefaultHub');
+                var hubConn = $.hubConnection();
+                // SiganlR 切断時の再接続処理を配線
+                var reconnectTimer = { id: null };
+                hubConn.stateChanged(function (args) {
+                    if (args.newState == 4 /* Disconnected */) {
+                        if (reconnectTimer.id == null) {
+                            reconnectTimer.id = setInterval(function () { return _this.startHubConnection(hubConn); }, 5000);
+                        }
+                    }
+                    else if (reconnectTimer.id != null) {
+                        clearInterval(reconnectTimer.id);
+                        reconnectTimer.id = null;
+                    }
+                });
+                this.hub = hubConn.createHubProxy('DefaultHub');
                 this.hub.on('Throw', this.OnThrow.bind(this));
-                $.connection.hub
-                    .start()
-                    .then(function () { return _this.hub.invoke('EnterRoom', _app.roomNumber); })
-                    .then(function (roomState) { return $scope.$apply(function () {
-                    _this.state = roomState;
-                }); });
+                this.startHubConnection(hubConn);
                 this.initWorld();
                 this.worker = new Worker('/Views/Default/BoxWorker.js');
                 this.worker.addEventListener('message', this.OnWorkerMessage.bind(this));
             }
+            RoomController.prototype.startHubConnection = function (hubConn) {
+                var _this = this;
+                hubConn.start()
+                    .then(function () { return _this.hub.invoke('EnterRoom', _app.roomNumber); })
+                    .then(function (roomState) { return _this.$scope.$apply(function () {
+                    _this.state = roomState;
+                }); });
+            };
             RoomController.prototype.UpdateSettings = function (settings) {
                 this.state.allowDisCoin = settings.allowDisCoin;
             };
