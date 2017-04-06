@@ -1,4 +1,4 @@
-﻿module b2 {
+﻿namespace b2 {
     export import Vec2 = Box2D.Common.Math.b2Vec2;
     export import BodyDef = Box2D.Dynamics.b2BodyDef;
     export import Body = Box2D.Dynamics.b2Body;
@@ -16,14 +16,16 @@ declare function html2canvas(element: HTMLElement, options?: {
     width?: number;
 }): void;
 
-module NaaS {
-    interface ISettingsScope extends ng.IScope {
+namespace NaaS {
+
+    interface Settings {
         twitterHashtag: string;
         allowDisCoin: boolean;
     }
+
     var theApp = angular.module('theApp', []);
 
-    module Box {
+    namespace Box {
         class CoinAsset {
             public image: HTMLImageElement;
 
@@ -75,7 +77,7 @@ module NaaS {
             countOfDis: number;
         }
 
-        interface IScope extends ng.IScope {
+        interface RoomState {
             allowDisCoin: boolean;
             countOfLike: number;
             countOfDis: number;
@@ -92,7 +94,9 @@ module NaaS {
             private frameRate = 60;
             private worker: Worker;
 
-            constructor(private $scope: IScope, private $http: ng.IHttpService) {
+            public state: RoomState;
+
+            constructor(private $scope: ng.IScope, private $http: ng.IHttpService) {
                 var canvas = <HTMLCanvasElement>document.getElementById('canvas');
                 this.context = canvas.getContext('2d');
                 this.worldWidth = canvas.width;
@@ -104,10 +108,8 @@ module NaaS {
                 $.connection.hub
                     .start()
                     .then(() => this.hub.invoke('EnterRoom', _app.roomNumber))
-                    .then(r => $scope.$apply(() => {
-                        this.$scope.allowDisCoin = (<any>r).allowDisCoin;
-                        this.$scope.countOfLike = (<any>r).countOfLike;
-                        this.$scope.countOfDis = (<any>r).countOfDis;
+                    .then((roomState: RoomState) => $scope.$apply(() => {
+                        this.state = roomState;
                     }));
 
                 this.initWorld();
@@ -116,8 +118,8 @@ module NaaS {
                 this.worker.addEventListener('message', this.OnWorkerMessage.bind(this));
             }
 
-            public UpdateSettings(settings: ISettingsScope): void {
-                this.$scope.allowDisCoin = settings.allowDisCoin;
+            public UpdateSettings(settings: Settings): void {
+                this.state.allowDisCoin = settings.allowDisCoin;
             }
 
             private OnThrow(data: ThrowingData): void {
@@ -149,8 +151,8 @@ module NaaS {
                 this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
 
                 this.$scope.$apply(() => {
-                    this.$scope.countOfLike = Math.max(this.$scope.countOfLike, data.countOfLike);
-                    this.$scope.countOfDis = Math.max(this.$scope.countOfDis, data.countOfDis);
+                    this.state.countOfLike = Math.max(this.state.countOfLike, data.countOfLike);
+                    this.state.countOfDis = Math.max(this.state.countOfDis, data.countOfDis);
                 });
             }
 
@@ -256,8 +258,8 @@ module NaaS {
 
             public tweet(): void {
                 var text =
-                    `この枠に${this.$scope.countOfLike}円分の投げ銭` +
-                    (this.$scope.allowDisCoin ? `と${this.$scope.countOfDis}Dis` : '') +
+                    `この枠に${this.state.countOfLike}円分の投げ銭` +
+                    (this.state.allowDisCoin ? `と${this.state.countOfDis}Dis` : '') +
                     `が集まりました☆`;
                 var url = _app.apiBaseUrl + '/TwitterShare?';
                 url += 'text=' + encodeURIComponent(text);
@@ -279,17 +281,23 @@ module NaaS {
         });
     }
 
-    module Settings {
+    namespace Settings {
 
         class SettingsController {
-            constructor(private $scope: ISettingsScope, private $http: ng.IHttpService) {
+
+            public settings: Settings;
+
+            constructor(private $http: ng.IHttpService) {
+                this.settings = {
+                    twitterHashtag: '',
+                    allowDisCoin: false
+                };
             }
 
             public DoModal(): void {
                 this.$http.get(_app.apiBaseUrl + '/Settings')
-                    .then(e => {
-                        this.$scope.twitterHashtag = (<ISettingsScope>e.data).twitterHashtag;
-                        this.$scope.allowDisCoin = (<ISettingsScope>e.data).allowDisCoin;
+                    .then((e: any) => {
+                        this.settings = e.data;
                         $('#settings-dialog, .modal-mask')
                             .fadeIn('normal', _ => {
                                 $('#settings-dialog *[autofocus]').focus();
@@ -303,7 +311,7 @@ module NaaS {
                     { headers: { 'content-type': 'application/x-www-form-urlencoded' } }
                 ).then(_ => {
                     var roomController = <Box.RoomController>angular.element(document.getElementById('box')).controller();
-                    roomController.UpdateSettings(this.$scope);
+                    roomController.UpdateSettings(this.settings);
                     this.Close();
                 });
             }
@@ -317,7 +325,7 @@ module NaaS {
             }
         }
 
-        theApp.controller('settingsController', ['$scope', '$http', SettingsController]);
+        theApp.controller('settingsController', ['$http', SettingsController]);
 
         $(() => {
             $('#lnk-settings').click(function (e) {

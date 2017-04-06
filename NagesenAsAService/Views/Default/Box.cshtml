@@ -22,12 +22,12 @@
 
     <div id="box" ng-controller="roomController as ctrl">
 
-        <div id="score-box" ng-class="'dis-coin '+ (allowDisCoin ? 'allow' : 'deny')">
+        <div id="score-box" ng-class="'dis-coin '+ (ctrl.state.allowDisCoin ? 'allow' : 'deny')">
             <div class="count-of-coin like">
-                <span ng-bind="countOfLike|number"></span> Yen
+                <span ng-bind="ctrl.state.countOfLike | number"></span> Yen
             </div>
             <div class="count-of-coin dis">
-                <span ng-bind="countOfDis|number"></span> Dis
+                <span ng-bind="ctrl.state.countOfDis | number"></span> Dis
             </div>
         </div>
 
@@ -42,11 +42,11 @@
 
             <div class="field-container">
                 <label for="twitterHashtag">@Localize.TwitterHashtag #</label>
-                <input type="text" name="twitterHashtag" id="twitterHashtag" ng-model="twitterHashtag" autofocus />
+                <input type="text" name="twitterHashtag" id="twitterHashtag" ng-model="ctrl.settings.twitterHashtag" autofocus />
             </div>
             <div class="field-container">
                 <label for="allowDisCoin">
-                    <input type="checkbox" name="allowDisCoin" id="allowDisCoin" value="true" ng-model="allowDisCoin" />
+                    <input type="checkbox" name="allowDisCoin" id="allowDisCoin" value="true" ng-model="ctrl.settings.allowDisCoin" />
                     <input type="hidden" name="allowDisCoin" value="false" />
                     @Localize.AllowDisCoin
                 </label>

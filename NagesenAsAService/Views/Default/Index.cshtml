@@ -12,10 +12,10 @@
             @Localize.EnterRoomNumber
         </p>
         <p>
-            <input type="number" value="" autofocus required class="room-number" ng-model="roomNumber" />
+            <input type="number" value="" autofocus required class="room-number" ng-model="ctrl.roomNumber" />
         </p>
         <p>
-            <a ng-href="/Room/{{roomNumber}}" ng-class="'btn btn-primary ' + (roomNumber.toString().length != 4 ? 'disabled' : '')">
+            <a ng-href="/Room/{{ctrl.roomNumber}}" ng-class="'btn btn-primary ' + (ctrl.inputIsNotFull ? 'disabled' : '')">
                 @Localize.Enter
             </a>
         </p>

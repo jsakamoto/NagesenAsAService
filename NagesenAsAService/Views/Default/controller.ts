@@ -1,40 +1,36 @@
-﻿module NaaS {
-
-    interface INagesenControllerScope extends ng.IScope {
-        countOfCoin: number;
-        countOfDis: number;
-        allowDisCoin: boolean;
-    }
+﻿namespace NaaS {
 
     class NagesenControllerController {
-        $scope: INagesenControllerScope;
-        $http: ng.IHttpService;
-        constructor($scope: INagesenControllerScope, $http: ng.IHttpService) {
-            this.$scope = $scope;
-            this.$scope.countOfCoin = 0;
-            this.$scope.countOfDis = 0;
-            this.$scope.allowDisCoin = _app.allowDisCoin;
+        public countOfCoin: number;
+        public countOfDis: number;
+        public allowDisCoin: boolean;
+        private $http: ng.IHttpService;
+
+        constructor($http: ng.IHttpService) {
+            this.countOfCoin = 0;
+            this.countOfDis = 0;
+            this.allowDisCoin = _app.allowDisCoin;
             this.$http = $http;
         }
 
         public countUpCoin(price: number): void {
-            this.$scope.countOfCoin += price;
+            this.countOfCoin += price;
             this.$http
                 .put(location.pathname + '/throw', { typeOfCoin: CoinType.Like })
-                .then(e => this.$scope.allowDisCoin = (<any>e.data).allowDisCoin);
+                .then(e => this.allowDisCoin = (<any>e.data).allowDisCoin);
         }
 
         public countUpDis(price: number): void {
-            this.$scope.countOfDis += price;
+            this.countOfDis += price;
             this.$http
                 .put(location.pathname + '/throw', { typeOfCoin: CoinType.Dis })
-                .then(e => this.$scope.allowDisCoin = (<any>e.data).allowDisCoin);
+                .then(e => this.allowDisCoin = (<any>e.data).allowDisCoin);
         }
 
         public tweet(): void {
             var text =
-                `この枠に${this.$scope.countOfCoin}円分の投げ銭` +
-                (this.$scope.allowDisCoin ? `と${this.$scope.countOfDis}Dis` : '') +
+                `この枠に${this.countOfCoin}円分の投げ銭` +
+                (this.allowDisCoin ? `と${this.countOfDis}Dis` : '') +
                 `をしました☆`;
             var url = _app.apiBaseUrl + '/TwitterShare?';
             url += 'text=' + encodeURIComponent(text);
@@ -44,7 +40,7 @@
     }
 
     var theApp = angular.module('theApp', []);
-    theApp.controller('controllerController', NagesenControllerController);
+    theApp.controller('controllerController', ['$http', NagesenControllerController]);
 }
 
 $(() => {

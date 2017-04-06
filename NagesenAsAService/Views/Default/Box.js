@@ -67,17 +67,15 @@ var NaaS;
                 $.connection.hub
                     .start()
                     .then(function () { return _this.hub.invoke('EnterRoom', _app.roomNumber); })
-                    .then(function (r) { return $scope.$apply(function () {
-                    _this.$scope.allowDisCoin = r.allowDisCoin;
-                    _this.$scope.countOfLike = r.countOfLike;
-                    _this.$scope.countOfDis = r.countOfDis;
+                    .then(function (roomState) { return $scope.$apply(function () {
+                    _this.state = roomState;
                 }); });
                 this.initWorld();
                 this.worker = new Worker('/Views/Default/BoxWorker.js');
                 this.worker.addEventListener('message', this.OnWorkerMessage.bind(this));
             }
             RoomController.prototype.UpdateSettings = function (settings) {
-                this.$scope.allowDisCoin = settings.allowDisCoin;
+                this.state.allowDisCoin = settings.allowDisCoin;
             };
             RoomController.prototype.OnThrow = function (data) {
                 this.worker.postMessage({ cmd: 'Enqueue', data: data });
@@ -100,8 +98,8 @@ var NaaS;
                 (new Audio(coinAsset.seUrl)).play();
                 this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
                 this.$scope.$apply(function () {
-                    _this.$scope.countOfLike = Math.max(_this.$scope.countOfLike, data.countOfLike);
-                    _this.$scope.countOfDis = Math.max(_this.$scope.countOfDis, data.countOfDis);
+                    _this.state.countOfLike = Math.max(_this.state.countOfLike, data.countOfLike);
+                    _this.state.countOfDis = Math.max(_this.state.countOfDis, data.countOfDis);
                 });
             };
             RoomController.prototype.getDebugDraw = function () {
@@ -191,8 +189,8 @@ var NaaS;
                 return isAwake;
             };
             RoomController.prototype.tweet = function () {
-                var text = "\u3053\u306E\u67A0\u306B" + this.$scope.countOfLike + "\u5186\u5206\u306E\u6295\u3052\u92AD" +
-                    (this.$scope.allowDisCoin ? "\u3068" + this.$scope.countOfDis + "Dis" : '') +
+                var text = "\u3053\u306E\u67A0\u306B" + this.state.countOfLike + "\u5186\u5206\u306E\u6295\u3052\u92AD" +
+                    (this.state.allowDisCoin ? "\u3068" + this.state.countOfDis + "Dis" : '') +
                     "\u304C\u96C6\u307E\u308A\u307E\u3057\u305F\u2606";
                 var url = _app.apiBaseUrl + '/TwitterShare?';
                 url += 'text=' + encodeURIComponent(text);
@@ -215,16 +213,18 @@ var NaaS;
     var Settings;
     (function (Settings) {
         var SettingsController = (function () {
-            function SettingsController($scope, $http) {
-                this.$scope = $scope;
+            function SettingsController($http) {
                 this.$http = $http;
+                this.settings = {
+                    twitterHashtag: '',
+                    allowDisCoin: false
+                };
             }
             SettingsController.prototype.DoModal = function () {
                 var _this = this;
                 this.$http.get(_app.apiBaseUrl + '/Settings')
                     .then(function (e) {
-                    _this.$scope.twitterHashtag = e.data.twitterHashtag;
-                    _this.$scope.allowDisCoin = e.data.allowDisCoin;
+                    _this.settings = e.data;
                     $('#settings-dialog, .modal-mask')
                         .fadeIn('normal', function (_) {
                         $('#settings-dialog *[autofocus]').focus();
@@ -235,7 +235,7 @@ var NaaS;
                 var _this = this;
                 this.$http.put(_app.apiBaseUrl + '/Settings', $('#settings-dialog .form').serialize(), { headers: { 'content-type': 'application/x-www-form-urlencoded' } }).then(function (_) {
                     var roomController = angular.element(document.getElementById('box')).controller();
-                    roomController.UpdateSettings(_this.$scope);
+                    roomController.UpdateSettings(_this.settings);
                     _this.Close();
                 });
             };
@@ -247,7 +247,7 @@ var NaaS;
             };
             return SettingsController;
         }());
-        theApp.controller('settingsController', ['$scope', '$http', SettingsController]);
+        theApp.controller('settingsController', ['$http', SettingsController]);
         $(function () {
             $('#lnk-settings').click(function (e) {
                 e.preventDefault();
