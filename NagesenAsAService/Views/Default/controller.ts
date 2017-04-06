@@ -40,7 +40,7 @@
     }
 
     var theApp = angular.module('theApp', []);
-    theApp.controller('controllerController', NagesenControllerController);
+    theApp.controller('controllerController', ['$http', NagesenControllerController]);
 }
 
 $(() => {

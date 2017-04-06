@@ -33,7 +33,7 @@ var NaaS;
         return NagesenControllerController;
     }());
     var theApp = angular.module('theApp', []);
-    theApp.controller('controllerController', NagesenControllerController);
+    theApp.controller('controllerController', ['$http', NagesenControllerController]);
 })(NaaS || (NaaS = {}));
 $(function () {
     $('img.coin').on('click', function (e) {
