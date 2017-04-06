@@ -14,14 +14,14 @@
 }
 
 <div id="controller" ng-app="theApp" ng-controller="controllerController as ctrl">
-    <div id="items" ng-class="'dis-coin '+ (allowDisCoin ? 'allow' : 'deny')">
+    <div id="items" ng-class="'dis-coin '+ (ctrl.allowDisCoin ? 'allow' : 'deny')">
         <div id="coin" class="item">
             <img class="img-throwing coin" src="~/Content/images/coin.png" ng-click="ctrl.countUpCoin(10)">
-            <div><span ng-bind="countOfCoin|number">0</span> Yen</div>
+            <div><span ng-bind="ctrl.countOfCoin | number">0</span> Yen</div>
         </div>
         <div id="stone" class="item">
             <img class="img-throwing coin" src="~/Content/images/stone.png" ng-click="ctrl.countUpDis(10)">
-            <div><span ng-bind="countOfDis|number">0</span> Dis</div>
+            <div><span ng-bind="ctrl.countOfDis | number">0</span> Dis</div>
         </div>
     </div>
     <div id="buttons">
