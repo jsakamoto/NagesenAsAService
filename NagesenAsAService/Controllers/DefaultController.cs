@@ -80,21 +80,6 @@ namespace NagesenAsAService.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPut, ValidateAntiForgeryToken]
-        public async Task<ActionResult> Settings(int id, string twitterHashtag, bool allowDisCoin)
-        {
-            var room = await this.Repository.FindRoomAsync(id);
-            if (room == null) return HttpNotFound();
-            var isOwner = room.OwnerUserID == this.User.Identity.Name;
-            if (isOwner == false) return HttpNotFound();
-
-            room.TwitterHashtag = twitterHashtag;
-            room.AllowDisCoin = allowDisCoin;
-            await this.Repository.UpdateRoomAsync(room);
-
-            return new HttpStatusCodeResult(HttpStatusCode.OK);
-        }
-
         public async Task<ActionResult> Controller(int id)
         {
             var room = await this.Repository.FindRoomAsync(id);

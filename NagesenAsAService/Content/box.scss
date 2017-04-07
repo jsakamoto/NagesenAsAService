@@ -1,0 +1,147 @@
+﻿body, #box {
+    background-image: url(images/bg.png);
+}
+
+header {
+
+    #settings-button {
+        position: absolute;
+        right: 0;
+        width: 3em;
+        height: 3em;
+        line-height: 3.7em;
+        color: #888;
+        cursor: pointer;
+
+        &:hover {
+            color: #000;
+        }
+    }
+}
+
+.main {
+    width: auto;
+}
+
+#box-container {
+    position: absolute;
+    width: auto;
+    top: 3em;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    overflow: auto;
+    text-align: center;
+}
+
+#box {
+    position: relative;
+    margin: 0 auto;
+    margin-top: 1em;
+    width: 802px;
+}
+
+#score-box {
+    background-color: rgba(0,0,0,0.3);
+    width: 6.7em;
+    position: absolute;
+    top: 1em;
+    left: 680px;
+    -moz-transition: all linear 0.2s;
+    -o-transition: all linear 0.2s;
+    -webkit-transition: all linear 0.2s;
+    transition: all linear 0.2s;
+    z-index: 1;
+
+    .count-of-coin {
+        text-align: right;
+        padding: 0.3em;
+        color: white;
+        font-size: 95%;
+        background-size: 1.3em;
+        background-position: 0.3em center;
+    }
+
+    .count-of-coin.like {
+        background-image: url(images/coin.png);
+    }
+
+    .count-of-coin.dis {
+        display: none;
+        background-image: url(images/stone.png);
+    }
+
+    &.dis-coin.allow .count-of-coin.dis {
+        display: block;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    #score-box {
+        left: 1em;
+    }
+}
+
+#canvas {
+    width: auto;
+    height: auto;
+    border: solid 1px red;
+    border-top: none;
+}
+
+#lnk-tweet {
+    background-color: #1ab2e8;
+    top: 0;
+    bottom: 0;
+    position: absolute;
+    margin: auto;
+    margin-left: 36px;
+    display: inline-block;
+    height: 28px;
+    line-height: 28px;
+    width: 28px;
+    color: white;
+}
+
+/* Settings */
+
+#settings-container {
+    $settings-width: 15rem;
+    position: absolute;
+    width: 0;
+    top: 3em;
+    bottom: 0;
+    right: 0;
+    border: solid 1px #ccc;
+    background-color: #eee;
+    z-index: 2;
+    text-align: left;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -moz-transition: width ease-out 0.2s;
+    -o-transition: width ease-out 0.2s;
+    -webkit-transition: width ease-out 0.2s;
+    transition: width ease-out 0.2s;
+
+    &.visible {
+        width: $settings-width;
+    }
+
+    #settings-content {
+        width: $settings-width;
+
+        .menu-item {
+            border-bottom: solid 1px #ccc;
+            padding: 1em 0 1em 1em;
+        }
+    }
+
+    label {
+        cursor: pointer;
+    }
+
+    input {
+        display: inline;
+        width: auto;
+    }
+}

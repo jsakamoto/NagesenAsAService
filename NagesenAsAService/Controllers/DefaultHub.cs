@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Helpers;
 using NagesenAsAService.Models;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
@@ -26,6 +22,21 @@ namespace NagesenAsAService.Controllers
                 countOfLike = room.CountOfNageSen,
                 countOfDis = room.CountOfAoriSen
             };
+        }
+
+        public async Task UpdateSettings(int roomNumber, string twitterHashtag, bool allowDisCoin)
+        {
+            var repository = new AzureTableRoomRepository();
+            var room = await repository.FindRoomAsync(roomNumber);
+            if (room == null) return;
+            var isOwner = room.OwnerUserID == this.Context.User.Identity.Name;
+            if (isOwner == false) return;
+
+            room.TwitterHashtag = twitterHashtag;
+            room.AllowDisCoin = allowDisCoin;
+            await repository.UpdateRoomAsync(room);
+
+            Clients.Group(roomNumber.ToString()).UpdatedSettings(new { twitterHashtag, allowDisCoin });
         }
 
         public void Throw(int roomNumber, CoinType typeOfCoin)
