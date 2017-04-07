@@ -319,6 +319,12 @@
     <Content Include="Views\Default\Index.js">
       <DependentUpon>Index.ts</DependentUpon>
     </Content>
+    <Content Include="Views\Default\RoomStateService.js">
+      <DependentUpon>RoomStateService.ts</DependentUpon>
+    </Content>
+    <Content Include="Views\Default\RoomStateService.js.map">
+      <DependentUpon>RoomStateService.ts</DependentUpon>
+    </Content>
     <Content Include="Views\Default\SettingsMenuController.js">
       <DependentUpon>SettingsMenuController.ts</DependentUpon>
     </Content>
