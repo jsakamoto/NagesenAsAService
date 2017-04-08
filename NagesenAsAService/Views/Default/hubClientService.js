@@ -26,6 +26,13 @@ var NaaS;
                     roomContext.allowDisCoin = newSettings.allowDisCoin;
                 });
             });
+            this.hub.on('ResetedRoom', function (newSessionID) {
+                $rootScope.$apply(function () {
+                    roomContext.sessionID = newSessionID;
+                    roomContext.countOfLike = 0;
+                    roomContext.countOfDis = 0;
+                });
+            });
             this.startHubConnection(hubConn);
         }
         HubClientService.prototype.startHubConnection = function (hubConn) {

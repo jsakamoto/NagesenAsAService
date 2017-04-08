@@ -127,43 +127,13 @@ namespace NagesenAsAService.Controllers
             return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
-        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Head)]
-        public async Task<ActionResult> ScreenShot(int id, Guid? session)
+        [HttpGet]
+        public ActionResult ScreenShot(int id, Guid? session)
         {
-            var room = await this.Repository.FindRoomAsync(id);
-            var updateScreenSnapshotAt = room?.UpdateScreenSnapshotAt ?? DateTime.MaxValue;
-
-            if (updateScreenSnapshotAt == DateTime.MaxValue || session.HasValue == false)
-            {
-                return new CacheableContentResult("image/jpeg",
-                    () =>
-                    {
-                        if (Request.HttpMethod == "HEAD")
-                            return new byte[0];
-                        else
-                            return System.IO.File.ReadAllBytes(Server.MapPath("~/Content/images/UnavailableRoomNumber.jpg"));
-                    },
-                    cacheability: HttpCacheability.Public,
-                    etag: id.ToString()
-                );
-            }
-            else
-            {
-                return new CacheableContentResult("image/jpeg",
-                    () =>
-                    {
-                        if (Request.HttpMethod == "HEAD")
-                            return new byte[0];
-                        else
-                        {
-                            return this.Repository.GetScreenShot(session.Value) ?? System.IO.File.ReadAllBytes(Server.MapPath("~/Content/images/UnavailableRoomNumber.jpg"));
-                        }
-                    },
-                    lastModified: updateScreenSnapshotAt,
-                    cacheability: HttpCacheability.Public,
-                    etag: id.ToString()
-                );
-            }
+            var imageBytes = default(byte[]);
+            if (session.HasValue) imageBytes = this.Repository.GetScreenShot(session.Value);
+            if (imageBytes == null) imageBytes = System.IO.File.ReadAllBytes(Server.MapPath("~/Content/images/UnavailableRoomNumber.jpg"));
+            return File(imageBytes, "image/jpeg");
         }
 
         [HttpGet]

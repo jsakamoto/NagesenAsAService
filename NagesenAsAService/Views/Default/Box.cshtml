@@ -48,6 +48,9 @@
                 <label for="twitterHashtag">@Localize.TwitterHashtag #</label>
                 <input type="text" id="twitterHashtag" ng-model="ctrl.roomContext.twitterHashtag"/>
             </div>
+            <div class="menu-item">
+                <button id="reset-room" ng-click="ctrl.resetRoom()">@Localize.ResetRoom</button>
+            </div>
         </div>
     </div>
 </div>
@@ -58,6 +61,7 @@
         var _app = _app || {};
         _app.localize = _app.localize || {};
         _app.localize.IfYouLeaveThisPageYouLostCoinsImage = '@Localize.IfYouLeaveThisPageYouLostCoinsImage';
+        _app.localize.ConfirmResetRoom = '@Localize.ConfirmResetRoom';
     </script>
     @Scripts.Render("~/bundles/box-js")
     <script src="~/Scripts/sharebox.js"></script>

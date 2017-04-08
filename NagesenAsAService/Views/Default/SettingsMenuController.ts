@@ -21,13 +21,19 @@
         }
 
         public toggleVisible(): void {
-            this.$scope.$apply(() => {
+            this.$scope.$applyAsync(() => {
                 this.visible = !this.visible;
             });
         }
 
         public hide(): void {
-            this.$scope.$apply(() => this.visible = false);
+            this.$scope.$applyAsync(() => this.visible = false);
+        }
+
+        public resetRoom(): void {
+            if (confirm(_app.localize.ConfirmResetRoom) == false) return;
+            this.hubClient.hub.invoke('ResetRoom', this.roomContext.roomNumber);
+            this.hide();
         }
     }
     angular.module('theApp').controller('settingsMenuController', ['roomContext', 'hubClient', '$scope', SettingsMenuController]);

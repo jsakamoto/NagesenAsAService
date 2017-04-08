@@ -144,4 +144,18 @@ header {
         display: inline;
         width: auto;
     }
+
+    input[type=text] {
+        width: $settings-width - 2rem;
+    }
+
+    #reset-room {
+        width: $settings-width - 2rem;
+        color: #fff;
+        background-color: darkred;
+        border: none;
+        -moz-border-radius: 4px;
+        -webkit-border-radius: 4px;
+        border-radius: 4px;
+    }
 }

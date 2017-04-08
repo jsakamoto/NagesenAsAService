@@ -39,6 +39,13 @@
                     roomContext.allowDisCoin = newSettings.allowDisCoin;
                 });
             });
+            this.hub.on('ResetedRoom', newSessionID => {
+                $rootScope.$apply(() => {
+                    roomContext.sessionID = newSessionID;
+                    roomContext.countOfLike = 0;
+                    roomContext.countOfDis = 0;
+                });
+            });
 
             this.startHubConnection(hubConn);
         }

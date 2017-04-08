@@ -95,8 +95,11 @@ namespace NaaS {
 
                 this.hubClient.hub.on('Throw', this.OnThrow.bind(this));
 
-                this.initWorld();
+                $scope.$watch(() => roomContext.sessionID, (newVal, oldVal) => {
+                    if (newVal != '' && oldVal != '') this.initWorld();
+                });
 
+                this.initWorld();
                 this.worker = new Worker('/Views/Default/BoxWorker.js');
                 this.worker.addEventListener('message', this.OnWorkerMessage.bind(this));
             }
@@ -155,6 +158,9 @@ namespace NaaS {
                 this.createFixedBox(this.worldWidth - 2, 0, 2.0, this.worldHeight);
 
                 this.world.SetDebugDraw(this.getDebugDraw());
+
+                this.world.ClearForces();
+                this.render();
             }
 
             private stepWorld() {

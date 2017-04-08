@@ -16,13 +16,19 @@ var NaaS;
         }
         SettingsMenuController.prototype.toggleVisible = function () {
             var _this = this;
-            this.$scope.$apply(function () {
+            this.$scope.$applyAsync(function () {
                 _this.visible = !_this.visible;
             });
         };
         SettingsMenuController.prototype.hide = function () {
             var _this = this;
-            this.$scope.$apply(function () { return _this.visible = false; });
+            this.$scope.$applyAsync(function () { return _this.visible = false; });
+        };
+        SettingsMenuController.prototype.resetRoom = function () {
+            if (confirm(_app.localize.ConfirmResetRoom) == false)
+                return;
+            this.hubClient.hub.invoke('ResetRoom', this.roomContext.roomNumber);
+            this.hide();
         };
         return SettingsMenuController;
     }());

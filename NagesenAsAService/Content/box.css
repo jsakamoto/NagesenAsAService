@@ -109,4 +109,14 @@ header #settings-button {
   #settings-container input {
     display: inline;
     width: auto; }
+  #settings-container input[type=text] {
+    width: 13rem; }
+  #settings-container #reset-room {
+    width: 13rem;
+    color: #fff;
+    background-color: darkred;
+    border: none;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px; }
 

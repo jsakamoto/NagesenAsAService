@@ -123,6 +123,9 @@
   <data name="Cancel" xml:space="preserve">
     <value>キャンセル</value>
   </data>
+  <data name="ConfirmResetRoom" xml:space="preserve">
+    <value>この部屋の投げ銭をリセットしてもよろしいですか? (投げ銭の数が 0 になります)</value>
+  </data>
   <data name="Enter" xml:space="preserve">
     <value>入場</value>
   </data>
@@ -143,6 +146,9 @@
   </data>
   <data name="PleaseGoBackToHomeAndEnterCorrectRoomNumber" xml:space="preserve">
     <value>&lt;a href='{0}'&gt;ホームに戻って&lt;/a&gt;正しい部屋番号を入力しなおすか、</value>
+  </data>
+  <data name="ResetRoom" xml:space="preserve">
+    <value>リセット</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>設定</value>
