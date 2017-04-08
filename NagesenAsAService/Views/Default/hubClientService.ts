@@ -33,6 +33,12 @@
             });
 
             this.hub = hubConn.createHubProxy('DefaultHub');
+            this.hub.on('UpdatedSettings', newSettings => {
+                $rootScope.$apply(() => {
+                    roomContext.twitterHashtag = newSettings.twitterHashtag;
+                    roomContext.allowDisCoin = newSettings.allowDisCoin;
+                });
+            });
 
             this.startHubConnection(hubConn);
         }

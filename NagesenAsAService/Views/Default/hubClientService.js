@@ -20,6 +20,12 @@ var NaaS;
                 }
             });
             this.hub = hubConn.createHubProxy('DefaultHub');
+            this.hub.on('UpdatedSettings', function (newSettings) {
+                $rootScope.$apply(function () {
+                    roomContext.twitterHashtag = newSettings.twitterHashtag;
+                    roomContext.allowDisCoin = newSettings.allowDisCoin;
+                });
+            });
             this.startHubConnection(hubConn);
         }
         HubClientService.prototype.startHubConnection = function (hubConn) {
