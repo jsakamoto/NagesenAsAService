@@ -319,23 +319,17 @@
     <Content Include="Views\Default\Index.js">
       <DependentUpon>Index.ts</DependentUpon>
     </Content>
-    <Content Include="Views\Default\RoomStateService.js">
-      <DependentUpon>RoomStateService.ts</DependentUpon>
+    <Content Include="Views\Default\RoomContextService.js">
+      <DependentUpon>RoomContextService.ts</DependentUpon>
     </Content>
-    <Content Include="Views\Default\RoomStateService.js.map">
-      <DependentUpon>RoomStateService.ts</DependentUpon>
+    <Content Include="Views\Default\RoomContextService.js.map">
+      <DependentUpon>RoomContextService.ts</DependentUpon>
     </Content>
     <Content Include="Views\Default\SettingsMenuController.js">
       <DependentUpon>SettingsMenuController.ts</DependentUpon>
     </Content>
     <Content Include="Views\Default\SettingsMenuController.js.map">
       <DependentUpon>SettingsMenuController.ts</DependentUpon>
-    </Content>
-    <Content Include="Views\Default\SettingsService.js">
-      <DependentUpon>SettingsService.ts</DependentUpon>
-    </Content>
-    <Content Include="Views\Default\SettingsService.js.map">
-      <DependentUpon>SettingsService.ts</DependentUpon>
     </Content>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -374,6 +368,7 @@
     <Compile Include="Models\AzureTableRoomRepository.cs" />
     <Compile Include="Models\IRoomRepository.cs" />
     <Compile Include="Models\Room.cs" />
+    <Compile Include="Models\RoomContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -429,9 +424,8 @@
     <TypeScriptCompile Include="Views\Default\controller.ts" />
     <TypeScriptCompile Include="Views\Default\hubClientService.ts" />
     <TypeScriptCompile Include="Views\Default\Index.ts" />
-    <TypeScriptCompile Include="Views\Default\RoomStateService.ts" />
+    <TypeScriptCompile Include="Views\Default\RoomContextService.ts" />
     <TypeScriptCompile Include="Views\Default\SettingsMenuController.ts" />
-    <TypeScriptCompile Include="Views\Default\SettingsService.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

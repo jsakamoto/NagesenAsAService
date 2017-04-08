@@ -13,7 +13,7 @@
         public hub: SignalR.Hub.Proxy;
 
         constructor(
-            private roomState: RoomStateService,
+            private roomContext: RoomContextService,
             private $rootScope: ng.IRootScopeService
         ) {
             var hubConn = $.hubConnection();
@@ -40,12 +40,10 @@
         private startHubConnection(hubConn: SignalR.Hub.Connection): void {
             hubConn.start()
                 .then(() => this.hub.invoke('EnterRoom', _app.roomNumber))
-                .then((roomState: RoomState) => this.$rootScope.$apply(() => {
-                    this.roomState.countOfLike = roomState.countOfLike;
-                    this.roomState.countOfDis = roomState.countOfDis;
+                .then((context: RoomContext) => this.$rootScope.$apply(() => {
+                    angular.copy(context, this.roomContext);
                 }));
         }
-
     }
-    angular.module('theApp').service('hubClient', ['roomState', '$rootScope', HubClientService]);
+    angular.module('theApp').service('hubClient', ['roomContext', '$rootScope', HubClientService]);
 }

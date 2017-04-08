@@ -1,17 +1,16 @@
 var NaaS;
 (function (NaaS) {
     var SettingsMenuController = (function () {
-        function SettingsMenuController(settings, hubClient, $scope) {
+        function SettingsMenuController(roomContext, hubClient, $scope) {
             var _this = this;
-            this.settings = settings;
+            this.roomContext = roomContext;
             this.hubClient = hubClient;
             this.$scope = $scope;
             SettingsMenuController.instance = this;
             this.visible = false;
             $scope.$watch(function () { return _this.visible; }, function (newValue, oldValue) {
                 if (oldValue === true && newValue === false) {
-                    console.log('FIRE');
-                    hubClient.hub.invoke('UpdateSettings', _app.roomNumber, settings.twitterHashtag, settings.allowDisCoin);
+                    hubClient.hub.invoke('UpdateSettings', roomContext.roomNumber, roomContext.twitterHashtag, roomContext.allowDisCoin);
                 }
             });
         }
@@ -27,7 +26,7 @@ var NaaS;
         };
         return SettingsMenuController;
     }());
-    angular.module('theApp').controller('settingsMenuController', ['settings', 'hubClient', '$scope', SettingsMenuController]);
+    angular.module('theApp').controller('settingsMenuController', ['roomContext', 'hubClient', '$scope', SettingsMenuController]);
     $(function () {
         $('#settings-button').click(function (e) {
             e.preventDefault();

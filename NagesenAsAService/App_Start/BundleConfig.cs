@@ -36,8 +36,7 @@ namespace NagesenAsAService
                 "~/Scripts/Box2dWeb-2.1.a.3.js",
                 "~/Scripts/html2canvas.js",
                 "~/Views/Default/Box.js",
-                "~/Views/Default/RoomStateService.js",
-                "~/Views/Default/SettingsService.js",
+                "~/Views/Default/RoomContextService.js",
                 "~/Views/Default/HubClientService.js",
                 "~/Views/Default/SettingsMenuController.js"
                 ));

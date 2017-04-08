@@ -10,18 +10,13 @@ namespace NagesenAsAService.Controllers
     {
         private static Random _Random = new Random(DateTime.UtcNow.Millisecond);
 
-        public async Task<object> EnterRoom(int roomNumber)
+        public async Task<RoomContext> EnterRoom(int roomNumber)
         {
             await Groups.Add(Context.ConnectionId, roomNumber.ToString());
             var repository = new AzureTableRoomRepository();
             var room = await repository.FindRoomAsync(roomNumber);
 
-            return new
-            {
-                allowDisCoin = room.AllowDisCoin,
-                countOfLike = room.CountOfNageSen,
-                countOfDis = room.CountOfAoriSen
-            };
+            return new RoomContext(room);
         }
 
         public async Task UpdateSettings(int roomNumber, string twitterHashtag, bool allowDisCoin)

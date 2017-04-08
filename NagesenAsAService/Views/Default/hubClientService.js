@@ -1,9 +1,9 @@
 var NaaS;
 (function (NaaS) {
     var HubClientService = (function () {
-        function HubClientService(roomState, $rootScope) {
+        function HubClientService(roomContext, $rootScope) {
             var _this = this;
-            this.roomState = roomState;
+            this.roomContext = roomContext;
             this.$rootScope = $rootScope;
             var hubConn = $.hubConnection();
             // SiganlR 切断時の再接続処理を配線
@@ -26,14 +26,13 @@ var NaaS;
             var _this = this;
             hubConn.start()
                 .then(function () { return _this.hub.invoke('EnterRoom', _app.roomNumber); })
-                .then(function (roomState) { return _this.$rootScope.$apply(function () {
-                _this.roomState.countOfLike = roomState.countOfLike;
-                _this.roomState.countOfDis = roomState.countOfDis;
+                .then(function (context) { return _this.$rootScope.$apply(function () {
+                angular.copy(context, _this.roomContext);
             }); });
         };
         return HubClientService;
     }());
     NaaS.HubClientService = HubClientService;
-    angular.module('theApp').service('hubClient', ['roomState', '$rootScope', HubClientService]);
+    angular.module('theApp').service('hubClient', ['roomContext', '$rootScope', HubClientService]);
 })(NaaS || (NaaS = {}));
 //# sourceMappingURL=hubClientService.js.map

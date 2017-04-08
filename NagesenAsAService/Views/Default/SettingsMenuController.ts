@@ -6,7 +6,7 @@
         public visible: boolean;
 
         constructor(
-            public settings: SettingsService,
+            public roomContext: RoomContextService,
             private hubClient: HubClientService,
             private $scope: ng.IScope
         ) {
@@ -15,8 +15,7 @@
             this.visible = false;
             $scope.$watch(() => this.visible, (newValue, oldValue) => {
                 if (oldValue === true && newValue === false) {
-                    console.log('FIRE');
-                    hubClient.hub.invoke('UpdateSettings', _app.roomNumber, settings.twitterHashtag, settings.allowDisCoin);
+                    hubClient.hub.invoke('UpdateSettings', roomContext.roomNumber, roomContext.twitterHashtag, roomContext.allowDisCoin);
                 }
             });
         }
@@ -31,7 +30,7 @@
             this.$scope.$apply(() => this.visible = false);
         }
     }
-    angular.module('theApp').controller('settingsMenuController', ['settings', 'hubClient', '$scope', SettingsMenuController]);
+    angular.module('theApp').controller('settingsMenuController', ['roomContext', 'hubClient', '$scope', SettingsMenuController]);
 
     $(() => {
         $('#settings-button').click(e => {

@@ -83,8 +83,7 @@ namespace NaaS {
             private worker: Worker;
 
             constructor(
-                public roomState: RoomStateService,
-                public settings: SettingsService,
+                public roomContext: RoomContextService,
                 private hubClient: HubClientService,
                 private $scope: ng.IScope,
                 private $http: ng.IHttpService
@@ -131,8 +130,8 @@ namespace NaaS {
                 this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
 
                 this.$scope.$apply(() => {
-                    this.roomState.countOfLike = Math.max(this.roomState.countOfLike, data.countOfLike);
-                    this.roomState.countOfDis = Math.max(this.roomState.countOfDis, data.countOfDis);
+                    this.roomContext.countOfLike = Math.max(this.roomContext.countOfLike, data.countOfLike);
+                    this.roomContext.countOfDis = Math.max(this.roomContext.countOfDis, data.countOfDis);
                 });
             }
 
@@ -238,17 +237,17 @@ namespace NaaS {
 
             public tweet(): void {
                 var text =
-                    `この枠に${this.roomState.countOfLike}円分の投げ銭` +
-                    (this.settings.allowDisCoin ? `と${this.roomState.countOfDis}Dis` : '') +
+                    `この枠に${this.roomContext.countOfLike}円分の投げ銭` +
+                    (this.roomContext.allowDisCoin ? `と${this.roomContext.countOfDis}Dis` : '') +
                     `が集まりました☆`;
                 var url = _app.apiBaseUrl + '/TwitterShare?';
                 url += 'text=' + encodeURIComponent(text);
-                url += '&url=' + encodeURIComponent(_app.apiBaseUrl + '/screenshot/' + _app.sessionId);
+                url += '&url=' + encodeURIComponent(_app.apiBaseUrl + '/screenshot/' + this.roomContext.sessionID);
                 window.open(url);
             }
         }
 
-        theApp.controller('roomController', ['roomState', 'settings', 'hubClient', '$scope', '$http', RoomController]);
+        theApp.controller('roomController', ['roomContext', 'hubClient', '$scope', '$http', RoomController]);
 
         $(() => {
             $('#lnk-tweet').click(function (e) {
