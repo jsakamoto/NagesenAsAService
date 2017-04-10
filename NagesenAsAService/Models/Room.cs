@@ -33,10 +33,9 @@ namespace NagesenAsAService.Models
 
         public Room()
         {
-            this.SessionID = Guid.NewGuid();
-            this.TwitterHashtag = "";
-            this.UpdateScreenSnapshotAt = DateTime.MaxValue;
             this.CreatedAt = DateTime.UtcNow;
+            this.TwitterHashtag = "";
+            this.Reset();
         }
 
         public Room(int roomNumber) : this()
@@ -49,5 +48,13 @@ namespace NagesenAsAService.Models
         public static string RoomNumberToPartitionKey(int roomNumber) => (roomNumber / 100).ToString();
 
         public static string RoomNumberToRowKey(int roomNumber) => roomNumber.ToString("D4");
+
+        public void Reset()
+        {
+            this.SessionID = Guid.NewGuid();
+            this.UpdateScreenSnapshotAt = DateTime.MaxValue;
+            this.CountOfNageSen = 0;
+            this.CountOfAoriSen = 0;
+        }
     }
 }

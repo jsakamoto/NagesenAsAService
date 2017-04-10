@@ -35,12 +35,17 @@ namespace NagesenAsAService
             bundles.Add(new ScriptBundle("~/bundles/box-js").Include(
                 "~/Scripts/Box2dWeb-2.1.a.3.js",
                 "~/Scripts/html2canvas.js",
-                "~/Views/Default/Box.js"));
+                "~/Views/Default/Box.js",
+                "~/Views/Default/RoomContextService.js",
+                "~/Views/Default/HubClientService.js",
+                "~/Views/Default/SettingsMenuController.js"
+                ));
 
             bundles.UseCdn = true;
 
             bundles.Add(new StyleBundle("~/content/css").Include(
                 "~/Content/normalize.css",
+                "~/Content/md-iconfont.css",
                 "~/Content/site.css"));
             bundles.Add(new StyleBundle("~/content/index-css").Include(
                 "~/Content/footer.css"));

@@ -10,7 +10,7 @@
     <a href="/" class="go-home"></a>
     @if (isOwner)
     {
-        <a href="#" id="lnk-settings" class="go-settings"></a>
+        <div id="settings-button"><i class="material-icons">menu</i></div>
     }
 }
 @section headerRight {
@@ -20,42 +20,38 @@
 
 <div ng-app="theApp" class="room-page">
 
-    <div id="box" ng-controller="roomController as ctrl">
+    <div id="box-container">
+        <div id="box" ng-controller="roomController as ctrl">
 
-        <div id="score-box" ng-class="'dis-coin '+ (ctrl.state.allowDisCoin ? 'allow' : 'deny')">
-            <div class="count-of-coin like">
-                <span ng-bind="ctrl.state.countOfLike | number"></span> Yen
+            <div id="score-box" ng-class="'dis-coin '+ (ctrl.roomContext.allowDisCoin ? 'allow' : 'deny')">
+                <div class="count-of-coin like">
+                    <span ng-bind="ctrl.roomContext.countOfLike | number"></span> Yen
+                </div>
+                <div class="count-of-coin dis">
+                    <span ng-bind="ctrl.roomContext.countOfDis | number"></span> Dis
+                </div>
             </div>
-            <div class="count-of-coin dis">
-                <span ng-bind="ctrl.state.countOfDis | number"></span> Dis
-            </div>
+
+            <canvas id="canvas" width="800" height="540"></canvas>
         </div>
-
-        <canvas id="canvas" width="800" height="540"></canvas>
     </div>
 
-    <div id="settings-dialog" ng-controller="settingsController as ctrl">
-        <form class="form">
-            @Html.AntiForgeryToken()
-
-            <h2>@Localize.Settings</h2>
-
-            <div class="field-container">
-                <label for="twitterHashtag">@Localize.TwitterHashtag #</label>
-                <input type="text" name="twitterHashtag" id="twitterHashtag" ng-model="ctrl.settings.twitterHashtag" autofocus />
-            </div>
-            <div class="field-container">
+    <div id="settings-container" ng-controller="settingsMenuController as ctrl" ng-class='{"visible": ctrl.visible}'>
+        <div id="settings-content">
+            <div class="menu-item">
                 <label for="allowDisCoin">
-                    <input type="checkbox" name="allowDisCoin" id="allowDisCoin" value="true" ng-model="ctrl.settings.allowDisCoin" />
-                    <input type="hidden" name="allowDisCoin" value="false" />
+                    <input type="checkbox" id="allowDisCoin" ng-model="ctrl.roomContext.allowDisCoin" />
                     @Localize.AllowDisCoin
                 </label>
             </div>
-            <div class="buttons">
-                <input type="button" value="OK" class="btn btn-primary" ng-click="ctrl.OK()" />
-                <input type="button" value="@Localize.Cancel" class="btn btn-default" ng-click="ctrl.Cancel()" />
+            <div class="menu-item">
+                <label for="twitterHashtag">@Localize.TwitterHashtag #</label>
+                <input type="text" id="twitterHashtag" ng-model="ctrl.roomContext.twitterHashtag"/>
             </div>
-        </form>
+            <div class="menu-item">
+                <button id="reset-room" ng-click="ctrl.resetRoom()">@Localize.ResetRoom</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -65,6 +61,7 @@
         var _app = _app || {};
         _app.localize = _app.localize || {};
         _app.localize.IfYouLeaveThisPageYouLostCoinsImage = '@Localize.IfYouLeaveThisPageYouLostCoinsImage';
+        _app.localize.ConfirmResetRoom = '@Localize.ConfirmResetRoom';
     </script>
     @Scripts.Render("~/bundles/box-js")
     <script src="~/Scripts/sharebox.js"></script>

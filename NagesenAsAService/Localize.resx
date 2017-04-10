@@ -159,4 +159,10 @@
   <data name="TheRoomWillExpireAfter7days" xml:space="preserve">
     <value>The room will expire after 7 days.</value>
   </data>
+  <data name="ConfirmResetRoom" xml:space="preserve">
+    <value>Are you sure you want to reset this room? (All count of coins will be 0)</value>
+  </data>
+  <data name="ResetRoom" xml:space="preserve">
+    <value>Reset</value>
+  </data>
 </root>

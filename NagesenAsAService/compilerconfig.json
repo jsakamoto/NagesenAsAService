@@ -1,0 +1,10 @@
+﻿[
+  {
+    "outputFile": "Content/md-iconfont.css",
+    "inputFile": "Content/md-iconfont.scss"
+  },
+  {
+    "outputFile": "Content/box.css",
+    "inputFile": "Content/box.scss"
+  }
+]

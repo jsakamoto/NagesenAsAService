@@ -207,6 +207,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\box.css">
+      <DependentUpon>box.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\box.min.css">
+      <DependentUpon>box.css</DependentUpon>
+    </Content>
     <Content Include="Content\favicons\android-chrome-144x144.png" />
     <Content Include="Content\favicons\android-chrome-192x192.png" />
     <Content Include="Content\favicons\android-chrome-36x36.png" />
@@ -244,17 +250,22 @@
     <Content Include="Content\images\qrcode.png" />
     <Content Include="Content\images\UnavailableRoomNumber.jpg" />
     <Content Include="Content\images\twittercard-image.png" />
+    <Content Include="Content\md-iconfont.css">
+      <DependentUpon>md-iconfont.scss</DependentUpon>
+    </Content>
+    <Content Include="Content\md-iconfont.min.css">
+      <DependentUpon>md-iconfont.css</DependentUpon>
+    </Content>
     <Content Include="Content\sharebox.css" />
     <Content Include="Scripts\html2canvas.js" />
     <Content Include="Scripts\sharebox.js">
       <DependentUpon>sharebox.ts</DependentUpon>
     </Content>
-    <Content Include="Content\box.css" />
+    <None Include="Content\box.scss" />
     <Content Include="Content\controller.css" />
     <Content Include="Content\images\back.png" />
     <Content Include="Content\images\bg.png" />
     <Content Include="Content\images\coin.png" />
-    <Content Include="Content\images\settings.png" />
     <Content Include="Content\images\stone.png" />
     <Content Include="Content\normalize.css" />
     <Content Include="Content\Site.css" />
@@ -276,6 +287,15 @@
     </Content>
     <Content Include="Scripts\angular.min.js.map" />
     <Content Include="Content\favicons\manifest.json" />
+    <Content Include="Content\fonts\MaterialIcons-Regular.eot" />
+    <Content Include="Content\fonts\MaterialIcons-Regular.ttf" />
+    <Content Include="Content\fonts\MaterialIcons-Regular.woff" />
+    <Content Include="Content\fonts\MaterialIcons-Regular.woff2" />
+    <Content Include="Content\md-iconfont.scss" />
+    <None Include="compilerconfig.json" />
+    <None Include="compilerconfig.json.defaults">
+      <DependentUpon>compilerconfig.json</DependentUpon>
+    </None>
     <None Include="Scripts\jquery-2.1.1.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.1.js" />
     <Content Include="Scripts\jquery-2.1.1.min.js" />
@@ -290,8 +310,26 @@
     <Content Include="Views\Default\controller.js">
       <DependentUpon>controller.ts</DependentUpon>
     </Content>
+    <Content Include="Views\Default\hubClientService.js">
+      <DependentUpon>hubClientService.ts</DependentUpon>
+    </Content>
+    <Content Include="Views\Default\hubClientService.js.map">
+      <DependentUpon>hubClientService.ts</DependentUpon>
+    </Content>
     <Content Include="Views\Default\Index.js">
       <DependentUpon>Index.ts</DependentUpon>
+    </Content>
+    <Content Include="Views\Default\RoomContextService.js">
+      <DependentUpon>RoomContextService.ts</DependentUpon>
+    </Content>
+    <Content Include="Views\Default\RoomContextService.js.map">
+      <DependentUpon>RoomContextService.ts</DependentUpon>
+    </Content>
+    <Content Include="Views\Default\SettingsMenuController.js">
+      <DependentUpon>SettingsMenuController.ts</DependentUpon>
+    </Content>
+    <Content Include="Views\Default\SettingsMenuController.js.map">
+      <DependentUpon>SettingsMenuController.ts</DependentUpon>
     </Content>
     <Content Include="Web.config">
       <SubType>Designer</SubType>
@@ -330,6 +368,7 @@
     <Compile Include="Models\AzureTableRoomRepository.cs" />
     <Compile Include="Models\IRoomRepository.cs" />
     <Compile Include="Models\Room.cs" />
+    <Compile Include="Models\RoomContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -383,7 +422,10 @@
     <TypeScriptCompile Include="Views\Default\BoxWorker.ts" />
     <TypeScriptCompile Include="Views\Default\CoinType.ts" />
     <TypeScriptCompile Include="Views\Default\controller.ts" />
+    <TypeScriptCompile Include="Views\Default\hubClientService.ts" />
     <TypeScriptCompile Include="Views\Default\Index.ts" />
+    <TypeScriptCompile Include="Views\Default\RoomContextService.ts" />
+    <TypeScriptCompile Include="Views\Default\SettingsMenuController.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

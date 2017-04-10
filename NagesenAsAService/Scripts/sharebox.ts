@@ -8,6 +8,7 @@
     isOwner: boolean;
     localize: {
         IfYouLeaveThisPageYouLostCoinsImage: string;
+        ConfirmResetRoom: string;
     };
 };
 

@@ -80,21 +80,6 @@ namespace NagesenAsAService.Controllers
             }, JsonRequestBehavior.AllowGet);
         }
 
-        [HttpPut, ValidateAntiForgeryToken]
-        public async Task<ActionResult> Settings(int id, string twitterHashtag, bool allowDisCoin)
-        {
-            var room = await this.Repository.FindRoomAsync(id);
-            if (room == null) return HttpNotFound();
-            var isOwner = room.OwnerUserID == this.User.Identity.Name;
-            if (isOwner == false) return HttpNotFound();
-
-            room.TwitterHashtag = twitterHashtag;
-            room.AllowDisCoin = allowDisCoin;
-            await this.Repository.UpdateRoomAsync(room);
-
-            return new HttpStatusCodeResult(HttpStatusCode.OK);
-        }
-
         public async Task<ActionResult> Controller(int id)
         {
             var room = await this.Repository.FindRoomAsync(id);
@@ -106,18 +91,23 @@ namespace NagesenAsAService.Controllers
             return View(room);
         }
 
+        [HttpGet, OutputCache(Duration = 0, NoStore = true)]
+        public async Task<ActionResult> PeekRoomContext(int id)
+        {
+            var room = await this.Repository.FindRoomAsync(id);
+            return Json(new
+            {
+                sessionID = room.SessionID,
+                allowDisCoin = room.AllowDisCoin
+            }, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpPut]
         public async Task<ActionResult> Throw(int id, CoinType typeOfCoin)
         {
             var hubContext = GlobalHost.ConnectionManager.GetHubContext<DefaultHub>();
             await DefaultHub.Throw(id, typeOfCoin, hubContext.Clients);
-
-            var room = await this.Repository.FindRoomAsync(id);
-
-            return Json(new
-            {
-                allowDisCoin = room.AllowDisCoin
-            });
+            return new HttpStatusCodeResult(HttpStatusCode.NoContent);
         }
 
         [HttpGet, OutputCache(Duration = 0, NoStore = true)]
@@ -142,43 +132,13 @@ namespace NagesenAsAService.Controllers
             return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
-        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Head)]
-        public async Task<ActionResult> ScreenShot(int id, Guid? session)
+        [HttpGet]
+        public ActionResult ScreenShot(int id, Guid? session)
         {
-            var room = await this.Repository.FindRoomAsync(id);
-            var updateScreenSnapshotAt = room?.UpdateScreenSnapshotAt ?? DateTime.MaxValue;
-
-            if (updateScreenSnapshotAt == DateTime.MaxValue || session.HasValue == false)
-            {
-                return new CacheableContentResult("image/jpeg",
-                    () =>
-                    {
-                        if (Request.HttpMethod == "HEAD")
-                            return new byte[0];
-                        else
-                            return System.IO.File.ReadAllBytes(Server.MapPath("~/Content/images/UnavailableRoomNumber.jpg"));
-                    },
-                    cacheability: HttpCacheability.Public,
-                    etag: id.ToString()
-                );
-            }
-            else
-            {
-                return new CacheableContentResult("image/jpeg",
-                    () =>
-                    {
-                        if (Request.HttpMethod == "HEAD")
-                            return new byte[0];
-                        else
-                        {
-                            return this.Repository.GetScreenShot(session.Value) ?? System.IO.File.ReadAllBytes(Server.MapPath("~/Content/images/UnavailableRoomNumber.jpg"));
-                        }
-                    },
-                    lastModified: updateScreenSnapshotAt,
-                    cacheability: HttpCacheability.Public,
-                    etag: id.ToString()
-                );
-            }
+            var imageBytes = default(byte[]);
+            if (session.HasValue) imageBytes = this.Repository.GetScreenShot(session.Value);
+            if (imageBytes == null) imageBytes = System.IO.File.ReadAllBytes(Server.MapPath("~/Content/images/UnavailableRoomNumber.jpg"));
+            return File(imageBytes, "image/jpeg");
         }
 
         [HttpGet]
