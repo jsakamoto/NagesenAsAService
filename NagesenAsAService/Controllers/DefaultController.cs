@@ -91,18 +91,23 @@ namespace NagesenAsAService.Controllers
             return View(room);
         }
 
+        [HttpGet, OutputCache(Duration = 0, NoStore = true)]
+        public async Task<ActionResult> PeekRoomContext(int id)
+        {
+            var room = await this.Repository.FindRoomAsync(id);
+            return Json(new
+            {
+                sessionID = room.SessionID,
+                allowDisCoin = room.AllowDisCoin
+            }, JsonRequestBehavior.AllowGet);
+        }
+
         [HttpPut]
         public async Task<ActionResult> Throw(int id, CoinType typeOfCoin)
         {
             var hubContext = GlobalHost.ConnectionManager.GetHubContext<DefaultHub>();
             await DefaultHub.Throw(id, typeOfCoin, hubContext.Clients);
-
-            var room = await this.Repository.FindRoomAsync(id);
-
-            return Json(new
-            {
-                allowDisCoin = room.AllowDisCoin
-            });
+            return new HttpStatusCodeResult(HttpStatusCode.NoContent);
         }
 
         [HttpGet, OutputCache(Duration = 0, NoStore = true)]
