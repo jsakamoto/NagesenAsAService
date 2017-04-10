@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -155,6 +156,23 @@ namespace NagesenAsAService.Controllers
             }
 
             return Redirect(twitterSharUrl);
+        }
+
+        [HttpGet]
+        public ActionResult CoinSoundBase64(int id)
+        {
+            var path = Server.MapPath($"~/Content/audio/se_coin{id}.mp3");
+            if (!System.IO.File.Exists(path)) return HttpNotFound();
+
+            return new CacheableContentResult(
+                contentType: "text/base64",
+                lastModified: System.IO.File.GetLastWriteTimeUtc(path),
+                getContent: () =>
+                {
+                    var soundBytes = System.IO.File.ReadAllBytes(path);
+                    var soundBase64 = Convert.ToBase64String(soundBytes);
+                    return Encoding.UTF8.GetBytes(soundBase64);
+                });
         }
 
         public async Task<ActionResult> WarmUp()

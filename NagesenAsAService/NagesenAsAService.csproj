@@ -207,6 +207,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\audio\se_coin1.mp3" />
+    <Content Include="Content\audio\se_coin0.mp3" />
     <Content Include="Content\box.css">
       <DependentUpon>box.scss</DependentUpon>
     </Content>
