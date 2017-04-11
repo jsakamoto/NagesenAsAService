@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.SignalR;
 using NagesenAsAService.Models;
+using QRCoder;
 using Toolbelt.Web;
 
 namespace NagesenAsAService.Controllers
@@ -172,6 +173,25 @@ namespace NagesenAsAService.Controllers
                     var soundBytes = System.IO.File.ReadAllBytes(path);
                     var soundBase64 = Convert.ToBase64String(soundBytes);
                     return Encoding.UTF8.GetBytes(soundBase64);
+                });
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> QRCodeOfRoom(int id)
+        {
+            var room = await this.Repository.FindRoomAsync(id);
+            if (room == null) return HttpNotFound();
+
+            return new CacheableContentResult(
+                contentType: "image/png",
+                lastModified: room.CreatedAt,
+                getContent: () =>
+                {
+                    var qrGenerator = new QRCodeGenerator();
+                    var qrCodeData = qrGenerator.CreateQrCode(room.ShortUrl, QRCodeGenerator.ECCLevel.M);
+                    var qrCode = new BitmapByteQRCode(qrCodeData);
+                    var qrCodeImage = qrCode.GetGraphic(12);
+                    return qrCodeImage;
                 });
         }
 

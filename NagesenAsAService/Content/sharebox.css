@@ -51,6 +51,13 @@
         font-size: 32px;
     }
 
+    .share-box .qr-code {
+        width: 301px;
+        height: 301px;
+        -o-object-fit: none;
+        object-fit: none;
+    }
+
 /* header, title */
 #app-title:after {
     content: ' - ';
