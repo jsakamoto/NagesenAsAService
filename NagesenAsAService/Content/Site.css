@@ -106,7 +106,18 @@ input.room-number {
     font-size: 150%;
     width: 4em;
     padding: 0.1em 0.5em;
+    -moz-appearance: textfield;
 }
+
+    input.room-number::-webkit-outer-spin-button,
+    input.room-number::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input.room-number:invalid {
+        box-shadow: none !important;
+    }
 
 .warning-of-expiration {
     margin-top: 8px;
