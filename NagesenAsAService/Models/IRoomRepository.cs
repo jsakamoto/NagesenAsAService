@@ -12,6 +12,6 @@ namespace NagesenAsAService.Models
         Task<Room> UpdateRoomAsync(int roomNumber, Action<Room> action);
         Task SweepRoomsAsync(DateTime limit);
         Task SaveScreenShotAsync(int roomNumber, byte[] image);
-        byte[] GetScreenShot(Guid sessionId);
+        Task<Picture> GetScreenShotAsync(Guid sessionId);
     }
 }

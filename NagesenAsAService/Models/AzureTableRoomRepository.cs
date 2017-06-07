@@ -109,21 +109,24 @@ namespace NagesenAsAService.Models
             await blockBlob.UploadFromByteArrayAsync(image, 0, image.Length);
         }
 
-        public byte[] GetScreenShot(Guid sessionId)
+        public async Task<Picture> GetScreenShotAsync(Guid sessionId)
         {
             var blockBlob = this.ScreenShots.Value.GetBlockBlobReference(sessionId.ToString("N"));
-            using (var ms = new MemoryStream())
+
+            try { await blockBlob.FetchAttributesAsync(); }
+            catch (StorageException e) when (e.RequestInformation.HttpStatusCode == 404)
             {
-                try
-                {
-                    blockBlob.DownloadToStream(ms);
-                }
-                catch (StorageException e) when (e.RequestInformation.HttpStatusCode == 404)
-                {
-                    return null;
-                }
-                return ms.ToArray();
+                return null;
             }
+
+            return new Picture(
+                blockBlob.Properties.LastModified.Value.DateTime,
+                () =>
+                {
+                    var imageBytes = new byte[blockBlob.Properties.Length];
+                    blockBlob.DownloadToByteArray(imageBytes, 0);
+                    return imageBytes;
+                });
         }
     }
 }

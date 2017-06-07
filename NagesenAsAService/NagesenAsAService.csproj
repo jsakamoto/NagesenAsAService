@@ -71,9 +71,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Antlr.3.5.0.2\lib\Antlr3.Runtime.dll</HintPath>
     </Reference>
-    <Reference Include="CacheableContentResult, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\CacheableContentResult.1.0.0.0\lib\net40\CacheableContentResult.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="CacheableContentResult, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\CacheableContentResult.1.1.2\lib\net40\CacheableContentResult.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.AspNet.SignalR.Core, Version=2.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.SignalR.Core.2.2.0\lib\net45\Microsoft.AspNet.SignalR.Core.dll</HintPath>
@@ -369,6 +368,7 @@
     <Compile Include="Code\Logging\LogToFileListener.cs" />
     <Compile Include="Models\AzureTableRoomRepository.cs" />
     <Compile Include="Models\IRoomRepository.cs" />
+    <Compile Include="Models\Picture.cs" />
     <Compile Include="Models\Room.cs" />
     <Compile Include="Models\RoomContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

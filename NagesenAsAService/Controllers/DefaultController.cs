@@ -135,12 +135,25 @@ namespace NagesenAsAService.Controllers
         }
 
         [HttpGet]
-        public ActionResult ScreenShot(int id, Guid? session)
+        public async Task<ActionResult> ScreenShot(int id, Guid? session)
         {
-            var imageBytes = default(byte[]);
-            if (session.HasValue) imageBytes = this.Repository.GetScreenShot(session.Value);
-            if (imageBytes == null) imageBytes = System.IO.File.ReadAllBytes(Server.MapPath("~/Content/images/UnavailableRoomNumber.jpg"));
-            return File(imageBytes, "image/jpeg");
+            if (session.HasValue)
+            {
+                var picture = await this.Repository.GetScreenShotAsync(session.Value);
+                if (picture != null)
+                {
+                    return new CacheableContentResult(
+                            contentType: "image/jpeg",
+                            lastModified: picture.LastModified,
+                            getContent: picture.GetImageBytes);
+                }
+            }
+
+            var path = Server.MapPath("~/Content/images/UnavailableRoomNumber.jpg");
+            return new CacheableContentResult(
+                contentType: "image/jpeg",
+                lastModified: System.IO.File.GetLastWriteTimeUtc(path),
+                getContent: () => System.IO.File.ReadAllBytes(path));
         }
 
         [HttpGet]
