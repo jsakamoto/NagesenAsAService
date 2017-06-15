@@ -62,6 +62,7 @@ var NaaS;
                 this.throwingBandHeight = 120;
                 this.worldScale = 30.0;
                 this.frameRate = 60;
+                this.debounceTakingScreenShotId = null;
                 var canvas = document.getElementById('canvas');
                 this.context = canvas.getContext('2d');
                 this.worldWidth = canvas.width;
@@ -107,8 +108,16 @@ var NaaS;
                     _this.roomContext.countOfDis = Math.max(_this.roomContext.countOfDis, data.countOfDis);
                 });
                 // ボックスが満杯と判定されていたら、効果音の再生とコイン数の表示更新だけとして、コイン投入のアニメーションはスキップする。
-                if (this.boxIsFull)
+                if (this.boxIsFull) {
+                    // ※ただしコイン数表示の更新は発生するので、スクリーンショットの再取得を行う
+                    if (this.debounceTakingScreenShotId != null)
+                        clearTimeout(this.debounceTakingScreenShotId);
+                    this.debounceTakingScreenShotId = setTimeout(function () {
+                        _this.debounceTakingScreenShotId = null;
+                        _this.takeScreenShot();
+                    }, 5000);
                     return;
+                }
                 var circleRadius = coinAsset.imageRadius;
                 this.createCircle({
                     world: this.world,

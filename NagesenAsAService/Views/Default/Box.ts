@@ -136,6 +136,8 @@ namespace NaaS {
                 }
             }
 
+            private debounceTakingScreenShotId: number = null;
+
             private OnEnqueueThrowing(data: ThrowingData) {
 
                 let coinAsset = CoinAssets[data.typeOfCoin];
@@ -146,7 +148,17 @@ namespace NaaS {
                 });
 
                 // ボックスが満杯と判定されていたら、効果音の再生とコイン数の表示更新だけとして、コイン投入のアニメーションはスキップする。
-                if (this.boxIsFull) return;
+                if (this.boxIsFull) {
+
+                    // ※ただしコイン数表示の更新は発生するので、スクリーンショットの再取得を行う
+                    if (this.debounceTakingScreenShotId != null) clearTimeout(this.debounceTakingScreenShotId);
+                    this.debounceTakingScreenShotId = setTimeout(() => {
+                        this.debounceTakingScreenShotId = null;
+                        this.takeScreenShot();
+                    }, 5000);
+
+                    return;
+                }
 
                 let circleRadius = coinAsset.imageRadius;
                 this.createCircle({
