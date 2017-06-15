@@ -185,17 +185,18 @@ var NaaS;
                 this.world.CreateBody(bodyDef).CreateFixture(fixDef);
             };
             RoomController.prototype.createCircle = function (option) {
-                var bodyDef = new b2.BodyDef;
-                bodyDef.type = b2.Body.b2_dynamicBody;
                 // オブジェクトの設定
                 var fixDef = new b2.FixtureDef;
                 fixDef.density = 100.0; // 密度
                 fixDef.friction = 0.5; // 摩擦係数
-                fixDef.restitution = 0.5; // 反発係数
+                fixDef.restitution = 0.7; // 反発係数
                 fixDef.shape = new b2.CircleShape(option.r / this.worldScale);
                 // 円形オブジェクトの設置
+                var bodyDef = new b2.BodyDef;
+                bodyDef.type = b2.Body.b2_dynamicBody;
                 bodyDef.position.x = option.x / this.worldScale;
                 bodyDef.position.y = option.y / this.worldScale;
+                bodyDef.linearDamping = 0.5; // 減衰率
                 bodyDef.userData = { img: option.img, r: option.r };
                 option.world.CreateBody(bodyDef).CreateFixture(fixDef);
             };
