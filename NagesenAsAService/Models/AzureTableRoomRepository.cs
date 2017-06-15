@@ -59,23 +59,24 @@ namespace NagesenAsAService.Models
             return result.Result as Room;
         }
 
-        public async Task<Room> UpdateRoomAsync(int roomNumber, Action<Room> action)
+        public async Task<Room> UpdateRoomAsync(int roomNumber, Func<Room, bool> action)
         {
-            var retryCounter = 0;
             var room = await this.FindRoomAsync(roomNumber);
             for (;;)
             {
-                action(room);
+                var allowUpdate = action(room);
                 try
                 {
-                    await this.UpdateRoomAsync(room);
+                    if (allowUpdate)
+                    {
+                        await this.UpdateRoomAsync(room);
+                    }
                     return room;
                 }
                 catch (StorageException e) when (e.RequestInformation?.HttpStatusCode == 412)
                 {
                     // NOP - random wait & continue to next retry loop...
                 }
-                retryCounter++;
                 var rate = this.RandomNumberGenerator.Next(10, 50);
                 await Task.Delay(20 * rate);
                 room = await this.FindRoomAsync(roomNumber);
@@ -101,9 +102,11 @@ namespace NagesenAsAService.Models
 
         public async Task SaveScreenShotAsync(int roomNumber, byte[] image)
         {
-            var room = await this.FindRoomAsync(roomNumber);
-            room.UpdateScreenSnapshotAt = DateTime.UtcNow;
-            await this.UpdateRoomAsync(room);
+            var room = await this.UpdateRoomAsync(roomNumber, r =>
+            {
+                r.UpdateScreenSnapshotAt = DateTime.UtcNow;
+                return true;
+            });
 
             var blockBlob = this.ScreenShots.Value.GetBlockBlobReference(room.SessionID.ToString("N"));
             await blockBlob.UploadFromByteArrayAsync(image, 0, image.Length);

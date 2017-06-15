@@ -27,14 +27,16 @@ namespace NagesenAsAService.Controllers
 
         public async Task UpdateSettings(int roomNumber, string twitterHashtag, bool allowDisCoin)
         {
-            var room = await this.Repository.FindRoomAsync(roomNumber);
-            if (room == null) return;
-            var isOwner = room.OwnerUserID == this.Context.User.Identity.Name;
-            if (isOwner == false) return;
+            await this.Repository.UpdateRoomAsync(roomNumber, room =>
+            {
+                if (room == null) return false;
+                var isOwner = room.OwnerUserID == this.Context.User.Identity.Name;
+                if (isOwner == false) return false;
 
-            room.TwitterHashtag = twitterHashtag;
-            room.AllowDisCoin = allowDisCoin;
-            await this.Repository.UpdateRoomAsync(room);
+                room.TwitterHashtag = twitterHashtag;
+                room.AllowDisCoin = allowDisCoin;
+                return true;
+            });
 
             Clients.Group(roomNumber.ToString()).UpdatedSettings(new { twitterHashtag, allowDisCoin });
         }
@@ -47,7 +49,7 @@ namespace NagesenAsAService.Controllers
         public static async Task Throw(int roomNumber, CoinType typeOfCoin, IHubConnectionContext<dynamic> clients)
         {
             var repository = new AzureTableRoomRepository();
-            var room = await repository.UpdateRoomAsync(roomNumber, (Room r) =>
+            var room = await repository.UpdateRoomAsync(roomNumber, r =>
             {
                 if (typeOfCoin == CoinType.Like)
                 {
@@ -57,6 +59,7 @@ namespace NagesenAsAService.Controllers
                 {
                     r.CountOfAoriSen += 10;
                 }
+                return true;
             });
 
             var countOfCoin = new { room.CountOfNageSen, room.CountOfAoriSen };
@@ -75,9 +78,10 @@ namespace NagesenAsAService.Controllers
 
         public async Task ResetRoom(int roomNumber)
         {
-            var room = await this.Repository.UpdateRoomAsync(roomNumber, (Room r) =>
+            var room = await this.Repository.UpdateRoomAsync(roomNumber, r =>
             {
                 r.Reset();
+                return true;
             });
 
             Clients.Group(roomNumber.ToString()).ResetedRoom(room.SessionID);
