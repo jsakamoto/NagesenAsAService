@@ -24,12 +24,14 @@ namespace NaaS {
         class CoinAsset {
             public image: HTMLImageElement;
 
+            public fixtureDef: b2.FixtureDef = null;
+
             constructor(
                 public imageUrl: string,
-                public imageRadius: number,
+                public radius: number,
                 public seUrl: string
             ) {
-                this.image = this.resizeImage(imageUrl, 2 * imageRadius);
+                this.image = this.resizeImage(imageUrl, 2 * radius);
             }
 
             // 参考：http://elicon.blog57.fc2.com/blog-entry-109.html
@@ -160,13 +162,10 @@ namespace NaaS {
                     return;
                 }
 
-                let circleRadius = coinAsset.imageRadius;
-                this.createCircle({
-                    world: this.world,
-                    x: circleRadius + (0 | ((this.worldWidth - 2 * circleRadius) * data.throwPoint)),
-                    y: -circleRadius,
-                    r: circleRadius,
-                    img: coinAsset.image
+                let radius = coinAsset.radius;
+                this.createCoin(coinAsset, {
+                    x: radius + (0 | ((this.worldWidth - 2 * radius) * data.throwPoint)),
+                    y: -radius
                 });
 
                 this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
@@ -238,24 +237,26 @@ namespace NaaS {
                 this.world.CreateBody(bodyDef).CreateFixture(fixDef);
             }
 
-            private createCircle(option: { world: Box2D.Dynamics.b2World, x: number, y: number, r: number, img: HTMLImageElement }) {
+            private createCoin(coinAsset: CoinAsset, position: { x: number, y: number }) {
 
                 // オブジェクトの設定
-                let fixDef = new b2.FixtureDef;
-                fixDef.density = 100.0;     // 密度
-                fixDef.friction = 0.5;     // 摩擦係数
-                fixDef.restitution = 0.7;  // 反発係数
-                fixDef.shape = new b2.CircleShape(option.r / this.worldScale);
+                if (coinAsset.fixtureDef == null) {
+                    coinAsset.fixtureDef = new b2.FixtureDef;
+                    coinAsset.fixtureDef.density = 100.0;     // 密度
+                    coinAsset.fixtureDef.friction = 0.5;     // 摩擦係数
+                    coinAsset.fixtureDef.restitution = 0.7;  // 反発係数
+                    coinAsset.fixtureDef.shape = new b2.CircleShape(coinAsset.radius / this.worldScale);
+                }
 
                 // 円形オブジェクトの設置
                 let bodyDef = new b2.BodyDef;
                 bodyDef.type = b2.Body.b2_dynamicBody;
-                bodyDef.position.x = option.x / this.worldScale;
-                bodyDef.position.y = option.y / this.worldScale;
+                bodyDef.position.x = position.x / this.worldScale;
+                bodyDef.position.y = position.y / this.worldScale;
                 bodyDef.linearDamping = 0.5; // 減衰率
-                bodyDef.userData = { img: option.img, r: option.r };
+                bodyDef.userData = coinAsset;
 
-                option.world.CreateBody(bodyDef).CreateFixture(fixDef);
+                this.world.CreateBody(bodyDef).CreateFixture(coinAsset.fixtureDef);
             }
 
             private render(): { isAwake: boolean, boxIsFull: boolean } {
@@ -280,17 +281,17 @@ namespace NaaS {
                     }
 
                     // userData に設定したコイン画像が取得できない body は処理スキップ。
-                    var userData = bodyItem.GetUserData() as { img: HTMLImageElement, r: number };
-                    if (userData == null || userData.img == null || userData.img.complete == false) continue;
+                    var userData = bodyItem.GetUserData() as CoinAsset;
+                    if (userData == null || userData.image == null || userData.image.complete == false) continue;
 
                     // 描画域に降りてきてない body は処理スキップ。
-                    if (slideY < -userData.r) continue;
+                    if (slideY < -userData.radius) continue;
 
                     // 以上の諸条件をクリアした body を canvas に描画。
                     this.context.save();
                     this.context.translate(slideX, slideY);
                     this.context.rotate(bodyItem.GetAngle());
-                    this.context.drawImage(userData.img, -userData.r, -userData.r);
+                    this.context.drawImage(userData.image, -userData.radius, -userData.radius);
                     this.context.restore();
                 }
 
