@@ -79,9 +79,14 @@ namespace NaaS {
 
             private worldWidth: number;
             private worldHeight: number;
+            /** World座標の高さのうち、Canvas に描画されない、ボックス上部の投入域の高さ */
+            private throwingBandHeight = 120;
             private worldScale = 30.0;
             private frameRate = 60;
             private worker: Worker;
+            /** ボックスがコインで満杯になったかどうかの、render()メソッドでの判定結果を保持します。
+                (動かなくなったコインで、中心座標が投入域の1/2.5の高さにまで達したものがあれば、満杯であると判定します) */
+            private boxIsFull: boolean;
 
             constructor(
                 public roomContext: RoomContextService,
@@ -89,10 +94,10 @@ namespace NaaS {
                 private $scope: ng.IScope,
                 private $http: ng.IHttpService
             ) {
-                var canvas = <HTMLCanvasElement>document.getElementById('canvas');
+                var canvas = document.getElementById('canvas') as HTMLCanvasElement;
                 this.context = canvas.getContext('2d');
                 this.worldWidth = canvas.width;
-                this.worldHeight = canvas.height;
+                this.worldHeight = canvas.height + this.throwingBandHeight;
 
                 this.hubClient.hub.on('Throw', this.OnThrow.bind(this));
 
@@ -132,22 +137,27 @@ namespace NaaS {
             }
 
             private OnEnqueueThrowing(data: ThrowingData) {
-                var coinAsset = CoinAssets[data.typeOfCoin];
-                var circleRadius = coinAsset.imageRadius;
-                this.createCircle(this.world,
-                    circleRadius + (0 | ((this.worldWidth - 2 * circleRadius) * data.throwPoint)),
-                    -circleRadius,
-                    circleRadius,
-                    coinAsset.image);
 
+                let coinAsset = CoinAssets[data.typeOfCoin];
                 if (coinAsset.seUrl != null) (new Audio(coinAsset.seUrl)).play();
-
-                this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
-
                 this.$scope.$apply(() => {
                     this.roomContext.countOfLike = Math.max(this.roomContext.countOfLike, data.countOfLike);
                     this.roomContext.countOfDis = Math.max(this.roomContext.countOfDis, data.countOfDis);
                 });
+
+                // ボックスが満杯と判定されていたら、効果音の再生とコイン数の表示更新だけとして、コイン投入のアニメーションはスキップする。
+                if (this.boxIsFull) return;
+
+                let circleRadius = coinAsset.imageRadius;
+                this.createCircle({
+                    world: this.world,
+                    x: circleRadius + (0 | ((this.worldWidth - 2 * circleRadius) * data.throwPoint)),
+                    y: -circleRadius,
+                    r: circleRadius,
+                    img: coinAsset.image
+                });
+
+                this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
             }
 
             private getDebugDraw() {
@@ -161,13 +171,14 @@ namespace NaaS {
             }
 
             private initWorld() {
+                this.boxIsFull = false;
                 this.world = new b2.World(
                     new b2.Vec2(0, 50), // 重力方向
                     true                 // Sleepの可否
                 );
-                this.createFixedBox(0, 0, 2.0, this.worldHeight);
-                this.createFixedBox(0, this.worldHeight - 2, this.worldWidth, 2.0);
-                this.createFixedBox(this.worldWidth - 2, 0, 2.0, this.worldHeight);
+                this.createFixedBox(0, 0, 2, this.worldHeight);
+                this.createFixedBox(0, this.worldHeight - 2, this.worldWidth, 2);
+                this.createFixedBox(this.worldWidth - 2, 0, 2, this.worldHeight);
 
                 this.world.SetDebugDraw(this.getDebugDraw());
 
@@ -179,17 +190,22 @@ namespace NaaS {
                 this.world.Step(1 / this.frameRate, 10, 10);
                 //this.world.DrawDebugData();
                 this.world.ClearForces();
-                var isAwake = this.render();
-                if (isAwake == false) {
+
+                let result = this.render();
+                this.boxIsFull = result.boxIsFull;
+
+                if (result.isAwake == false) {
                     this.worker.postMessage({ cmd: 'Stop' });
-                    if (_app.isOwner) {
-                        html2canvas(document.getElementById('box'), {
-                            onrendered: canvas => {
-                                this.$http.post(_app.apiBaseUrl + '/ScreenShot', { imageDataUrl: canvas.toDataURL('image/jpeg', 0.6) });
-                            }
-                        });
-                    }
+                    if (_app.isOwner) this.takeScreenShot();
                 }
+            }
+
+            private takeScreenShot(): void {
+                html2canvas(document.getElementById('box'), {
+                    onrendered: canvas => {
+                        this.$http.post(_app.apiBaseUrl + '/ScreenShot', { imageDataUrl: canvas.toDataURL('image/jpeg', 0.6) });
+                    }
+                });
             }
 
             private createFixedBox(x: number, y: number, width: number, height: number) {
@@ -210,7 +226,7 @@ namespace NaaS {
                 this.world.CreateBody(bodyDef).CreateFixture(fixDef);
             }
 
-            private createCircle(world: Box2D.Dynamics.b2World, x: number, y: number, r: number, img: HTMLImageElement) {
+            private createCircle(option: { world: Box2D.Dynamics.b2World, x: number, y: number, r: number, img: HTMLImageElement }) {
                 var bodyDef = new b2.BodyDef;
                 bodyDef.type = b2.Body.b2_dynamicBody;
 
@@ -219,38 +235,53 @@ namespace NaaS {
                 fixDef.density = 100.0;     // 密度
                 fixDef.friction = 0.5;     // 摩擦係数
                 fixDef.restitution = 0.5;  // 反発係数
-                fixDef.shape = new b2.CircleShape(r / this.worldScale);
+                fixDef.shape = new b2.CircleShape(option.r / this.worldScale);
 
                 // 円形オブジェクトの設置
-                bodyDef.position.x = x / this.worldScale;
-                bodyDef.position.y = y / this.worldScale;
-                bodyDef.userData = { img, r };
-                world.CreateBody(bodyDef).CreateFixture(fixDef);
+                bodyDef.position.x = option.x / this.worldScale;
+                bodyDef.position.y = option.y / this.worldScale;
+                bodyDef.userData = { img: option.img, r: option.r };
+                option.world.CreateBody(bodyDef).CreateFixture(fixDef);
             }
 
-            private render(): boolean {
+            private render(): { isAwake: boolean, boxIsFull: boolean } {
                 this.context.clearRect(0, 0, this.worldWidth, this.worldHeight);
-
-                var isAwake = false;
+                let boxIsFull = false;
+                let isAwakeAnyBody = false;
                 for (var bodyItem = this.world.GetBodyList(); bodyItem; bodyItem = bodyItem.GetNext()) {
-                    if (bodyItem.GetType() == b2.Body.b2_dynamicBody) {
-                        isAwake = isAwake || bodyItem.IsAwake();
-                        var pos = bodyItem.GetPosition();
 
-                        this.context.save();
-                        var userData = bodyItem.GetUserData();
-                        if (userData && userData.img && userData.img.complete) {
-                            var slideX = pos.x * this.worldScale;
-                            var slideY = pos.y * this.worldScale;
+                    // Type が dynamicBody である body だけに絞り込み
+                    if (bodyItem.GetType() != b2.Body.b2_dynamicBody) continue;
 
-                            this.context.translate(slideX, slideY);
-                            this.context.rotate(bodyItem.GetAngle());
-                            this.context.drawImage(userData.img, -userData.r, -userData.r);
-                        }
-                        this.context.restore();
+                    let pos = bodyItem.GetPosition();
+                    let slideX = pos.x * this.worldScale;
+                    let slideY = (pos.y * this.worldScale) - this.throwingBandHeight;
+
+                    let isAwake = bodyItem.IsAwake();
+                    isAwakeAnyBody = isAwakeAnyBody || isAwake;
+
+                    // 投入域の1/2.5にまで溜まって安定したコインがあれば、ボックスは満杯と判定
+                    if (isAwake == false && slideY <= -(this.throwingBandHeight / 2.5)) {
+                        boxIsFull = true;
                     }
+
+                    // userData に設定したコイン画像が取得できない body は処理スキップ。
+                    var userData = bodyItem.GetUserData() as { img: HTMLImageElement, r: number };
+                    if (userData == null || userData.img == null || userData.img.complete == false) continue;
+
+                    // 描画域に降りてきてない body は処理スキップ。
+                    if (slideY < -userData.r) continue;
+
+                    // 以上の諸条件をクリアした body を canvas に描画。
+                    this.context.save();
+                    this.context.translate(slideX, slideY);
+                    this.context.rotate(bodyItem.GetAngle());
+                    this.context.drawImage(userData.img, -userData.r, -userData.r);
+                    this.context.restore();
                 }
-                return isAwake;
+
+                let result = { isAwake: isAwakeAnyBody, boxIsFull };
+                return result;
             }
 
             public tweet(): void {
