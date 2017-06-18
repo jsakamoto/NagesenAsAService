@@ -29,7 +29,8 @@ namespace NaaS {
             constructor(
                 public imageUrl: string,
                 public radius: number,
-                public seUrl: string
+                public seUrl: string,
+                public coinType: CoinType
             ) {
                 this.image = this.resizeImage(imageUrl, 2 * radius);
             }
@@ -65,14 +66,24 @@ namespace NaaS {
         }
 
         var CoinAssets = new Array<CoinAsset>();
-        CoinAssets[CoinType.Like] = new CoinAsset('/Content/images/coin.png', 20, null);
-        CoinAssets[CoinType.Dis] = new CoinAsset('/Content/images/stone.png', 15, null);
+        CoinAssets[CoinType.Like] = new CoinAsset('/Content/images/coin.png', 20, null, CoinType.Like);
+        CoinAssets[CoinType.Dis] = new CoinAsset('/Content/images/stone.png', 15, null, CoinType.Dis);
 
         interface ThrowingData {
             throwPoint: number;
             typeOfCoin: CoinType;
             countOfLike: number;
             countOfDis: number;
+        }
+
+        interface ICoinState {
+            sessionId: string,
+            coins: {
+                x: number;
+                y: number;
+                a: number;
+                t: CoinType;
+            }[];
         }
 
         export class RoomController {
@@ -94,7 +105,8 @@ namespace NaaS {
                 public roomContext: RoomContextService,
                 private hubClient: HubClientService,
                 private $scope: ng.IScope,
-                private $http: ng.IHttpService
+                private $http: ng.IHttpService,
+                $q: ng.IQService
             ) {
                 var canvas = document.getElementById('canvas') as HTMLCanvasElement;
                 this.context = canvas.getContext('2d');
@@ -105,9 +117,11 @@ namespace NaaS {
 
                 $scope.$watch(() => roomContext.sessionID, (newVal, oldVal) => {
                     if (newVal != '' && oldVal != '') this.initWorld();
+                    if (newVal != '' && oldVal == '') this.restoreCoinsState($q);
                 });
 
                 this.initWorld();
+
                 this.worker = new Worker('/Views/Default/BoxWorker.js');
                 this.worker.addEventListener('message', this.OnWorkerMessage.bind(this));
 
@@ -163,9 +177,11 @@ namespace NaaS {
                 }
 
                 let radius = coinAsset.radius;
-                this.createCoin(coinAsset, {
+                this.createCoin({
                     x: radius + (0 | ((this.worldWidth - 2 * radius) * data.throwPoint)),
-                    y: -radius
+                    y: -radius,
+                    a: 0,
+                    t: coinAsset.coinType
                 });
 
                 this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
@@ -207,8 +223,58 @@ namespace NaaS {
 
                 if (result.isAwake == false) {
                     this.worker.postMessage({ cmd: 'Stop' });
+                    this.saveCoinsState();
                     if (_app.isOwner) this.takeScreenShot();
                 }
+            }
+
+            private saveCoinsState(): void {
+                let coinsState: ICoinState = {
+                    sessionId: this.roomContext.sessionID,
+                    coins: []
+                };
+                for (var bodyItem = this.world.GetBodyList(); bodyItem; bodyItem = bodyItem.GetNext()) {
+
+                    // Type が dynamicBody である body だけに絞り込み
+                    if (bodyItem.GetType() != b2.Body.b2_dynamicBody) continue;
+
+                    let coinAsset = bodyItem.GetUserData() as CoinAsset;
+                    if (coinAsset == null || coinAsset.coinType == null) continue;
+
+                    let pos = bodyItem.GetPosition();
+                    coinsState.coins.push({
+                        x: pos.x * this.worldScale,
+                        y: pos.y * this.worldScale,
+                        a: bodyItem.GetAngle(),
+                        t: coinAsset.coinType
+                    });
+                }
+
+                let coinsStateJson = JSON.stringify(coinsState);
+                sessionStorage.setItem('coinsState', coinsStateJson);
+            }
+
+            private restoreCoinsState($q: ng.IQService): void {
+
+                let coinsStateJson = sessionStorage.getItem('coinsState') || '';
+                if (coinsStateJson == '') return;
+
+                let coinsState = JSON.parse(coinsStateJson) as ICoinState;
+                if (coinsState.sessionId != this.roomContext.sessionID) {
+                    sessionStorage.removeItem('coinsState');
+                    return;
+                }
+
+                coinsState.coins.forEach(state => this.createCoin(state));
+
+                let coinImages = CoinAssets.map(asset => asset.image);
+                $q((resolve, reject) => {
+                    let resolver = () => { if (coinImages.every(img => img.complete)) resolve(); };
+                    coinImages.forEach(img => img.addEventListener('load', () => { resolver(); }));
+                    resolver();
+                }).then(() => {
+                    this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
+                });
             }
 
             private takeScreenShot(): void {
@@ -237,7 +303,9 @@ namespace NaaS {
                 this.world.CreateBody(bodyDef).CreateFixture(fixDef);
             }
 
-            private createCoin(coinAsset: CoinAsset, position: { x: number, y: number }) {
+            private createCoin(coinState: { x: number, y: number, a: number, t: CoinType }) {
+
+                let coinAsset = CoinAssets[coinState.t];
 
                 // オブジェクトの設定
                 if (coinAsset.fixtureDef == null) {
@@ -251,8 +319,9 @@ namespace NaaS {
                 // 円形オブジェクトの設置
                 let bodyDef = new b2.BodyDef;
                 bodyDef.type = b2.Body.b2_dynamicBody;
-                bodyDef.position.x = position.x / this.worldScale;
-                bodyDef.position.y = position.y / this.worldScale;
+                bodyDef.position.x = coinState.x / this.worldScale;
+                bodyDef.position.y = coinState.y / this.worldScale;
+                bodyDef.angle = coinState.a;
                 bodyDef.linearDamping = 0.5; // 減衰率
                 bodyDef.userData = coinAsset;
 
@@ -311,7 +380,7 @@ namespace NaaS {
             }
         }
 
-        theApp.controller('roomController', ['roomContext', 'hubClient', '$scope', '$http', RoomController]);
+        theApp.controller('roomController', ['roomContext', 'hubClient', '$scope', '$http', '$q', RoomController]);
 
         $(() => {
             $('#lnk-tweet').click(function (e) {

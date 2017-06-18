@@ -16,10 +16,11 @@ var NaaS;
     var Box;
     (function (Box) {
         var CoinAsset = (function () {
-            function CoinAsset(imageUrl, radius, seUrl) {
+            function CoinAsset(imageUrl, radius, seUrl, coinType) {
                 this.imageUrl = imageUrl;
                 this.radius = radius;
                 this.seUrl = seUrl;
+                this.coinType = coinType;
                 this.fixtureDef = null;
                 this.image = this.resizeImage(imageUrl, 2 * radius);
             }
@@ -50,10 +51,10 @@ var NaaS;
             return CoinAsset;
         }());
         var CoinAssets = new Array();
-        CoinAssets[0 /* Like */] = new CoinAsset('/Content/images/coin.png', 20, null);
-        CoinAssets[1 /* Dis */] = new CoinAsset('/Content/images/stone.png', 15, null);
+        CoinAssets[0 /* Like */] = new CoinAsset('/Content/images/coin.png', 20, null, 0 /* Like */);
+        CoinAssets[1 /* Dis */] = new CoinAsset('/Content/images/stone.png', 15, null, 1 /* Dis */);
         var RoomController = (function () {
-            function RoomController(roomContext, hubClient, $scope, $http) {
+            function RoomController(roomContext, hubClient, $scope, $http, $q) {
                 var _this = this;
                 this.roomContext = roomContext;
                 this.hubClient = hubClient;
@@ -72,6 +73,8 @@ var NaaS;
                 $scope.$watch(function () { return roomContext.sessionID; }, function (newVal, oldVal) {
                     if (newVal != '' && oldVal != '')
                         _this.initWorld();
+                    if (newVal != '' && oldVal == '')
+                        _this.restoreCoinsState($q);
                 });
                 this.initWorld();
                 this.worker = new Worker('/Views/Default/BoxWorker.js');
@@ -120,9 +123,11 @@ var NaaS;
                     return;
                 }
                 var radius = coinAsset.radius;
-                this.createCoin(coinAsset, {
+                this.createCoin({
                     x: radius + (0 | ((this.worldWidth - 2 * radius) * data.throwPoint)),
-                    y: -radius
+                    y: -radius,
+                    a: 0,
+                    t: coinAsset.coinType
                 });
                 this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
             };
@@ -155,9 +160,54 @@ var NaaS;
                 this.boxIsFull = result.boxIsFull;
                 if (result.isAwake == false) {
                     this.worker.postMessage({ cmd: 'Stop' });
+                    this.saveCoinsState();
                     if (_app.isOwner)
                         this.takeScreenShot();
                 }
+            };
+            RoomController.prototype.saveCoinsState = function () {
+                var coinsState = {
+                    sessionId: this.roomContext.sessionID,
+                    coins: []
+                };
+                for (var bodyItem = this.world.GetBodyList(); bodyItem; bodyItem = bodyItem.GetNext()) {
+                    // Type が dynamicBody である body だけに絞り込み
+                    if (bodyItem.GetType() != b2.Body.b2_dynamicBody)
+                        continue;
+                    var coinAsset = bodyItem.GetUserData();
+                    if (coinAsset == null || coinAsset.coinType == null)
+                        continue;
+                    var pos = bodyItem.GetPosition();
+                    coinsState.coins.push({
+                        x: pos.x * this.worldScale,
+                        y: pos.y * this.worldScale,
+                        a: bodyItem.GetAngle(),
+                        t: coinAsset.coinType
+                    });
+                }
+                var coinsStateJson = JSON.stringify(coinsState);
+                sessionStorage.setItem('coinsState', coinsStateJson);
+            };
+            RoomController.prototype.restoreCoinsState = function ($q) {
+                var _this = this;
+                var coinsStateJson = sessionStorage.getItem('coinsState') || '';
+                if (coinsStateJson == '')
+                    return;
+                var coinsState = JSON.parse(coinsStateJson);
+                if (coinsState.sessionId != this.roomContext.sessionID) {
+                    sessionStorage.removeItem('coinsState');
+                    return;
+                }
+                coinsState.coins.forEach(function (state) { return _this.createCoin(state); });
+                var coinImages = CoinAssets.map(function (asset) { return asset.image; });
+                $q(function (resolve, reject) {
+                    var resolver = function () { if (coinImages.every(function (img) { return img.complete; }))
+                        resolve(); };
+                    coinImages.forEach(function (img) { return img.addEventListener('load', function () { resolver(); }); });
+                    resolver();
+                }).then(function () {
+                    _this.worker.postMessage({ cmd: 'Start', fps: _this.frameRate });
+                });
             };
             RoomController.prototype.takeScreenShot = function () {
                 var _this = this;
@@ -182,7 +232,8 @@ var NaaS;
                 bodyDef.position.Set(x / this.worldScale, y / this.worldScale);
                 this.world.CreateBody(bodyDef).CreateFixture(fixDef);
             };
-            RoomController.prototype.createCoin = function (coinAsset, position) {
+            RoomController.prototype.createCoin = function (coinState) {
+                var coinAsset = CoinAssets[coinState.t];
                 // オブジェクトの設定
                 if (coinAsset.fixtureDef == null) {
                     coinAsset.fixtureDef = new b2.FixtureDef;
@@ -194,8 +245,9 @@ var NaaS;
                 // 円形オブジェクトの設置
                 var bodyDef = new b2.BodyDef;
                 bodyDef.type = b2.Body.b2_dynamicBody;
-                bodyDef.position.x = position.x / this.worldScale;
-                bodyDef.position.y = position.y / this.worldScale;
+                bodyDef.position.x = coinState.x / this.worldScale;
+                bodyDef.position.y = coinState.y / this.worldScale;
+                bodyDef.angle = coinState.a;
                 bodyDef.linearDamping = 0.5; // 減衰率
                 bodyDef.userData = coinAsset;
                 this.world.CreateBody(bodyDef).CreateFixture(coinAsset.fixtureDef);
@@ -246,7 +298,7 @@ var NaaS;
             return RoomController;
         }());
         Box.RoomController = RoomController;
-        theApp.controller('roomController', ['roomContext', 'hubClient', '$scope', '$http', RoomController]);
+        theApp.controller('roomController', ['roomContext', 'hubClient', '$scope', '$http', '$q', RoomController]);
         $(function () {
             $('#lnk-tweet').click(function (e) {
                 e.preventDefault();
