@@ -41,8 +41,6 @@ namespace NagesenAsAService
                 "~/Views/Default/SettingsMenuController.js"
                 ));
 
-            bundles.UseCdn = true;
-
             bundles.Add(new StyleBundle("~/content/css").Include(
                 "~/Content/normalize.css",
                 "~/Content/md-iconfont.css",
