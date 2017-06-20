@@ -30,22 +30,37 @@ header #settings-button {
   margin: 0 auto;
   margin-top: 1em;
   width: 802px; }
+  #box #session-title {
+    background-color: rgba(0, 0, 0, 0.3);
+    color: white;
+    -moz-transition: all linear 0.2s;
+    -o-transition: all linear 0.2s;
+    -webkit-transition: all linear 0.2s;
+    transition: all linear 0.2s;
+    height: 0;
+    line-height: 2.3em;
+    overflow: hidden;
+    position: absolute;
+    width: 100%;
+    z-index: 1; }
+    #box.has-title #session-title {
+      height: 2.3em; }
 
 #score-box {
   background-color: rgba(0, 0, 0, 0.3);
-  width: 6.7em;
-  position: absolute;
-  top: 1em;
-  left: 680px;
+  color: white;
   -moz-transition: all linear 0.2s;
   -o-transition: all linear 0.2s;
   -webkit-transition: all linear 0.2s;
   transition: all linear 0.2s;
+  width: 6.7em;
+  position: absolute;
+  top: 1em;
+  left: 680px;
   z-index: 1; }
   #score-box .count-of-coin {
     text-align: right;
     padding: 0.3em;
-    color: white;
     font-size: 95%;
     background-size: 1.3em;
     background-position: 0.3em center; }
@@ -56,6 +71,8 @@ header #settings-button {
     background-image: url(images/stone.png); }
   #score-box.dis-coin.allow .count-of-coin.dis {
     display: block; }
+  .has-title #score-box {
+    top: 3em; }
 
 @media screen and (max-width: 800px) {
   #score-box {

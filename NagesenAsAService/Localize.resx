@@ -165,4 +165,7 @@
   <data name="ResetRoom" xml:space="preserve">
     <value>Reset</value>
   </data>
+  <data name="SessionTitle" xml:space="preserve">
+    <value>Title</value>
+  </data>
 </root>

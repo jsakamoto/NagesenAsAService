@@ -21,7 +21,9 @@
 <div ng-app="theApp" class="room-page">
 
     <div id="box-container">
-        <div id="box" ng-controller="roomController as ctrl">
+        <div id="box" ng-controller="roomController as ctrl" ng-class='{"has-title": ctrl.roomContext.title != ""}'>
+
+            <div id="session-title">{{ctrl.roomContext.title}}</div>
 
             <div id="score-box" ng-class="'dis-coin '+ (ctrl.roomContext.allowDisCoin ? 'allow' : 'deny')">
                 <div class="count-of-coin like">
@@ -39,14 +41,18 @@
     <div id="settings-container" ng-controller="settingsMenuController as ctrl" ng-class='{"visible": ctrl.visible}'>
         <div id="settings-content">
             <div class="menu-item">
+                <label for="session-title">@Localize.SessionTitle</label>
+                <input type="text" id="session-title" ng-model="ctrl.roomContext.title" />
+            </div>
+            <div class="menu-item">
+                <label for="twitterHashtag">@Localize.TwitterHashtag #</label>
+                <input type="text" id="twitterHashtag" ng-model="ctrl.roomContext.twitterHashtag" />
+            </div>
+            <div class="menu-item">
                 <label for="allowDisCoin">
                     <input type="checkbox" id="allowDisCoin" ng-model="ctrl.roomContext.allowDisCoin" />
                     @Localize.AllowDisCoin
                 </label>
-            </div>
-            <div class="menu-item">
-                <label for="twitterHashtag">@Localize.TwitterHashtag #</label>
-                <input type="text" id="twitterHashtag" ng-model="ctrl.roomContext.twitterHashtag"/>
             </div>
             <div class="menu-item">
                 <button id="reset-room" ng-click="ctrl.resetRoom()">@Localize.ResetRoom</button>
@@ -64,5 +70,4 @@
         _app.localize.ConfirmResetRoom = '@Localize.ConfirmResetRoom';
     </script>
     @Scripts.Render("~/bundles/box-js")
-    <script src="~/Scripts/sharebox.js"></script>
 }

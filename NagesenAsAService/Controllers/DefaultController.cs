@@ -50,7 +50,7 @@ namespace NagesenAsAService.Controllers
             await this.Repository.AddRoomAsync(new Room(newRoomNumber)
             {
                 OwnerUserID = this.User.Identity.Name,
-                Title = "Room Number: " + newRoomNumber.ToString(),
+                Title = "",
                 Url = urlOfThisRoom,
                 ShortUrl = shortUrlOfThisRoom
             });
@@ -100,6 +100,7 @@ namespace NagesenAsAService.Controllers
             return Json(new
             {
                 sessionID = room.SessionID,
+                title = room.Title,
                 allowDisCoin = room.AllowDisCoin
             }, JsonRequestBehavior.AllowGet);
         }

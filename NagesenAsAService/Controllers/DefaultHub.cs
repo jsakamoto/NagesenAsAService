@@ -25,7 +25,7 @@ namespace NagesenAsAService.Controllers
             return new RoomContext(room);
         }
 
-        public async Task UpdateSettings(int roomNumber, string twitterHashtag, bool allowDisCoin)
+        public async Task UpdateSettings(int roomNumber, string title, string twitterHashtag, bool allowDisCoin)
         {
             await this.Repository.UpdateRoomAsync(roomNumber, room =>
             {
@@ -33,12 +33,13 @@ namespace NagesenAsAService.Controllers
                 var isOwner = room.OwnerUserID == this.Context.User.Identity.Name;
                 if (isOwner == false) return false;
 
+                room.Title = title;
                 room.TwitterHashtag = twitterHashtag;
                 room.AllowDisCoin = allowDisCoin;
                 return true;
             });
 
-            Clients.Group(roomNumber.ToString()).UpdatedSettings(new { twitterHashtag, allowDisCoin });
+            Clients.Group(roomNumber.ToString()).UpdatedSettings(new { title, twitterHashtag, allowDisCoin });
         }
 
         public void Throw(int roomNumber, CoinType typeOfCoin)

@@ -14,27 +14,28 @@
     const KeyOfControllerStateStore = 'naas.controller.state';
 
     class NagesenControllerController {
-        public countOfCoin: number;
+        public countOfLike: number;
         public countOfDis: number;
+        public title: string;
         public allowDisCoin: boolean;
-        private sessionID: string;
-        private $http: ng.IHttpService;
+        public sessionID: string;
 
         constructor(
-            $http: ng.IHttpService,
-            $interval: ng.IIntervalService
+            $interval: ng.IIntervalService,
+            private $http: ng.IHttpService,
+            private tweeter: TweetService
         ) {
             this.$http = $http;
 
             this.sessionID = '';
-            this.countOfCoin = 0;
+            this.countOfLike = 0;
             this.countOfDis = 0;
 
             let state = this.loadStateWithSweepOld();
             let room = state.rooms[_app.roomNumber] || null;
             if (room !== null) {
                 this.sessionID = room.sessionID;
-                this.countOfCoin = room.countOfCoin;
+                this.countOfLike = room.countOfCoin;
                 this.countOfDis = room.countOfDis;
             }
 
@@ -43,7 +44,7 @@
         }
 
         public countUpCoin(price: number): void {
-            this.countOfCoin += price;
+            this.countOfLike += price;
             this.$http.put(location.pathname + '/throw', { typeOfCoin: CoinType.Like });
             this.saveState();
         }
@@ -64,7 +65,7 @@
             let state = this.loadState();
             state.rooms[_app.roomNumber] = {
                 sessionID: this.sessionID,
-                countOfCoin: this.countOfCoin,
+                countOfCoin: this.countOfLike,
                 countOfDis: this.countOfDis,
                 lastSavedTime: Date.now()
             };
@@ -90,24 +91,18 @@
         }
 
         public tweet(): void {
-            var text =
-                `この枠に${this.countOfCoin}円分の投げ銭` +
-                (this.allowDisCoin ? `と${this.countOfDis}Dis` : '') +
-                `をしました☆`;
-            var url = _app.apiBaseUrl + '/TwitterShare?';
-            url += 'text=' + encodeURIComponent(text);
-            url += '&url=' + encodeURIComponent(_app.apiBaseUrl + '/screenshot/' + this.sessionID);
-            window.open(url);
+            this.tweeter.openTweet(TweetType.FromController, this, _app.apiBaseUrl);
         }
 
         private refreshContext(): void {
             this.$http
                 .get<RoomContextSummary>(location.pathname + '/PeekRoomContext')
                 .then(e => {
+                    this.title = e.data.title;
                     this.allowDisCoin = e.data.allowDisCoin;
                     if (this.sessionID !== e.data.sessionID) {
                         if (this.sessionID !== '') {
-                            this.countOfCoin = 0;
+                            this.countOfLike = 0;
                             this.countOfDis = 0;
                         }
                         this.sessionID = e.data.sessionID;
@@ -117,7 +112,7 @@
     }
 
     var theApp = angular.module('theApp', []);
-    theApp.controller('controllerController', ['$http', '$interval', NagesenControllerController]);
+    theApp.controller('controllerController', ['$interval', '$http', 'tweeter', NagesenControllerController]);
 }
 
 $(() => {

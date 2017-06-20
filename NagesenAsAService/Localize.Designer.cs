@@ -178,6 +178,15 @@ namespace NagesenAsAService {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Title.
+        /// </summary>
+        public static string SessionTitle {
+            get {
+                return ResourceManager.GetString("SessionTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Settings.
         /// </summary>
         public static string Settings {

@@ -2,12 +2,12 @@
 
     export interface RoomContextSummary {
         sessionID: string
+        title: string;
         allowDisCoin: boolean;
     }
 
     export interface RoomContext extends RoomContextSummary {
         roomNumber: number;
-        title: string;
         twitterHashtag: string;
         countOfLike: number;
         countOfDis: number;

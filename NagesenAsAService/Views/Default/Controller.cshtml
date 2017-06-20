@@ -13,23 +13,28 @@
     @Html.Partial("_ShareBox", Model)
 }
 
-<div id="controller" ng-app="theApp" ng-controller="controllerController as ctrl">
-    <div id="items" ng-class="'dis-coin '+ (ctrl.allowDisCoin ? 'allow' : 'deny')">
-        <div id="coin" class="item">
-            <img class="img-throwing coin" src="~/Content/images/coin.png" ng-click="ctrl.countUpCoin(10)">
-            <div><span ng-bind="ctrl.countOfCoin | number">0</span> Yen</div>
+<div ng-app="theApp" ng-controller="controllerController as ctrl" ng-class='{"has-title": ctrl.title != ""}'>
+
+    <div id="session-title">{{ctrl.title}}</div>
+
+    <div id="controller">
+        <div id="items" ng-class="'dis-coin '+ (ctrl.allowDisCoin ? 'allow' : 'deny')">
+            <div id="coin" class="item">
+                <img class="img-throwing coin" src="~/Content/images/coin.png" ng-click="ctrl.countUpCoin(10)">
+                <div><span ng-bind="ctrl.countOfLike | number">0</span> Yen</div>
+            </div>
+            <div id="stone" class="item">
+                <img class="img-throwing coin" src="~/Content/images/stone.png" ng-click="ctrl.countUpDis(10)">
+                <div><span ng-bind="ctrl.countOfDis | number">0</span> Dis</div>
+            </div>
         </div>
-        <div id="stone" class="item">
-            <img class="img-throwing coin" src="~/Content/images/stone.png" ng-click="ctrl.countUpDis(10)">
-            <div><span ng-bind="ctrl.countOfDis | number">0</span> Dis</div>
+        <div id="buttons">
+            <input type="button" value="Tweet" id="buttonTweet" ng-click="ctrl.tweet()" />
         </div>
-    </div>
-    <div id="buttons">
-        <input type="button" value="Tweet" id="buttonTweet" ng-click="ctrl.tweet()" />
     </div>
 </div>
+
 @section scripts{
     @Html.Partial("_AppInfoJS", Model)
-    <script src="~/Views/Default/controller.js"></script>
-    <script src="~/Scripts/sharebox.js"></script>
+    @Scripts.Render("~/bundles/controller-js")
 }

@@ -54,12 +54,13 @@ var NaaS;
         CoinAssets[0 /* Like */] = new CoinAsset('/Content/images/coin.png', 20, null, 0 /* Like */);
         CoinAssets[1 /* Dis */] = new CoinAsset('/Content/images/stone.png', 15, null, 1 /* Dis */);
         var RoomController = (function () {
-            function RoomController(roomContext, hubClient, $scope, $http, $q) {
+            function RoomController(roomContext, hubClient, $scope, $http, tweeter, $q) {
                 var _this = this;
                 this.roomContext = roomContext;
                 this.hubClient = hubClient;
                 this.$scope = $scope;
                 this.$http = $http;
+                this.tweeter = tweeter;
                 /** World座標の高さのうち、Canvas に描画されない、ボックス上部の投入域の高さ */
                 this.throwingBandHeight = 120;
                 this.worldScale = 30.0;
@@ -81,6 +82,9 @@ var NaaS;
                 this.worker.addEventListener('message', this.OnWorkerMessage.bind(this));
                 this.loadSoundAsset(0 /* Like */);
                 this.loadSoundAsset(1 /* Dis */);
+                $scope.$watch(function () { return roomContext.title; }, function (newVal, oldVal) {
+                    setTimeout(function () { return _this.takeScreenShot(); }, 1000);
+                });
             }
             RoomController.prototype.loadSoundAsset = function (coinType) {
                 $.ajax({
@@ -287,18 +291,12 @@ var NaaS;
                 return result;
             };
             RoomController.prototype.tweet = function () {
-                var text = "\u3053\u306E\u67A0\u306B" + this.roomContext.countOfLike + "\u5186\u5206\u306E\u6295\u3052\u92AD" +
-                    (this.roomContext.allowDisCoin ? "\u3068" + this.roomContext.countOfDis + "Dis" : '') +
-                    "\u304C\u96C6\u307E\u308A\u307E\u3057\u305F\u2606";
-                var url = _app.apiBaseUrl + '/TwitterShare?';
-                url += 'text=' + encodeURIComponent(text);
-                url += '&url=' + encodeURIComponent(_app.apiBaseUrl + '/screenshot/' + this.roomContext.sessionID);
-                window.open(url);
+                this.tweeter.openTweet(0 /* FromBox */, this.roomContext, _app.apiBaseUrl);
             };
             return RoomController;
         }());
         Box.RoomController = RoomController;
-        theApp.controller('roomController', ['roomContext', 'hubClient', '$scope', '$http', '$q', RoomController]);
+        theApp.controller('roomController', ['roomContext', 'hubClient', '$scope', '$http', 'tweeter', '$q', RoomController]);
         $(function () {
             $('#lnk-tweet').click(function (e) {
                 e.preventDefault();

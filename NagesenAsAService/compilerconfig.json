@@ -6,5 +6,13 @@
   {
     "outputFile": "Content/box.css",
     "inputFile": "Content/box.scss"
+  },
+  {
+    "outputFile": "Content/controller.css",
+    "inputFile": "Content/controller.scss"
+  },
+  {
+    "outputFile": "Content/Site.css",
+    "inputFile": "Content/Site.scss"
   }
 ]

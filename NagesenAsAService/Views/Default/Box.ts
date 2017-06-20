@@ -106,6 +106,7 @@ namespace NaaS {
                 private hubClient: HubClientService,
                 private $scope: ng.IScope,
                 private $http: ng.IHttpService,
+                private tweeter: TweetService,
                 $q: ng.IQService
             ) {
                 var canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -127,6 +128,10 @@ namespace NaaS {
 
                 this.loadSoundAsset(CoinType.Like);
                 this.loadSoundAsset(CoinType.Dis);
+
+                $scope.$watch(() => roomContext.title, (newVal, oldVal) => {
+                    setTimeout(() => this.takeScreenShot(), 1000);
+                });
             }
 
             private loadSoundAsset(coinType: number): void {
@@ -369,18 +374,11 @@ namespace NaaS {
             }
 
             public tweet(): void {
-                var text =
-                    `この枠に${this.roomContext.countOfLike}円分の投げ銭` +
-                    (this.roomContext.allowDisCoin ? `と${this.roomContext.countOfDis}Dis` : '') +
-                    `が集まりました☆`;
-                var url = _app.apiBaseUrl + '/TwitterShare?';
-                url += 'text=' + encodeURIComponent(text);
-                url += '&url=' + encodeURIComponent(_app.apiBaseUrl + '/screenshot/' + this.roomContext.sessionID);
-                window.open(url);
+                this.tweeter.openTweet(TweetType.FromBox, this.roomContext, _app.apiBaseUrl);
             }
         }
 
-        theApp.controller('roomController', ['roomContext', 'hubClient', '$scope', '$http', '$q', RoomController]);
+        theApp.controller('roomController', ['roomContext', 'hubClient', '$scope', '$http', 'tweeter', '$q', RoomController]);
 
         $(() => {
             $('#lnk-tweet').click(function (e) {

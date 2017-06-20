@@ -35,6 +35,7 @@
             this.hub = hubConn.createHubProxy('DefaultHub');
             this.hub.on('UpdatedSettings', newSettings => {
                 $rootScope.$apply(() => {
+                    roomContext.title = newSettings.title;
                     roomContext.twitterHashtag = newSettings.twitterHashtag;
                     roomContext.allowDisCoin = newSettings.allowDisCoin;
                 });

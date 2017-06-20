@@ -15,7 +15,7 @@
             this.visible = false;
             $scope.$watch(() => this.visible, (newValue, oldValue) => {
                 if (oldValue === true && newValue === false) {
-                    hubClient.hub.invoke('UpdateSettings', roomContext.roomNumber, roomContext.twitterHashtag, roomContext.allowDisCoin);
+                    hubClient.hub.invoke('UpdateSettings', roomContext.roomNumber, roomContext.title, roomContext.twitterHashtag, roomContext.allowDisCoin);
                 }
             });
         }

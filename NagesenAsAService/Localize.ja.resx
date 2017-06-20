@@ -150,6 +150,9 @@
   <data name="ResetRoom" xml:space="preserve">
     <value>リセット</value>
   </data>
+  <data name="SessionTitle" xml:space="preserve">
+    <value>タイトル</value>
+  </data>
   <data name="Settings" xml:space="preserve">
     <value>設定</value>
   </data>

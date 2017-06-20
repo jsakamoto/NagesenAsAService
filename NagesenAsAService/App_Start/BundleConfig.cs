@@ -36,9 +36,17 @@ namespace NagesenAsAService
                 "~/Scripts/Box2dWeb-2.1.a.3.js",
                 "~/Scripts/html2canvas.js",
                 "~/Views/Default/Box.js",
+                "~/Views/Default/TweetService.js",
                 "~/Views/Default/RoomContextService.js",
                 "~/Views/Default/HubClientService.js",
-                "~/Views/Default/SettingsMenuController.js"
+                "~/Views/Default/SettingsMenuController.js",
+                "~/Scripts/sharebox.js"
+                ));
+
+            bundles.Add(new ScriptBundle("~/bundles/controller-js").Include(
+                "~/Views/Default/controller.js",
+                "~/Views/Default/TweetService.js",
+                "~/Scripts/sharebox.js"
                 ));
 
             bundles.Add(new StyleBundle("~/content/css").Include(

@@ -10,7 +10,7 @@ var NaaS;
             this.visible = false;
             $scope.$watch(function () { return _this.visible; }, function (newValue, oldValue) {
                 if (oldValue === true && newValue === false) {
-                    hubClient.hub.invoke('UpdateSettings', roomContext.roomNumber, roomContext.twitterHashtag, roomContext.allowDisCoin);
+                    hubClient.hub.invoke('UpdateSettings', roomContext.roomNumber, roomContext.title, roomContext.twitterHashtag, roomContext.allowDisCoin);
                 }
             });
         }
