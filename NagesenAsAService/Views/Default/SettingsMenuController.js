@@ -27,6 +27,7 @@ var NaaS;
         SettingsMenuController.prototype.resetRoom = function () {
             if (confirm(_app.localize.ConfirmResetRoom) == false)
                 return;
+            this.roomContext.title = '';
             this.hubClient.hub.invoke('ResetRoom', this.roomContext.roomNumber);
             this.hide();
         };

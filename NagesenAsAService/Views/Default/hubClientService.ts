@@ -43,6 +43,7 @@
             this.hub.on('ResetedRoom', newSessionID => {
                 $rootScope.$apply(() => {
                     roomContext.sessionID = newSessionID;
+                    roomContext.title = '';
                     roomContext.countOfLike = 0;
                     roomContext.countOfDis = 0;
                 });

@@ -30,6 +30,7 @@ var NaaS;
             this.hub.on('ResetedRoom', function (newSessionID) {
                 $rootScope.$apply(function () {
                     roomContext.sessionID = newSessionID;
+                    roomContext.title = '';
                     roomContext.countOfLike = 0;
                     roomContext.countOfDis = 0;
                 });
