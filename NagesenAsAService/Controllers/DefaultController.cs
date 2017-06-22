@@ -135,7 +135,7 @@ namespace NagesenAsAService.Controllers
             return new HttpStatusCodeResult(HttpStatusCode.OK);
         }
 
-        [HttpGet]
+        [AcceptVerbs(HttpVerbs.Get | HttpVerbs.Head)]
         public async Task<ActionResult> ScreenShot(int id, Guid? session)
         {
             if (session.HasValue)
