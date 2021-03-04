@@ -1,1 +1,0 @@
-//# sourceMappingURL=CoinType.js.map

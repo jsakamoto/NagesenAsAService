@@ -3,9 +3,5 @@
 bin/
 obj/
 App_Data/
-/packages
-/testresults
-/SignalYN/custom.appSettings.config
-/NagesenAsAService/custom.appSettings.config
 .vs/
 node_modules/

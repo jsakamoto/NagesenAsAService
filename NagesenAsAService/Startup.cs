@@ -1,35 +1,40 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNet.SignalR;
-using Microsoft.Owin;
-using Microsoft.Owin.Security.Cookies;
-using Owin;
-
-[assembly: OwinStartup(typeof(NagesenAsAService.Startup))]
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace NagesenAsAService
 {
     public class Startup
     {
-        public void Configuration(IAppBuilder app)
+        // This method gets called by the runtime. Use this method to add services to the container.
+        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        public void ConfigureServices(IServiceCollection services)
         {
-            app.UseCookieAuthentication(new CookieAuthenticationOptions
-            {
-                AuthenticationType = "TrackingAuth",
-                ExpireTimeSpan = TimeSpan.FromDays(300)
-            });
+        }
 
-            app.Use<TrackingAuthMiddleware>();
-
-            // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=316888
-            var serviceBusConnStr = AppSettings.SignalR.BackPlane.AzureServiceBus.ConnectionString ?? "";
-            if (serviceBusConnStr != "")
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
             {
-                GlobalHost.DependencyResolver.UseServiceBus(
-                    connectionString: serviceBusConnStr,
-                    topicPrefix: "NaaS");
+                app.UseDeveloperExceptionPage();
             }
-            app.MapSignalR();
+
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapGet("/", async context =>
+                {
+                    await context.Response.WriteAsync("Hello World!");
+                });
+            });
         }
     }
 }
