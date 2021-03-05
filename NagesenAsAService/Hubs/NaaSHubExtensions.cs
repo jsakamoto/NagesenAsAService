@@ -33,14 +33,14 @@ namespace NagesenAsAService.Hubs
 
             var throwPoint = default(double);
             lock (_Random) throwPoint = _Random.NextDouble();
-            var data = new
-            {
+            var args = new ThrowCoinEventArgs
+            (
                 throwPoint,
                 typeOfCoin,
-                countOfLike = countOfCoin.CountOfNageSen,
-                countOfDis = countOfCoin.CountOfAoriSen
-            };
-            await clients.Group(roomNumber.ToString()).Throw(data);
+                countOfCoin.CountOfNageSen,
+                countOfCoin.CountOfAoriSen
+            );
+            await clients.Group(roomNumber.ToString()).Throw(args);
         }
     }
 }
