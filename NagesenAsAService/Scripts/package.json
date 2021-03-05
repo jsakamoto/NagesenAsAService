@@ -1,0 +1,6 @@
+{
+  "name": "nagesen-as-a-service",
+  "dependencies": {
+    "@microsoft/signalr": "^5.0.3"
+  }
+}
