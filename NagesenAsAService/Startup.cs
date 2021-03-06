@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using NagesenAsAService.Extensions.DependencyInjection;
 using NagesenAsAService.Hubs;
-using NagesenAsAService.Services.RoomRepository;
-using NagesenAsAService.Services.UrlShorter;
 
 namespace NagesenAsAService
 {
@@ -29,8 +28,8 @@ namespace NagesenAsAService
             if (!string.IsNullOrEmpty(this.Configuration["Azure:SignalR:ConnectionString"]))
                 signalRServerBuilder.AddAzureSignalR();
 
-            services.AddSingleton<IRoomRepository, AzureTableRoomRepository>();
-            services.AddSingleton<IUrlShorter, BitlyUrlShorter>();
+            services.AddNaaSRoomRepository(this.Configuration);
+            services.AddNaaSUrlShorter(this.Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
