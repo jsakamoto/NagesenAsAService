@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using NagesenAsAService.Models;
 
-namespace NagesenAsAService.Models
+namespace NagesenAsAService.Services.RoomRepository
 {
     public interface IRoomRepository
     {

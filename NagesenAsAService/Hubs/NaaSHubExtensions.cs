@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using NagesenAsAService.Models;
+using NagesenAsAService.Services.RoomRepository;
 
 namespace NagesenAsAService.Hubs
 {

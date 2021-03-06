@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using NagesenAsAService.Hubs;
 using NagesenAsAService.Models;
+using NagesenAsAService.Services.RoomRepository;
 
 namespace NagesenAsAService.Controllers
 {

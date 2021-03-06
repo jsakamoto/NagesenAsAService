@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Microsoft.Azure.Cosmos.Table;
 using Microsoft.Extensions.Configuration;
+using NagesenAsAService.Models;
 
-namespace NagesenAsAService.Models
+namespace NagesenAsAService.Services.RoomRepository
 {
     public class AzureTableRoomRepository : IRoomRepository
     {

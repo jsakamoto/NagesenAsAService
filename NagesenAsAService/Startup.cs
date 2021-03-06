@@ -4,7 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NagesenAsAService.Hubs;
-using NagesenAsAService.Models;
+using NagesenAsAService.Services.RoomRepository;
 using NagesenAsAService.Services.UrlShorter;
 
 namespace NagesenAsAService
