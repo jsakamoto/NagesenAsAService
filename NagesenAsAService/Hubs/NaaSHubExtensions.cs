@@ -7,14 +7,14 @@ namespace NagesenAsAService.Hubs
 {
     public static class NaaSHubExtensions
     {
-        private static Random _Random = new Random(DateTime.UtcNow.Millisecond);
+        private static readonly Random _Random = new Random(DateTime.UtcNow.Millisecond);
 
-        public static async Task Throw(this IHubContext<NaaSHub, INaaSHubEvents> naasHubContext, IRoomRepository repository, int roomNumber, CoinType typeOfCoin)
+        public static async Task ThrowCoinAsync(this IHubContext<NaaSHub, INaaSHubEvents> naasHubContext, IRoomRepository repository, int roomNumber, CoinType typeOfCoin)
         {
-            await naasHubContext.Clients.Throw(repository, roomNumber, typeOfCoin);
+            await naasHubContext.Clients.ThrowCoinAsync(repository, roomNumber, typeOfCoin);
         }
 
-        public static async Task Throw(this IHubClients<INaaSHubEvents> clients, IRoomRepository repository, int roomNumber, CoinType typeOfCoin)
+        public static async Task ThrowCoinAsync(this IHubClients<INaaSHubEvents> clients, IRoomRepository repository, int roomNumber, CoinType typeOfCoin)
         {
             var room = await repository.UpdateRoomAsync(roomNumber, r =>
             {

@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NagesenAsAService.Hubs;
 using NagesenAsAService.Models;
+using NagesenAsAService.Services.UrlShorter;
 
 namespace NagesenAsAService
 {
@@ -29,6 +30,7 @@ namespace NagesenAsAService
                 signalRServerBuilder.AddAzureSignalR();
 
             services.AddSingleton<IRoomRepository, AzureTableRoomRepository>();
+            services.AddSingleton<IUrlShorter, BitlyUrlShorter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

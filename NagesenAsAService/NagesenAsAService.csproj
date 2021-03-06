@@ -9,6 +9,8 @@
     <PackageReference Include="Microsoft.Azure.SignalR" Version="1.7.1" />
     <PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="1.0.8" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.8.0" />
+    <PackageReference Include="CacheableContentResult" Version="1.1.3" />
+    <PackageReference Include="QRCoder" Version="1.4.1" />
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.2" />
   </ItemGroup>
 

@@ -38,9 +38,9 @@ namespace NagesenAsAService.Hubs
             await Clients.Group(roomNumber.ToString()).UpdatedSettings(settings);
         }
 
-        public Task Throw(int roomNumber, CoinType typeOfCoin)
+        public Task ThrowCoin(int roomNumber, CoinType typeOfCoin)
         {
-            return this.Clients.Throw(this.Repository, roomNumber, typeOfCoin);
+            return this.Clients.ThrowCoinAsync(this.Repository, roomNumber, typeOfCoin);
         }
 
         public async Task ResetRoom(int roomNumber)
