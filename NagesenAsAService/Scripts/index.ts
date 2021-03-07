@@ -1,40 +1,47 @@
-﻿/// <reference types="@microsoft/signalr" />
+﻿namespace NaaS {
+    class IndexController {
 
-var connection = new signalR.HubConnectionBuilder()
-    .withUrl("/testhub")
-    .configureLogging(signalR.LogLevel.Information)
-    .build();
+        private roomNumber: string = '';
 
-async function start() {
-    try {
-        await connection.start();
-        console.log("SignalR Connected!");
-    } catch (err) {
-        console.log(err);
-        setTimeout(start, 5000);
-    }
-};
-connection.onclose(start);
-connection.on('ReceiveText', onReceiveText)
-start();
+        private enterButton: HTMLAnchorElement;
 
+        constructor() {
 
-const buttonElement = document.getElementById('button');
-if (buttonElement !== null) {
-    buttonElement.addEventListener('click', onClickButton);
-}
+            const roomNumberInput = document.getElementById('room-number-input') as HTMLInputElement;
+            roomNumberInput.addEventListener('input', _ => this.onInputRoomNumberInput(roomNumberInput.value));
 
-async function onClickButton(e: MouseEvent): Promise<void> {
-    console.log('clicked!');
-    if (connection.state === signalR.HubConnectionState.Connected) {
-        try {
-            await connection.invoke('SendText', 'woo:' + (new Date().getTime()))
-            console.log('message sent!');
+            this.enterButton = document.getElementById('enter-button') as HTMLAnchorElement;
+
+            const createNewRoomButton = document.getElementById('create-newroom-button') as HTMLAnchorElement;
+            createNewRoomButton.addEventListener('click', _ => this.onClickCreateNewRoomButton())
         }
-        catch (err) { console.error(err); }
-    }
-}
 
-function onReceiveText(text: string | null): void {
-    console.log('onReceiveText! text: ' + text);
+        private onInputRoomNumberInput(roomNumber: string): void {
+
+            this.roomNumber = roomNumber;
+            this.update();
+        }
+
+        private update(): void {
+            const roomNumberAvailable = /^\d{4}$/.test(this.roomNumber);
+            this.enterButton.classList.toggle('disabled', !roomNumberAvailable);
+            this.enterButton.href = roomNumberAvailable ? `/room/${this.roomNumber}` : '';
+        }
+
+        private async onClickCreateNewRoomButton(): Promise<void> {
+            const res = await fetch('/api/rooms/new', { method: 'post' });
+            if (res.status === 200) {
+                const newRoomNumber = await res.json();
+                location.href = `/room/${newRoomNumber}`;
+            }
+            else {
+                const responseMessage = await res.text();
+                const message = `Creating new room was failed. (HTTP Status ${res.status} ${responseMessage})`;
+                console.error(message);
+                alert(message);
+            }
+        }
+    }
+
+    export const controller = new IndexController();
 }

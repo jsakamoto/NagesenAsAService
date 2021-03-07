@@ -483,7 +483,11 @@ header a.go-home:hover {
 
 a {
   color: #1284ff;
-  text-decoration: none; }
+  text-decoration: none;
+  cursor: pointer; }
+  a.disabled {
+    pointer-events: none;
+    cursor: default; }
 
 a.btn-primary,
 input.btn-primary {

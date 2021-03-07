@@ -85,6 +85,12 @@ header a.go-home:hover {
 a {
     color: rgb(18, 132, 255);
     text-decoration: none;
+    cursor: pointer;
+
+    &.disabled {
+        pointer-events: none;
+        cursor: default;
+    }
 }
 
 a.btn-primary,

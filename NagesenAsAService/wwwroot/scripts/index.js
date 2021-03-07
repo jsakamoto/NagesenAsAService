@@ -1,38 +1,37 @@
 "use strict";
-var connection = new signalR.HubConnectionBuilder()
-    .withUrl("/testhub")
-    .configureLogging(signalR.LogLevel.Information)
-    .build();
-async function start() {
-    try {
-        await connection.start();
-        console.log("SignalR Connected!");
-    }
-    catch (err) {
-        console.log(err);
-        setTimeout(start, 5000);
-    }
-}
-;
-connection.onclose(start);
-connection.on('ReceiveText', onReceiveText);
-start();
-const buttonElement = document.getElementById('button');
-if (buttonElement !== null) {
-    buttonElement.addEventListener('click', onClickButton);
-}
-async function onClickButton(e) {
-    console.log('clicked!');
-    if (connection.state === signalR.HubConnectionState.Connected) {
-        try {
-            await connection.invoke('SendText', 'woo:' + (new Date().getTime()));
-            console.log('message sent!');
+var NaaS;
+(function (NaaS) {
+    class IndexController {
+        constructor() {
+            this.roomNumber = '';
+            const roomNumberInput = document.getElementById('room-number-input');
+            roomNumberInput.addEventListener('input', _ => this.onInputRoomNumberInput(roomNumberInput.value));
+            this.enterButton = document.getElementById('enter-button');
+            const createNewRoomButton = document.getElementById('create-newroom-button');
+            createNewRoomButton.addEventListener('click', _ => this.onClickCreateNewRoomButton());
         }
-        catch (err) {
-            console.error(err);
+        onInputRoomNumberInput(roomNumber) {
+            this.roomNumber = roomNumber;
+            this.update();
+        }
+        update() {
+            const roomNumberAvailable = /^\d{4}$/.test(this.roomNumber);
+            this.enterButton.classList.toggle('disabled', !roomNumberAvailable);
+            this.enterButton.href = roomNumberAvailable ? `/room/${this.roomNumber}` : '';
+        }
+        async onClickCreateNewRoomButton() {
+            const res = await fetch('/api/rooms/new', { method: 'post' });
+            if (res.status === 200) {
+                const newRoomNumber = await res.json();
+                location.href = `/room/${newRoomNumber}`;
+            }
+            else {
+                const responseMessage = await res.text();
+                const message = `Creating new room was failed. (HTTP Status ${res.status} ${responseMessage})`;
+                console.error(message);
+                alert(message);
+            }
         }
     }
-}
-function onReceiveText(text) {
-    console.log('onReceiveText! text: ' + text);
-}
+    NaaS.controller = new IndexController();
+})(NaaS || (NaaS = {}));
