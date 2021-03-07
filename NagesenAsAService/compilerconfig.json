@@ -1,0 +1,18 @@
+﻿[
+  {
+    "inputFile": "Styles/site.scss",
+    "outputFile": "wwwroot/styles/site.css"
+  },
+  {
+    "inputFile": "Styles/index/index.scss",
+    "outputFile": "wwwroot/styles/index.css"
+  },
+  {
+    "inputFile": "Styles/room/room.scss",
+    "outputFile": "wwwroot/styles/room.css"
+  },
+  {
+    "inputFile": "Styles/controller/controller.scss",
+    "outputFile": "wwwroot/styles/controller.css"
+  }
+]

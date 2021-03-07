@@ -1,0 +1,82 @@
+﻿
+/* "Share" box, QR code */
+
+.room-url {
+    color: #0026ff;
+}
+
+.qr-code-icon {
+    position: absolute;
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    margin-left: 4px;
+    background-color: white;
+    background-image: url(/images/qrcode.png);
+}
+
+.share-box {
+    position: fixed;
+    top: 5em;
+    background-color: white;
+    z-index: 3;
+    width: 100%;
+    display: none;
+}
+
+.share-box #buttonTweet {
+    padding: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    width: 100px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.3);
+    -webkit-appearance: button;
+    display: inline-block;
+    border-color: #1ab2e8;
+    color: #fff;
+    background-color: #1ab2e8;
+    margin-left: 8px;
+    margin-top: -10px;
+    position: relative;
+    top: 0;
+}
+
+.share-box .room-url {
+    display: inline-block;
+    font-size: 32px;
+}
+
+.share-box .qr-code {
+    width: 301px;
+    height: 301px;
+    -o-object-fit: none;
+    object-fit: none;
+}
+
+/* header, title */
+#app-title:after {
+    content: ' - ';
+}
+
+.room-number:after,
+.room-url:after {
+    content: ' | ';
+    color: black;
+}
+
+@media screen and (max-width: 650px) {
+    #app-title {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .room-number {
+        display: none;
+    }
+}
