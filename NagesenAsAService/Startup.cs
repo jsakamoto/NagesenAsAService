@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -5,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NagesenAsAService.Extensions.DependencyInjection;
 using NagesenAsAService.Hubs;
+using NagesenAsAService.Middlewares;
 
 namespace NagesenAsAService
 {
@@ -23,6 +25,7 @@ namespace NagesenAsAService
         {
             services.AddControllers();
             services.AddRazorPages();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 
             var signalRServerBuilder = services.AddSignalR();
             if (!string.IsNullOrEmpty(this.Configuration["Azure:SignalR:ConnectionString"]))
@@ -42,6 +45,8 @@ namespace NagesenAsAService
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
+            app.UseMiddleware<TrackingAuthMiddleware>();
             app.UseStaticFiles();
             app.UseRouting();
 
