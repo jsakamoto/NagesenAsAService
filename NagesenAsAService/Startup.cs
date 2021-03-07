@@ -50,6 +50,12 @@ namespace NagesenAsAService
             app.UseStaticFiles();
             app.UseRouting();
 
+            var supportedCultures = new[] { "en", "ja" };
+            var localizationOptions = new RequestLocalizationOptions().SetDefaultCulture(supportedCultures[0])
+                .AddSupportedCultures(supportedCultures)
+                .AddSupportedUICultures(supportedCultures);
+            app.UseRequestLocalization(localizationOptions);
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
