@@ -43,5 +43,5 @@
         }
     }
 
-    export const controller = new IndexController();
+    export var controller: any = new IndexController();
 }

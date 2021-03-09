@@ -8,11 +8,11 @@
     "outputFile": "wwwroot/styles/index.css"
   },
   {
-    "inputFile": "Styles/room/room.scss",
-    "outputFile": "wwwroot/styles/room.css"
+    "inputFile": "Styles/nagesenBox/nagesenBox.scss",
+    "outputFile": "wwwroot/styles/nagesenBox.css"
   },
   {
-    "inputFile": "Styles/controller/controller.scss",
-    "outputFile": "wwwroot/styles/controller.css"
+    "inputFile": "Styles/nagesenController/nagesenController.scss",
+    "outputFile": "wwwroot/styles/nagesenController.css"
   }
 ]
