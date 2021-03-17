@@ -21,7 +21,7 @@ namespace NagesenAsAService.Controllers
     [ApiController]
     public class NaaSController : ControllerBase
     {
-        private static readonly Random _Random = new Random(DateTime.UtcNow.Millisecond);
+        private static readonly Random _Random = new(DateTime.UtcNow.Millisecond);
 
         private IWebHostEnvironment WebHostEnvironment { get; }
 
@@ -107,6 +107,7 @@ namespace NagesenAsAService.Controllers
         public async Task<IActionResult> PeekRoomContextAsync(int roomNumber)
         {
             var room = await this.Repository.FindRoomAsync(roomNumber);
+            if (room == null) return NotFound();
             return Ok(new
             {
                 sessionID = room.SessionID,

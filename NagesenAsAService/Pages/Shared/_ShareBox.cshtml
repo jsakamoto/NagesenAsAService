@@ -1,0 +1,13 @@
+﻿@model NagesenAsAService.Models.Room
+<span class="room-number">Room #@Model.RoomNumber</span>
+<span class="room-url">@Model.ShortUrl</span>
+<a href="#" class="qr-code-icon"></a>
+
+<div class="share-box">
+    <div class="header">
+        <span class="room-url">@Model.ShortUrl</span>
+        <input type="button" value="Tweet" id="buttonTweet" />
+    </div>
+    <img src="@($"/api/rooms/{Model.RoomNumber}/qrcode")" alt="@Model.ShortUrl" class="qr-code" />
+</div>
+

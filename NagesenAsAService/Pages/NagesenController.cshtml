@@ -1,10 +1,46 @@
 ﻿@page "/room/{roomNumber}"
+@inject NagesenAsAService.Services.RoomRepository.IRoomRepository RoomRepository
+@{
+    ViewBag.Title = "Controller";
+
+    var roomNumber = int.Parse(RouteData.Values["roomNumber"].ToString());
+    var room = await this.RoomRepository.FindRoomAsync(roomNumber);
+
+}
 @section head {
     <link href="~/styles/nagesenController.min.css" rel="stylesheet" />
 }
-<div id="room-number-holder">
+@section headerLeft {
+    <a href="/" class="go-home"></a>
+}
+@section headerRight{
+    <partial name="_ShareBox" model="room" />
+}
+
+<div id="controller-holder">
+
+    <div id="session-title">
+        <!-- ctrl.title -->
+    </div>
+
+    <div id="controller">
+        <div id="items" class="dis-coin">
+            <div id="coin" class="item">
+                <img id="coin-image" class="img-throwing coin" src="~/images/coin.png" />
+                <div><span id="count-of-like">0</span> Yen</div>
+            </div>
+            <div id="stone" class="item">
+                <img id="stone-image" class="img-throwing coin" src="~/images/stone.png">
+                <div><span id="count-of-dis">0</span> Dis</div>
+            </div>
+        </div>
+        <div id="buttons">
+            <input type="button" value="Tweet" id="buttonTweet" />
+        </div>
+    </div>
 </div>
 
 @section scripts {
+    <script src="~/scripts/tweetService.js"></script>
     <script src="~/scripts/nagesenController.js"></script>
 }
