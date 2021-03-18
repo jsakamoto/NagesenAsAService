@@ -19,7 +19,7 @@ using Toolbelt.Web;
 namespace NagesenAsAService.Controllers
 {
     [ApiController]
-    public class NaaSController : ControllerBase
+    public class RoomsApiController : ControllerBase
     {
         private static readonly Random _Random = new(DateTime.UtcNow.Millisecond);
 
@@ -31,7 +31,7 @@ namespace NagesenAsAService.Controllers
 
         private IUrlShorter UrlShorter { get; }
 
-        public NaaSController(
+        public RoomsApiController(
             IWebHostEnvironment webHostEnvironment,
             IRoomRepository repository,
             IHubContext<NaaSHub, INaaSHubEvents> naasHubContext,
@@ -181,23 +181,6 @@ namespace NagesenAsAService.Controllers
             }
 
             return Redirect(twitterSharUrl);
-        }
-
-        [HttpGet("/api/coinsoundbase64/{id}")]
-        public IActionResult GetCoinSoundBase64(int id)
-        {
-            var path = Path.Combine(this.WebHostEnvironment.WebRootPath, "audio", $"se_coin{id}.mp3");
-            if (!System.IO.File.Exists(path)) return NotFound();
-
-            return new CacheableContentResult(
-                contentType: "text/base64",
-                lastModified: System.IO.File.GetLastWriteTimeUtc(path),
-                getContent: () =>
-                {
-                    var soundBytes = System.IO.File.ReadAllBytes(path);
-                    var soundBase64 = Convert.ToBase64String(soundBytes);
-                    return Encoding.UTF8.GetBytes(soundBase64);
-                });
         }
 
         [HttpGet("/api/rooms/{roomNumber}/qrcode")]
