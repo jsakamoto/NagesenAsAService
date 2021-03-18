@@ -24,7 +24,6 @@ namespace NagesenAsAService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddRazorPages();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 
             var signalRServerBuilder = services.AddSignalR();
@@ -58,7 +57,6 @@ namespace NagesenAsAService
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapRazorPages();
                 endpoints.MapControllers();
                 endpoints.MapHub<TestHub>("/testhub");
             });

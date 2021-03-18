@@ -1,11 +1,7 @@
-﻿@page "/room/{roomNumber}"
-@inject NagesenAsAService.Services.RoomRepository.IRoomRepository RoomRepository
+﻿@model NagesenAsAService.Models.Room
 @{
     ViewBag.Title = "Controller";
-
-    var roomNumber = int.Parse(RouteData.Values["roomNumber"].ToString());
-    var room = await this.RoomRepository.FindRoomAsync(roomNumber);
-
+    var room = Model;
 }
 @section head {
     <link href="~/styles/nagesenController.min.css" rel="stylesheet" />

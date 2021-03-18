@@ -18,6 +18,7 @@
     <Content Remove="App_Data\**" />
     <Content Remove="compilerconfig.json" />
     <None Include="compilerconfig.json" />
+    <None Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
