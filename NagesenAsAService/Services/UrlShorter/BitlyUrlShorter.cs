@@ -1,101 +1,60 @@
 ﻿using System;
-using System.Net;
-using System.Text;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
-using System.Web;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using NagesenAsAService.Extensions;
-using Newtonsoft.Json.Linq;
 
 namespace NagesenAsAService.Services.UrlShorter
 {
     public class BitlyUrlShorter : IUrlShorter
     {
-        private enum StatusType
-        {
-            NotInitialized,
-            Available,
-            NotAvailable
-        }
-
-        private StatusType Status { get; set; } = StatusType.NotInitialized;
-
-        private string AccessToken { get; set; } = "";
-
         private IConfiguration Configuration { get; }
+
+        private IHttpClientFactory HttpClientFactory { get; }
 
         private ILogger<BitlyUrlShorter> Logger { get; }
 
-        public BitlyUrlShorter(IConfiguration configuration, ILogger<BitlyUrlShorter> logger)
+        public BitlyUrlShorter(
+            IConfiguration configuration,
+            IHttpClientFactory httpClientFactory,
+            ILogger<BitlyUrlShorter> logger)
         {
             this.Configuration = configuration;
+            this.HttpClientFactory = httpClientFactory;
             this.Logger = logger;
         }
 
-        private StatusType TryToActivate()
+        private class BitlyShortenAPIResponse
         {
-            lock (this)
-            {
-                if (this.Status != StatusType.NotInitialized) return this.Status;
-
-                // Retrieve Bitly account user name and password.
-                var bitlyAccount = new NetworkCredential();
-                this.Configuration.GetSection("Bitly:Account").Bind(bitlyAccount);
-                if (string.IsNullOrEmpty(bitlyAccount.UserName) || string.IsNullOrEmpty(bitlyAccount.Password))
-                {
-                    this.Status = StatusType.NotAvailable;
-                    return this.Status;
-                }
-
-                // Exchange Bitly account user name and password to access token.
-                var wc = new WebClient { Encoding = Encoding.UTF8 };
-                wc.Headers.Add(HttpRequestHeader.Authorization, "Basic " + (bitlyAccount.UserName + ":" + bitlyAccount.Password).ToBase64());
-                try
-                {
-                    var response = wc.UploadString("https://api-ssl.bitly.com/oauth/access_token", method: "POST", data: "");
-                    if (response.StartsWith("{"))
-                    {
-                        this.Status = StatusType.NotAvailable;
-                        return this.Status;
-                    }
-                    this.AccessToken = response;
-                }
-                catch (Exception)
-                {
-                    this.Status = StatusType.NotAvailable;
-                    return this.Status;
-                }
-
-                this.Status = StatusType.Available;
-                return this.Status;
-            }
+            public string Link { get; set; }
         }
 
-        public Task WarmUpAsync()
+        public async Task<string> ShortenUrlAsync(string url)
         {
-            var status = this.TryToActivate();
-            return Task.CompletedTask;
-        }
-
-        public Task<string> ShortenUrlAsync(string url)
-        {
-            var status = this.TryToActivate();
-            if (status != StatusType.Available) return Task.FromResult(url);
-
-            var wc = new WebClient { Encoding = Encoding.UTF8 };
-            var resultJson = wc.DownloadString(
-                "https://api-ssl.bitly.com/v3/shorten?access_token={0}&longUrl={1}"
-                .FormatBy(this.AccessToken, HttpUtility.UrlEncode(url)));
-            var result = (dynamic)JObject.Parse(resultJson);
-            var statusCode = (int)result.status_code;
-            if (statusCode != 200)
+            try
             {
-                this.Logger.LogWarning($"Bitly server reply non 200 status ({statusCode}). ({resultJson})");
-                return Task.FromResult(url);
+                var accessToken = this.Configuration.GetValue<string>("Bitly:AccessToken", defaultValue: "");
+                if (string.IsNullOrEmpty(accessToken)) return url;
+
+                var httpClient = this.HttpClientFactory.CreateClient();
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                var res = await httpClient.PostAsJsonAsync("https://api-ssl.bitly.com/v4/shorten", new
+                {
+                    Domain = "j.mp",
+                    Long_url = url
+                });
+
+                res.EnsureSuccessStatusCode();
+                var result = await res.Content.ReadFromJsonAsync<BitlyShortenAPIResponse>();
+                return result.Link;
             }
-            var shortUrl = (string)result.data.url;
-            return Task.FromResult(shortUrl);
+            catch (Exception e)
+            {
+                this.Logger.LogError(e, e.Message);
+                return url;
+            }
         }
     }
 }

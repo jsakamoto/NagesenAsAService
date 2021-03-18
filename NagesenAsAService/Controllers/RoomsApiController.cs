@@ -202,14 +202,11 @@ namespace NagesenAsAService.Controllers
                 });
         }
 
-        [HttpGet("/api/warmup")]
+        [HttpDelete("/api/rooms/expired")]
         public async Task<IActionResult> WarmUp()
         {
             var limit = DateTime.UtcNow.AddDays(-7);
-            await Task.WhenAll(
-                this.Repository.SweepRoomsAsync(limit),
-                this.UrlShorter.WarmUpAsync()
-            );
+            await this.Repository.SweepRoomsAsync(limit);
             return NoContent();
         }
     }
