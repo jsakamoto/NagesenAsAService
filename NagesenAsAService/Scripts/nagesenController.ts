@@ -60,15 +60,17 @@
                 (e.srcElement as HTMLElement).click();
             })
 
-            // todo:
-            //$('img.coin').on('click', e => {
-            //    $(e.target)
-            //        .removeClass()
-            //        .addClass('slideOutUp animated')
-            //        .one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function () {
-            //            $(this).removeClass();
-            //        });
-            //});
+            // Wireup the animation of coins.
+            const coinAnimationCssClass = 'slideOutUp';
+            document.querySelectorAll('img.coin').forEach(element => {
+                element.addEventListener('click', e => {
+                    element.classList.remove(coinAnimationCssClass);
+                    element.classList.add(coinAnimationCssClass);
+                });
+                element.addEventListener('animationend', e => {
+                    element.classList.remove(coinAnimationCssClass);
+                });
+            });
 
             const state = this.loadStateWithSweepOld();
             const room = state.rooms[this.roomNumber] || null;
@@ -156,10 +158,10 @@
         }
 
         async countUp(typeOfCoin: CoinType): Promise<void> {
-            await fetch(this.apiBaseUrl + '/throw', {
-                method: 'PUT',
+            await fetch(this.apiBaseUrl + '/coin', {
+                method: 'POST',
                 headers,
-                body: JSON.stringify({ typeOfCoin: CoinType.Dis })
+                body: JSON.stringify({ typeOfCoin })
             });
             this.saveState();
             this.update();

@@ -34,6 +34,16 @@ var NaaS;
                 e.preventDefault();
                 e.srcElement.click();
             });
+            const coinAnimationCssClass = 'slideOutUp';
+            document.querySelectorAll('img.coin').forEach(element => {
+                element.addEventListener('click', e => {
+                    element.classList.remove(coinAnimationCssClass);
+                    element.classList.add(coinAnimationCssClass);
+                });
+                element.addEventListener('animationend', e => {
+                    element.classList.remove(coinAnimationCssClass);
+                });
+            });
             const state = this.loadStateWithSweepOld();
             const room = state.rooms[this.roomNumber] || null;
             if (room !== null) {
@@ -110,10 +120,10 @@ var NaaS;
             await this.countUp(1);
         }
         async countUp(typeOfCoin) {
-            await fetch(this.apiBaseUrl + '/throw', {
-                method: 'PUT',
+            await fetch(this.apiBaseUrl + '/coin', {
+                method: 'POST',
                 headers,
-                body: JSON.stringify({ typeOfCoin: 1 })
+                body: JSON.stringify({ typeOfCoin })
             });
             this.saveState();
             this.update();
