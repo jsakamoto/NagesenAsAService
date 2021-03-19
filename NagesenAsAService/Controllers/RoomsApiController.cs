@@ -43,13 +43,6 @@ namespace NagesenAsAService.Controllers
             UrlShorter = urlShorter;
         }
 
-        // TODO: Index.cshtml Razor Page に移植
-        //// GET: Default
-        //public ActionResult Index()
-        //{
-        //    return View();
-        //}
-
         [HttpPost("/api/rooms/new")]
         public async Task<IActionResult> CreateNewRoom()
         {
@@ -69,17 +62,6 @@ namespace NagesenAsAService.Controllers
             return Ok(newRoomNumber);
         }
 
-        // TODO: Box.cshtml (改め Room.cshtml?) Razor Page へ移植
-        //public async Task<ActionResult> Box(int id)
-        //{
-        //    var room = await this.Repository.FindRoomAsync(id);
-        //    if (room == null)
-        //    {
-        //        return View("UnavailableRoomNumber");
-        //    }
-        //    return View(room);
-        //}
-
         [HttpGet("/api/rooms/{roomNumber}/settings")]
         public async Task<IActionResult> GetRoomSettingsAsync(int roomNumber)
         {
@@ -91,17 +73,6 @@ namespace NagesenAsAService.Controllers
                 room.AllowDisCoin
             ));
         }
-
-        // TODO: Controller.cshtml Razor Page へ移植
-        //public async Task<ActionResult> Controller(int id)
-        //{
-        //    var room = await this.Repository.FindRoomAsync(id);
-        //    if (room == null)
-        //    {
-        //        return View("UnavailableRoomNumber");
-        //    }
-        //    return View(room);
-        //}
 
         [HttpGet("/api/rooms/{roomNumber}/context")]// TODO: キャッシュ制御, OutputCache(Duration = 0, NoStore = true)]
         public async Task<IActionResult> PeekRoomContextAsync(int roomNumber)
