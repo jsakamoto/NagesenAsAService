@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using NagesenAsAService.Extensions.DependencyInjection;
 using NagesenAsAService.Hubs;
 using NagesenAsAService.Middlewares;
+using Toolbelt.Extensions.DependencyInjection;
 
 namespace NagesenAsAService
 {
@@ -40,6 +41,7 @@ namespace NagesenAsAService
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseCssLiveReload();
             }
 
             app.UseHttpsRedirection();
