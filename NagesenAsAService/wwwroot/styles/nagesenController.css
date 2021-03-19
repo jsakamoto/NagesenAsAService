@@ -144,41 +144,61 @@ input#buttonTweet {
   background-color: white;
   background-image: url(/images/qrcode.png); }
 
-.share-box {
+#share-box-container {
   position: fixed;
-  top: 5em;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  z-index: 1;
+  opacity: 0;
+  visibility: hidden;
+  transition: all ease-in 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; }
+  #share-box-container.visible {
+    opacity: 1;
+    visibility: visible; }
+
+#share-box-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: #000;
+  opacity: 0.2;
+  z-index: -1; }
+
+#share-box {
   background-color: white;
-  z-index: 3;
   width: 100%;
-  display: none; }
-
-.share-box #buttonTweet {
-  padding: 5px 0;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  width: 100px;
-  text-align: center;
-  cursor: pointer;
-  box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.3);
-  -webkit-appearance: button;
-  display: inline-block;
-  border-color: #1ab2e8;
-  color: #fff;
-  background-color: #1ab2e8;
-  margin-left: 8px;
-  margin-top: -10px;
-  position: relative;
-  top: 0; }
-
-.share-box .room-url {
-  display: inline-block;
-  font-size: 32px; }
-
-.share-box .qr-code {
-  width: 301px;
-  height: 301px;
-  -o-object-fit: none;
-  object-fit: none; }
+  box-shadow: #000 0 4px 16px 0; }
+  #share-box #buttonTweet {
+    padding: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    width: 100px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.3);
+    display: inline-block;
+    border-color: #1ab2e8;
+    color: #fff;
+    background-color: #1ab2e8;
+    margin-left: 8px;
+    margin-top: -10px;
+    position: relative;
+    top: 0; }
+  #share-box .room-url {
+    display: inline-block;
+    font-size: 32px; }
+  #share-box .qr-code {
+    width: 50vh;
+    height: 50vh;
+    object-fit: contain;
+    margin: -18px; }
 
 /* header, title */
 #app-title:after {

@@ -8,5 +8,5 @@ var NaaS;
             roomNumberHolder.textContent = roomNumber;
         }
     }
-    NaaS.controller = new NagesenBoxController();
+    NaaS.nagesenBoxController = new NagesenBoxController();
 })(NaaS || (NaaS = {}));

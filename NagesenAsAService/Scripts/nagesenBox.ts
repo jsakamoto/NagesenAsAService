@@ -8,5 +8,5 @@
         }
     }
 
-    export var controller: any = new NagesenBoxController();
+    export var nagesenBoxController: any = new NagesenBoxController();
 }

@@ -172,6 +172,6 @@
         }
     }
 
-    export var controller: any = new NagesenControllerController(
+    export const nagesenControllerController = new NagesenControllerController(
         new TweetService());
 }

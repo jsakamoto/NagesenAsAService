@@ -132,5 +132,5 @@ var NaaS;
             this.tweeter.openTweet(1, this, this.apiBaseUrl);
         }
     }
-    NaaS.controller = new NagesenControllerController(new NaaS.TweetService());
+    NaaS.nagesenControllerController = new NagesenControllerController(new NaaS.TweetService());
 })(NaaS || (NaaS = {}));
