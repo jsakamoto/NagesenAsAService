@@ -145,7 +145,7 @@
     <value>or create your own new room from &lt;a id="btn-create-new-room" class="no-effects"&gt;click here.&lt;/a&gt;</value>
   </data>
   <data name="PleaseGoBackToHomeAndEnterCorrectRoomNumber" xml:space="preserve">
-    <value>Please &lt;a href='{0}'&gt;go back to home&lt;/a&gt; and enter correct room number,</value>
+    <value>Please &lt;a href='{0}'&gt;go back to home&lt;/a&gt; and enter correct room number</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>

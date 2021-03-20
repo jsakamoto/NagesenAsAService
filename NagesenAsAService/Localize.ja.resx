@@ -145,7 +145,7 @@
     <value>又は&lt;a id="btn-create-new-room" class="no-effects"&gt;ここをクリックして&lt;/a&gt;自分の部屋を新しく作成してください。</value>
   </data>
   <data name="PleaseGoBackToHomeAndEnterCorrectRoomNumber" xml:space="preserve">
-    <value>&lt;a href='{0}'&gt;ホームに戻って&lt;/a&gt;正しい部屋番号を入力しなおすか、</value>
+    <value>&lt;a href='{0}'&gt;ホームに戻って&lt;/a&gt;正しい部屋番号を入力してください。</value>
   </data>
   <data name="ResetRoom" xml:space="preserve">
     <value>リセット</value>

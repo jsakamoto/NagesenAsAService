@@ -160,7 +160,7 @@ namespace NagesenAsAService {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please &lt;a href=&apos;{0}&apos;&gt;go back to home&lt;/a&gt; and enter correct room number,.
+        ///   Looks up a localized string similar to Please &lt;a href=&apos;{0}&apos;&gt;go back to home&lt;/a&gt; and enter correct room number.
         /// </summary>
         public static string PleaseGoBackToHomeAndEnterCorrectRoomNumber {
             get {
