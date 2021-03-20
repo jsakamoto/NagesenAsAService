@@ -1,0 +1,23 @@
+﻿.button {
+    cursor: pointer;
+    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.3);
+    display: inline-block;
+    padding: 5px 0;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    transition: all ease-out 0.2s;
+
+    &.tweet {
+        $button-tweet-color: #1ab2e8;
+        width: 100px;
+        color: #fff;
+        border-color: $button-tweet-color;
+        background-color: $button-tweet-color;
+
+        &:hover {
+            border-color: lighten($button-tweet-color, 20);
+            background-color: lighten($button-tweet-color, 20);
+        }
+    }
+}

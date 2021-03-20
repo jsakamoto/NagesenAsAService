@@ -184,18 +184,7 @@ header #settings-button {
   background-color: white;
   width: 100%;
   box-shadow: #000 0 4px 16px 0; }
-  #share-box #buttonTweet {
-    padding: 5px 0;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    width: 100px;
-    text-align: center;
-    cursor: pointer;
-    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.3);
-    display: inline-block;
-    border-color: #1ab2e8;
-    color: #fff;
-    background-color: #1ab2e8;
+  #share-box .button.tweet {
     margin-left: 8px;
     margin-top: -10px;
     position: relative;

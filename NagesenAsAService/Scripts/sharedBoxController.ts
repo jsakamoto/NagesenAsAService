@@ -5,7 +5,9 @@
 
         sharedBoxContainerElement!: HTMLElement;
 
-        constructor() {
+        constructor(
+            private tweetService: TweetService
+        ) {
             this.init();
             this.update();
         }
@@ -14,6 +16,7 @@
             this.sharedBoxContainerElement = document.getElementById('share-box-container')!;
             document.getElementById('qr-code-icon')!.addEventListener('click', e => this.onClickQRCodeIcon());
             document.getElementById('share-box-container')!.addEventListener('click', e => this.onClickShareBoxContainer(e));
+            document.getElementById('tweet-to-share-button')!.addEventListener('click', e => this.onClickTweetToShareButton());
         }
 
         update(): void {
@@ -28,12 +31,16 @@
         onClickShareBoxContainer(e: Event): void {
             const src = e.srcElement as HTMLElement | null;
             if (src === null) return;
-            if (src.id === 'buttonTweet') return;
+            if (src.id === 'tweet-to-share-button') return;
 
             this.sharedBoxVisible = false;
             this.update();
         }
+
+        onClickTweetToShareButton(): void {
+            this.tweetService.tweetToShare();
+        }
     }
 
-    export const sharedBoxController = new SharedBoxController();
+    export const sharedBoxController = new SharedBoxController(tweetService);
 }

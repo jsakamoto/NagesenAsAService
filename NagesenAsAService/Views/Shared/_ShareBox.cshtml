@@ -11,7 +11,7 @@
     <div id="share-box">
         <div class="header">
             <span class="room-url">@Model.ShortUrl</span>
-            <input type="button" value="Tweet" id="buttonTweet" />
+            <input type="button" value="Tweet" id="tweet-to-share-button" class="button tweet" />
         </div>
         <img src="@($"/api/rooms/{Model.RoomNumber}/qrcode")" alt="@Model.ShortUrl" class="qr-code" />
     </div>

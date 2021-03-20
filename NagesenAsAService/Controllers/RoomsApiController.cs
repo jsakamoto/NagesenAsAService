@@ -142,7 +142,7 @@ namespace NagesenAsAService.Controllers
         public async Task<IActionResult> TwitterShareAsync(int roomNumber, string text, string url)
         {
             var room = await this.Repository.FindRoomAsync(roomNumber);
-            var twitterHashtag = room?.TwitterHashtag ?? "";
+            var twitterHashtag = (room?.TwitterHashtag ?? "").TrimStart('#');
             var twitterSharUrl = "https://twitter.com/share?";
             twitterSharUrl += "text=" + HttpUtility.UrlEncode(text);
             twitterSharUrl += "&url=" + HttpUtility.UrlEncode(url);

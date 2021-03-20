@@ -554,3 +554,21 @@ input.room-number:invalid {
   margin-top: 0px;
   color: #1284ff;
   font-weight: bold; }
+
+.button {
+  cursor: pointer;
+  box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.3);
+  display: inline-block;
+  padding: 5px 0;
+  text-align: center;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  transition: all ease-out 0.2s; }
+  .button.tweet {
+    width: 100px;
+    color: #fff;
+    border-color: #1ab2e8;
+    background-color: #1ab2e8; }
+    .button.tweet:hover {
+      border-color: #77d1f1;
+      background-color: #77d1f1; }

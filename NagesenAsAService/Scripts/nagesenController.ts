@@ -17,7 +17,6 @@
 
     class NagesenControllerController {
 
-        roomNumber: number = 0;
         title: string = '';
         sessionID: string = '';
         countOfLike: number = 0;
@@ -30,16 +29,15 @@
         countOfLikeElement!: HTMLElement;
         countOfDisElement!: HTMLElement;
 
-        apiBaseUrl: string = '';
-
-        constructor(private tweeter: TweetService) {
+        constructor(
+            private urlService: UrlService,
+            private tweeter: TweetService
+        ) {
             this.init();
             this.update();
         }
 
         init(): void {
-            this.roomNumber = parseInt(location.pathname.split('/')[2]);
-            this.apiBaseUrl = location.origin + '/api/rooms/' + this.roomNumber;
 
             this.controllerHolderElement = document.getElementById('controller-holder')!;
             this.sessionTitleElement = document.getElementById('session-title')!;
@@ -50,7 +48,7 @@
 
             this.countOfLikeElement = document.getElementById('count-of-like')!;
             this.countOfDisElement = document.getElementById('count-of-dis')!;
-            document.getElementById('buttonTweet')!.addEventListener('click', () => this.tweet());
+            document.getElementById('tweet-to-price-button')!.addEventListener('click', () => this.onClickTweetToPrice());
 
             ['touchmove', 'touchend', 'gesturestart', 'gesturechange', 'gestureend'].forEach(eventType => {
                 document.addEventListener(eventType, e => { e.preventDefault(); })
@@ -73,7 +71,7 @@
             });
 
             const state = this.loadStateWithSweepOld();
-            const room = state.rooms[this.roomNumber] || null;
+            const room = state.rooms[this.urlService.roomNumber] || null;
             if (room !== null) {
                 this.sessionID = room.sessionID;
                 this.countOfLike = room.countOfLike;
@@ -101,7 +99,7 @@
 
         saveState(): void {
             const state = this.loadState();
-            state.rooms[this.roomNumber] = {
+            state.rooms[this.urlService.roomNumber] = {
                 sessionID: this.sessionID,
                 countOfLike: this.countOfLike,
                 countOfDis: this.countOfDis,
@@ -130,7 +128,7 @@
 
         async refreshContext(): Promise<void> {
 
-            const response = await fetch(this.apiBaseUrl + '/context', { method: 'GET', headers });
+            const response = await fetch(this.urlService.apiBaseUrl + '/context', { method: 'GET', headers });
             if (!response.ok) throw new Error();
             const roomContextSummary = await response.json() as RoomContextSummary;
 
@@ -158,7 +156,7 @@
         }
 
         async countUp(typeOfCoin: CoinType): Promise<void> {
-            await fetch(this.apiBaseUrl + '/coin', {
+            await fetch(this.urlService.apiBaseUrl + '/coin', {
                 method: 'POST',
                 headers,
                 body: JSON.stringify({ typeOfCoin })
@@ -167,11 +165,12 @@
             this.update();
         }
 
-        tweet(): void {
-            this.tweeter.openTweet(TweetType.FromController, this, this.apiBaseUrl);
+        onClickTweetToPrice(): void {
+            this.tweeter.tweetToPrice(TweetType.FromController, this);
         }
     }
 
     export const nagesenControllerController = new NagesenControllerController(
-        new TweetService());
+        urlService,
+        tweetService);
 }

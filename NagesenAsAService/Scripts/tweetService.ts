@@ -6,32 +6,45 @@
     }
 
     export class TweetService {
-        constructor() {
+
+        constructor(private urlService: UrlService) {
         }
 
-        public openTweet(tweetType: TweetType, context: {
+        public tweetToShare(): void {
+            const text = `投げ銭 as a Service - Room ${this.urlService.roomNumber} に今すぐアクセス☆`;
+            this.tweet(text, this.urlService.controllerUrl);
+        }
+
+        public tweetToPrice(tweetType: TweetType, context: {
             title: string,
             countOfLike: number,
             countOfDis: number,
             allowDisCoin: boolean,
             sessionID: string
-        }, apiBaseUrl: string): void {
+        }): void {
 
             let title = context.title || '';
             title = title == '' ? 'この枠' : `「${title}」`;
 
-            let text = tweetType == TweetType.FromBox ?
+            const text = tweetType == TweetType.FromBox ?
                 `${title}に${context.countOfLike}円分の投げ銭` +
                 (context.allowDisCoin ? `と${context.countOfDis}Dis` : '') +
                 `が集まりました☆` :
                 `${title}に${context.countOfLike}円分の投げ銭` +
                 (context.allowDisCoin ? `と${context.countOfDis}Dis` : '') +
                 `をしました☆`;
+            const url = this.urlService.apiBaseUrl + '/screenshot/' + context.sessionID;
 
-            let url = apiBaseUrl + '/TwitterShare?';
-            url += 'text=' + encodeURIComponent(text);
-            url += '&url=' + encodeURIComponent(apiBaseUrl + '/screenshot/' + context.sessionID);
-            window.open(url);
+            this.tweet(text, url);
+        }
+
+        private tweet(text: string, url: string): void {
+            let tweetApiUrl = this.urlService.apiBaseUrl + '/TwitterShare?';
+            tweetApiUrl += 'text=' + encodeURIComponent(text);
+            tweetApiUrl += '&url=' + encodeURIComponent(url);
+            window.open(tweetApiUrl);
         }
     }
+
+    export const tweetService = new TweetService(urlService);
 }

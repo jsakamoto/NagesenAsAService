@@ -4,21 +4,18 @@ var NaaS;
     const KeyOfControllerStateStore = 'naas.controller.state';
     const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' };
     class NagesenControllerController {
-        constructor(tweeter) {
+        constructor(urlService, tweeter) {
+            this.urlService = urlService;
             this.tweeter = tweeter;
-            this.roomNumber = 0;
             this.title = '';
             this.sessionID = '';
             this.countOfLike = 0;
             this.countOfDis = 0;
             this.allowDisCoin = false;
-            this.apiBaseUrl = '';
             this.init();
             this.update();
         }
         init() {
-            this.roomNumber = parseInt(location.pathname.split('/')[2]);
-            this.apiBaseUrl = location.origin + '/api/rooms/' + this.roomNumber;
             this.controllerHolderElement = document.getElementById('controller-holder');
             this.sessionTitleElement = document.getElementById('session-title');
             this.itemsElement = document.getElementById('items');
@@ -26,7 +23,7 @@ var NaaS;
             document.getElementById('stone-image').addEventListener('click', () => this.countUpDis(10));
             this.countOfLikeElement = document.getElementById('count-of-like');
             this.countOfDisElement = document.getElementById('count-of-dis');
-            document.getElementById('buttonTweet').addEventListener('click', () => this.tweet());
+            document.getElementById('tweet-to-price-button').addEventListener('click', () => this.onClickTweetToPrice());
             ['touchmove', 'touchend', 'gesturestart', 'gesturechange', 'gestureend'].forEach(eventType => {
                 document.addEventListener(eventType, e => { e.preventDefault(); });
             });
@@ -45,7 +42,7 @@ var NaaS;
                 });
             });
             const state = this.loadStateWithSweepOld();
-            const room = state.rooms[this.roomNumber] || null;
+            const room = state.rooms[this.urlService.roomNumber] || null;
             if (room !== null) {
                 this.sessionID = room.sessionID;
                 this.countOfLike = room.countOfLike;
@@ -69,7 +66,7 @@ var NaaS;
         }
         saveState() {
             const state = this.loadState();
-            state.rooms[this.roomNumber] = {
+            state.rooms[this.urlService.roomNumber] = {
                 sessionID: this.sessionID,
                 countOfLike: this.countOfLike,
                 countOfDis: this.countOfDis,
@@ -96,7 +93,7 @@ var NaaS;
             return state;
         }
         async refreshContext() {
-            const response = await fetch(this.apiBaseUrl + '/context', { method: 'GET', headers });
+            const response = await fetch(this.urlService.apiBaseUrl + '/context', { method: 'GET', headers });
             if (!response.ok)
                 throw new Error();
             const roomContextSummary = await response.json();
@@ -120,7 +117,7 @@ var NaaS;
             await this.countUp(1);
         }
         async countUp(typeOfCoin) {
-            await fetch(this.apiBaseUrl + '/coin', {
+            await fetch(this.urlService.apiBaseUrl + '/coin', {
                 method: 'POST',
                 headers,
                 body: JSON.stringify({ typeOfCoin })
@@ -128,9 +125,9 @@ var NaaS;
             this.saveState();
             this.update();
         }
-        tweet() {
-            this.tweeter.openTweet(1, this, this.apiBaseUrl);
+        onClickTweetToPrice() {
+            this.tweeter.tweetToPrice(1, this);
         }
     }
-    NaaS.nagesenControllerController = new NagesenControllerController(new NaaS.TweetService());
+    NaaS.nagesenControllerController = new NagesenControllerController(NaaS.urlService, NaaS.tweetService);
 })(NaaS || (NaaS = {}));

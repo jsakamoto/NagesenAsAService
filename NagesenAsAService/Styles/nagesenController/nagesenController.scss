@@ -13,9 +13,6 @@ body {
     margin: 0 auto;
     position: relative;
     width: 100%;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
     user-select: none;
 }
 
@@ -62,51 +59,17 @@ body {
 
 @keyframes slideOutUp {
     0% {
-        -webkit-transform: translateY(0);
-        -ms-transform: translateY(0);
-        -moz-transform: translateY(0);
-        -o-transform: translateY(0);
         transform: translateY(0);
     }
 
     100% {
         opacity: 0;
-        -webkit-transform: translateY(-300px);
-        -ms-transform: translateY(-300px);
-        -moz-transform: translateY(-300px);
-        -o-transform: translateY(-300px);
         transform: translateY(-300px);
     }
 }
 
 #buttons {
     margin-top: 2em;
-}
-
-#container button,
-#buttons input {
-    padding: 5px 0;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    width: 100px;
-    background-color: #eee;
-    text-align: center;
-    cursor: pointer;
-    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.3);
-    -webkit-appearance: button;
-}
-
-input#buttonTweet {
-    border-color: #1ab2e8;
-    color: #fff;
-    background-color: #1ab2e8;
-}
-
-#container button:hover,
-#buttons input:hover {
-    color: #fff;
-    border-color: #555;
-    background-color: #333;
 }
 
 @media screen and (min-width: 701px) {
