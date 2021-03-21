@@ -6,7 +6,7 @@ namespace NagesenAsAService.Hubs
 {
     public interface INaaSHubEvents
     {
-        Task UpdatedSettings(RoomSettings settings);
+        Task UpdatedRoomSettings(RoomContextSummary settings);
 
         Task ResetedRoom(Guid sessionId);
 

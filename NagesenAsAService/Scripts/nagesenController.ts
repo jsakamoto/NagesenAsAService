@@ -17,11 +17,15 @@
 
     class NagesenControllerController {
 
-        title: string = '';
-        sessionID: string = '';
+        roomContextSummary: RoomContextSummary = {
+            sessionID: '',
+            title: '',
+            allowDisCoin: false,
+            twitterHashtag: ''
+        };
+
         countOfLike: number = 0;
         countOfDis: number = 0;
-        allowDisCoin: boolean = false;
 
         controllerHolderElement!: HTMLElement;
         sessionTitleElement!: HTMLElement;
@@ -31,6 +35,7 @@
 
         constructor(
             private urlService: UrlService,
+            private hubConn: HubConnectionService,
             private tweeter: TweetService
         ) {
             this.init();
@@ -73,23 +78,29 @@
             const state = this.loadStateWithSweepOld();
             const room = state.rooms[this.urlService.roomNumber] || null;
             if (room !== null) {
-                this.sessionID = room.sessionID;
+                this.roomContextSummary.sessionID = room.sessionID;
                 this.countOfLike = room.countOfLike;
                 this.countOfDis = room.countOfDis;
             }
 
-            this.refreshContext()
-            setInterval(() => this.refreshContext(), 3000);
+            this.hubConn.onConnected(() => this.onHubConnectedAsync());
+            this.hubConn.onUpdatedRoomSettings(args => this.onUpdatedRoomSettings(args));
         }
 
         update(): void {
-            this.controllerHolderElement.classList.toggle('has-title', this.title !== '');
-            this.sessionTitleElement.textContent = this.title;
-            this.itemsElement.classList.toggle('allow', this.allowDisCoin);
-            this.itemsElement.classList.toggle('deny', !this.allowDisCoin);
+            this.controllerHolderElement.classList.toggle('has-title', this.roomContextSummary.title !== '');
+            this.sessionTitleElement.textContent = this.roomContextSummary.title;
+            this.itemsElement.classList.toggle('allow', this.roomContextSummary.allowDisCoin);
+            this.itemsElement.classList.toggle('deny', !this.roomContextSummary.allowDisCoin);
             this.countOfLikeElement.textContent = '' + this.countOfLike;
             this.countOfDisElement.textContent = '' + this.countOfDis;
         }
+
+        async onHubConnectedAsync(): Promise<void> {
+            this.roomContextSummary = await this.hubConn.enterRoomAsControllerAsync(this.urlService.roomNumber);
+            this.update();
+        }
+
 
         loadState(): NagesenControllerState {
             const stateJsonStr = localStorage.getItem(KeyOfControllerStateStore);
@@ -100,7 +111,7 @@
         saveState(): void {
             const state = this.loadState();
             state.rooms[this.urlService.roomNumber] = {
-                sessionID: this.sessionID,
+                sessionID: this.roomContextSummary.sessionID,
                 countOfLike: this.countOfLike,
                 countOfDis: this.countOfDis,
                 lastSavedTime: Date.now()
@@ -126,22 +137,12 @@
             return state;
         }
 
-        async refreshContext(): Promise<void> {
-
-            const response = await fetch(this.urlService.apiBaseUrl + '/context', { method: 'GET', headers });
-            if (!response.ok) throw new Error();
-            const roomContextSummary = await response.json() as RoomContextSummary;
-
-            this.title = roomContextSummary.title;
-            this.allowDisCoin = roomContextSummary.allowDisCoin;
-            if (this.sessionID !== roomContextSummary.sessionID) {
-                if (this.sessionID !== '') {
-                    this.countOfLike = 0;
-                    this.countOfDis = 0;
-                }
-                this.sessionID = roomContextSummary.sessionID;
+        onUpdatedRoomSettings(args: RoomContextSummary): void {
+            if (this.roomContextSummary.sessionID !== args.sessionID) {
+                this.countOfLike = 0;
+                this.countOfDis = 0;
             }
-
+            this.roomContextSummary = args;
             this.update();
         }
 
@@ -166,11 +167,12 @@
         }
 
         onClickTweetScoreButton(): void {
-            this.tweeter.tweetScore(TweetType.FromController, this);
+            this.tweeter.tweetScore(TweetType.FromController, this.roomContextSummary, this.countOfLike, this.countOfDis);
         }
     }
 
     export const nagesenControllerController = new NagesenControllerController(
         urlService,
+        hubConnService,
         tweetService);
 }

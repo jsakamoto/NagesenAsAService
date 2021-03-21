@@ -27,7 +27,9 @@ var NaaS;
             this.titleInputElement = document.getElementById('session-title-input');
             this.twitterHashtagInputElement = document.getElementById('twitter-hashtag-input');
             this.allowDisCoinInputElement = document.getElementById('allow-dis-coin-input');
-            document.getElementById('settings-button').addEventListener('click', e => this.onClickSettingButton());
+            const settingButtonElement = document.getElementById('settings-button');
+            if (settingButtonElement !== null)
+                settingButtonElement.addEventListener('click', e => this.onClickSettingButton());
             this.titleInputElement.addEventListener('input', e => this.onInputTitle());
             this.twitterHashtagInputElement.addEventListener('input', e => this.onInputTwitterHashtag());
             this.allowDisCoinInputElement.addEventListener('change', e => this.onChageAllowDisCoin());
@@ -36,11 +38,8 @@ var NaaS;
             document.getElementById('settings-mask').addEventListener('click', e => this.onClickSettingsMask());
             window.addEventListener('beforeunload', e => this.onBeforeUnload(e));
             this.hubConn.onThrow(args => this.onThrowCoin(args));
+            this.hubConn.onUpdatedRoomSettings(args => this.onUpdatedRoomSettings(args));
             this.hubConn.onConnected(() => this.onHubConnectedAsync());
-            this.update();
-        }
-        async onHubConnectedAsync() {
-            this.roomContext = await this.hubConn.enterRoomAsync(this.urlService.roomNumber);
             this.update();
         }
         update() {
@@ -56,7 +55,11 @@ var NaaS;
                 this.twitterHashtagInputElement.value = this.roomContext.twitterHashtag || '';
             if (this.allowDisCoinInputElement.checked !== this.roomContext.allowDisCoin)
                 this.allowDisCoinInputElement.checked = this.roomContext.allowDisCoin;
-            console.log(this.roomContext);
+            this.hubConn.updateRoomSettingsAsync(this.urlService.roomNumber, this.roomContext);
+        }
+        async onHubConnectedAsync() {
+            this.roomContext = await this.hubConn.enterRoomAsBoxAsync(this.urlService.roomNumber);
+            this.update();
         }
         onClickSettingButton() {
             this.visibleSettings = !this.visibleSettings;
@@ -91,6 +94,10 @@ var NaaS;
         }
         onThrowCoin(args) {
             console.log('onThrowCoin', args);
+        }
+        onUpdatedRoomSettings(args) {
+            Object.assign(this.roomContext, args);
+            this.update();
         }
     }
     NaaS.nagesenBoxController = new NagesenBoxController(NaaS.urlService, NaaS.hubConnService, NaaS.tweetService);

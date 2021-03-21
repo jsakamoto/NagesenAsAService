@@ -30,17 +30,18 @@ namespace NagesenAsAService.Services.RoomRepository
             }
         }
 
-        public async Task AddRoomAsync(Room room)
+        public Task AddRoomAsync(Room room)
         {
             lock (this.Rooms) this.Rooms.Add(room);
-            await this.SaveRoomsAsync();
+            this.SaveRooms();
+            return Task.CompletedTask;
         }
 
-        private async Task SaveRoomsAsync()
+        private void SaveRooms()
         {
             var roomsJsonStr = default(string);
             lock (this.Rooms) roomsJsonStr = JsonSerializer.Serialize(this.Rooms);
-            await File.WriteAllTextAsync(this.RoomsStoragePath, roomsJsonStr);
+            lock (this) File.WriteAllText(this.RoomsStoragePath, roomsJsonStr);
         }
 
         public Task<Room> FindRoomAsync(int roomNumber)
@@ -80,17 +81,18 @@ namespace NagesenAsAService.Services.RoomRepository
             }
         }
 
-        public async Task SweepRoomsAsync(DateTime limit)
+        public Task SweepRoomsAsync(DateTime limit)
         {
             lock (this.Rooms)
             {
                 var roomsToSweep = this.Rooms.Where(room => room.CreatedAt < limit).ToArray();
                 foreach (var roomToSweep in roomsToSweep) this.Rooms.Remove(roomToSweep);
             }
-            await this.SaveRoomsAsync();
+            this.SaveRooms();
+            return Task.CompletedTask;
         }
 
-        public async Task<Room> UpdateRoomAsync(int roomNumber, Func<Room, bool> action)
+        public Task<Room> UpdateRoomAsync(int roomNumber, Func<Room, bool> action)
         {
             var room = default(Room);
             lock (this.Rooms)
@@ -98,8 +100,8 @@ namespace NagesenAsAService.Services.RoomRepository
                 room = this.Rooms.FirstOrDefault(r => r.RoomNumber == roomNumber);
                 if (room != null) action(room);
             }
-            await this.SaveRoomsAsync();
-            return room;
+            this.SaveRooms();
+            return Task.FromResult(room);
         }
     }
 }

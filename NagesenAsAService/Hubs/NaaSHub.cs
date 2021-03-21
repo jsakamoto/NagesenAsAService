@@ -14,7 +14,7 @@ namespace NagesenAsAService.Hubs
             this.Repository = repository;
         }
 
-        public async Task<RoomContext> EnterRoom(int roomNumber)
+        public async Task<RoomContext> EnterRoomAsBoxAsync(int roomNumber)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, roomNumber.ToString());
             var room = await this.Repository.FindRoomAsync(roomNumber);
@@ -22,13 +22,27 @@ namespace NagesenAsAService.Hubs
             return new RoomContext(room);
         }
 
-        public async Task UpdateSettings(int roomNumber, RoomSettings settings)// string title, string twitterHashtag, bool allowDisCoin)
+        public async Task<RoomContextSummary> EnterRoomAsControllerAsync(int roomNumber)
         {
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomNumber.ToString() + "/controller");
+            var room = await this.Repository.FindRoomAsync(roomNumber);
+
+            return new RoomContextSummary(room);
+        }
+
+        public async Task UpdateRoomSettingsAsync(int roomNumber, RoomSettings settings)
+        {
+            var hasChanged = false;
             await this.Repository.UpdateRoomAsync(roomNumber, room =>
             {
                 if (room == null) return false;
                 var isOwner = room.OwnerUserID == this.Context.User.Identity.Name;
                 if (isOwner == false) return false;
+
+                hasChanged =
+                    (room.Title != settings.Title) ||
+                    (room.TwitterHashtag != settings.TwitterHashtag) ||
+                    (room.AllowDisCoin != settings.AllowDisCoin);
 
                 room.Title = settings.Title;
                 room.TwitterHashtag = settings.TwitterHashtag;
@@ -36,7 +50,12 @@ namespace NagesenAsAService.Hubs
                 return true;
             });
 
-            await Clients.Group(roomNumber.ToString()).UpdatedSettings(settings);
+            if (hasChanged)
+            {
+                var room = await this.Repository.FindRoomAsync(roomNumber);
+                await Clients.Groups(roomNumber.ToString(), roomNumber.ToString() + "/controller")
+                    .UpdatedRoomSettings(new RoomContextSummary(room));
+            }
         }
 
         public Task ThrowCoin(int roomNumber, CoinType typeOfCoin)

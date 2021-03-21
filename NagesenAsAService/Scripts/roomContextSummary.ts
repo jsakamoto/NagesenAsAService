@@ -1,7 +1,5 @@
 ﻿namespace NaaS {
-    export interface RoomContextSummary {
+    export interface RoomContextSummary extends RoomSettings {
         sessionID: string
-        title: string;
-        allowDisCoin: boolean;
     }
 }

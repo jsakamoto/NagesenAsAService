@@ -15,17 +15,20 @@
             this.tweet(text, this.urlService.controllerUrl);
         }
 
-        public tweetScore(tweetType: TweetType, context: RoomContext): void {
+        public tweetScore(tweetType: TweetType, context: RoomContext | RoomContextSummary, countOfLike?: number, countOfDis?: number): void {
 
             let title = context.title || '';
             title = title == '' ? 'この枠' : `「${title}」`;
 
+            const col = (context as RoomContext).countOfLike || countOfLike || 0;
+            const cod = (context as RoomContext).countOfDis || countOfDis || 0;
+
             const text = tweetType == TweetType.FromBox ?
-                `${title}に${context.countOfLike}円分の投げ銭` +
-                (context.allowDisCoin ? `と${context.countOfDis}Dis` : '') +
+                `${title}に${col}円分の投げ銭` +
+                (context.allowDisCoin ? `と${cod}Dis` : '') +
                 `が集まりました☆` :
-                `${title}に${context.countOfLike}円分の投げ銭` +
-                (context.allowDisCoin ? `と${context.countOfDis}Dis` : '') +
+                `${title}に${col}円分の投げ銭` +
+                (context.allowDisCoin ? `と${cod}Dis` : '') +
                 `をしました☆`;
             const url = this.urlService.apiBaseUrl + '/screenshot/' + context.sessionID;
 

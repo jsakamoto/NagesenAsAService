@@ -1,19 +1,7 @@
-﻿using System;
-
-namespace NagesenAsAService.Models
+﻿namespace NagesenAsAService.Models
 {
-    public class RoomContext
+    public class RoomContext : RoomContextSummary
     {
-        public int roomNumber { get; private set; }
-
-        public Guid sessionID { get; set; }
-
-        public string title { get; set; }
-
-        public string twitterHashtag { get; set; }
-
-        public bool allowDisCoin { get; set; }
-
         public int countOfLike { get; set; }
 
         public int countOfDis { get; set; }
@@ -22,13 +10,8 @@ namespace NagesenAsAService.Models
         {
         }
 
-        public RoomContext(Room room)
+        public RoomContext(Room room) : base(room)
         {
-            this.roomNumber = room.RoomNumber;
-            this.sessionID = room.SessionID;
-            this.title = room.Title;
-            this.twitterHashtag = room.TwitterHashtag;
-            this.allowDisCoin = room.AllowDisCoin;
             this.countOfLike = room.CountOfNageSen;
             this.countOfDis = room.CountOfAoriSen;
         }

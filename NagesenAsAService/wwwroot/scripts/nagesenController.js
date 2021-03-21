@@ -4,14 +4,18 @@ var NaaS;
     const KeyOfControllerStateStore = 'naas.controller.state';
     const headers = { 'Accept': 'application/json', 'Content-Type': 'application/json' };
     class NagesenControllerController {
-        constructor(urlService, tweeter) {
+        constructor(urlService, hubConn, tweeter) {
             this.urlService = urlService;
+            this.hubConn = hubConn;
             this.tweeter = tweeter;
-            this.title = '';
-            this.sessionID = '';
+            this.roomContextSummary = {
+                sessionID: '',
+                title: '',
+                allowDisCoin: false,
+                twitterHashtag: ''
+            };
             this.countOfLike = 0;
             this.countOfDis = 0;
-            this.allowDisCoin = false;
             this.init();
             this.update();
         }
@@ -44,20 +48,24 @@ var NaaS;
             const state = this.loadStateWithSweepOld();
             const room = state.rooms[this.urlService.roomNumber] || null;
             if (room !== null) {
-                this.sessionID = room.sessionID;
+                this.roomContextSummary.sessionID = room.sessionID;
                 this.countOfLike = room.countOfLike;
                 this.countOfDis = room.countOfDis;
             }
-            this.refreshContext();
-            setInterval(() => this.refreshContext(), 3000);
+            this.hubConn.onConnected(() => this.onHubConnectedAsync());
+            this.hubConn.onUpdatedRoomSettings(args => this.onUpdatedRoomSettings(args));
         }
         update() {
-            this.controllerHolderElement.classList.toggle('has-title', this.title !== '');
-            this.sessionTitleElement.textContent = this.title;
-            this.itemsElement.classList.toggle('allow', this.allowDisCoin);
-            this.itemsElement.classList.toggle('deny', !this.allowDisCoin);
+            this.controllerHolderElement.classList.toggle('has-title', this.roomContextSummary.title !== '');
+            this.sessionTitleElement.textContent = this.roomContextSummary.title;
+            this.itemsElement.classList.toggle('allow', this.roomContextSummary.allowDisCoin);
+            this.itemsElement.classList.toggle('deny', !this.roomContextSummary.allowDisCoin);
             this.countOfLikeElement.textContent = '' + this.countOfLike;
             this.countOfDisElement.textContent = '' + this.countOfDis;
+        }
+        async onHubConnectedAsync() {
+            this.roomContextSummary = await this.hubConn.enterRoomAsControllerAsync(this.urlService.roomNumber);
+            this.update();
         }
         loadState() {
             const stateJsonStr = localStorage.getItem(KeyOfControllerStateStore);
@@ -67,7 +75,7 @@ var NaaS;
         saveState() {
             const state = this.loadState();
             state.rooms[this.urlService.roomNumber] = {
-                sessionID: this.sessionID,
+                sessionID: this.roomContextSummary.sessionID,
                 countOfLike: this.countOfLike,
                 countOfDis: this.countOfDis,
                 lastSavedTime: Date.now()
@@ -92,20 +100,12 @@ var NaaS;
             localStorage.setItem(KeyOfControllerStateStore, JSON.stringify(state));
             return state;
         }
-        async refreshContext() {
-            const response = await fetch(this.urlService.apiBaseUrl + '/context', { method: 'GET', headers });
-            if (!response.ok)
-                throw new Error();
-            const roomContextSummary = await response.json();
-            this.title = roomContextSummary.title;
-            this.allowDisCoin = roomContextSummary.allowDisCoin;
-            if (this.sessionID !== roomContextSummary.sessionID) {
-                if (this.sessionID !== '') {
-                    this.countOfLike = 0;
-                    this.countOfDis = 0;
-                }
-                this.sessionID = roomContextSummary.sessionID;
+        onUpdatedRoomSettings(args) {
+            if (this.roomContextSummary.sessionID !== args.sessionID) {
+                this.countOfLike = 0;
+                this.countOfDis = 0;
             }
+            this.roomContextSummary = args;
             this.update();
         }
         async countUpLike(price) {
@@ -126,8 +126,8 @@ var NaaS;
             this.update();
         }
         onClickTweetScoreButton() {
-            this.tweeter.tweetScore(1, this);
+            this.tweeter.tweetScore(1, this.roomContextSummary, this.countOfLike, this.countOfDis);
         }
     }
-    NaaS.nagesenControllerController = new NagesenControllerController(NaaS.urlService, NaaS.tweetService);
+    NaaS.nagesenControllerController = new NagesenControllerController(NaaS.urlService, NaaS.hubConnService, NaaS.tweetService);
 })(NaaS || (NaaS = {}));

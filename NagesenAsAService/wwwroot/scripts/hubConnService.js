@@ -6,6 +6,7 @@ var NaaS;
             this.onConnectedCallBacks = [];
             this.init();
         }
+        get connected() { return this.connection.state === signalR.HubConnectionState.Connected; }
         async init() {
             this.connection = new signalR.HubConnectionBuilder()
                 .withUrl("/naashub")
@@ -34,14 +35,25 @@ var NaaS;
         }
         onConnected(callback) {
             this.onConnectedCallBacks.push(callback);
-            if (this.connection.state === signalR.HubConnectionState.Connected)
+            if (this.connected)
                 callback();
         }
-        enterRoomAsync(roomNumber) {
-            return this.connection.invoke('EnterRoom', roomNumber);
+        enterRoomAsBoxAsync(roomNumber) {
+            return this.connection.invoke('EnterRoomAsBoxAsync', roomNumber);
+        }
+        enterRoomAsControllerAsync(roomNumber) {
+            return this.connection.invoke('EnterRoomAsControllerAsync', roomNumber);
+        }
+        async updateRoomSettingsAsync(roomNumber, roomSettings) {
+            if (!this.connected)
+                return;
+            await this.connection.invoke('UpdateRoomSettingsAsync', roomNumber, roomSettings);
         }
         onThrow(callback) {
             this.connection.on('Throw', callback);
+        }
+        onUpdatedRoomSettings(callback) {
+            this.connection.on('UpdatedRoomSettings', callback);
         }
     }
     NaaS.HubConnectionService = HubConnectionService;

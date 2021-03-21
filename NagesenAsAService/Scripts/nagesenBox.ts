@@ -42,7 +42,8 @@
             this.twitterHashtagInputElement = document.getElementById('twitter-hashtag-input') as HTMLInputElement;
             this.allowDisCoinInputElement = document.getElementById('allow-dis-coin-input') as HTMLInputElement;
 
-            document.getElementById('settings-button')!.addEventListener('click', e => this.onClickSettingButton());
+            const settingButtonElement = document.getElementById('settings-button');
+            if (settingButtonElement !== null) settingButtonElement.addEventListener('click', e => this.onClickSettingButton());
 
             this.titleInputElement.addEventListener('input', e => this.onInputTitle());
             this.twitterHashtagInputElement.addEventListener('input', e => this.onInputTwitterHashtag());
@@ -54,13 +55,9 @@
             window.addEventListener('beforeunload', e => this.onBeforeUnload(e));
 
             this.hubConn.onThrow(args => this.onThrowCoin(args));
+            this.hubConn.onUpdatedRoomSettings(args => this.onUpdatedRoomSettings(args));
             this.hubConn.onConnected(() => this.onHubConnectedAsync());
 
-            this.update();
-        }
-
-        async onHubConnectedAsync(): Promise<void> {
-            this.roomContext = await this.hubConn.enterRoomAsync(this.urlService.roomNumber);
             this.update();
         }
 
@@ -76,7 +73,12 @@
             if (this.twitterHashtagInputElement.value !== this.roomContext.twitterHashtag) this.twitterHashtagInputElement.value = this.roomContext.twitterHashtag || '';
             if (this.allowDisCoinInputElement.checked !== this.roomContext.allowDisCoin) this.allowDisCoinInputElement.checked = this.roomContext.allowDisCoin;
 
-            console.log(this.roomContext);
+            this.hubConn.updateRoomSettingsAsync(this.urlService.roomNumber, this.roomContext);
+        }
+
+        async onHubConnectedAsync(): Promise<void> {
+            this.roomContext = await this.hubConn.enterRoomAsBoxAsync(this.urlService.roomNumber);
+            this.update();
         }
 
         onClickSettingButton(): void {
@@ -120,6 +122,11 @@
 
         onThrowCoin(args: ThrowCoinEventArgs): void {
             console.log('onThrowCoin', args);
+        }
+
+        onUpdatedRoomSettings(args: RoomContextSummary): void {
+            Object.assign(this.roomContext, args);
+            this.update();
         }
     }
 

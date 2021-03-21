@@ -1,10 +1,6 @@
 ﻿namespace NaaS {
-    export interface RoomContext {
-        title: string,
+    export interface RoomContext extends RoomContextSummary {
         countOfLike: number,
         countOfDis: number,
-        allowDisCoin: boolean,
-        sessionID: string,
-        twitterHashtag?: string | undefined
     }
 }

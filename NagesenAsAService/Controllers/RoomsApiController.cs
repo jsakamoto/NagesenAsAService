@@ -62,43 +62,11 @@ namespace NagesenAsAService.Controllers
             return Ok(newRoomNumber);
         }
 
-        [HttpGet("/api/rooms/{roomNumber}/settings")]
-        public async Task<IActionResult> GetRoomSettingsAsync(int roomNumber)
-        {
-            var room = await this.Repository.FindRoomAsync(roomNumber);
-            return Ok(new RoomSettings
-            (
-                room.Title,
-                room.TwitterHashtag,
-                room.AllowDisCoin
-            ));
-        }
-
-        [HttpGet("/api/rooms/{roomNumber}/context")]// TODO: キャッシュ制御, OutputCache(Duration = 0, NoStore = true)]
-        public async Task<IActionResult> PeekRoomContextAsync(int roomNumber)
-        {
-            var room = await this.Repository.FindRoomAsync(roomNumber);
-            if (room == null) return NotFound();
-            return Ok(new
-            {
-                sessionID = room.SessionID,
-                title = room.Title,
-                allowDisCoin = room.AllowDisCoin
-            });
-        }
-
         [HttpPost("/api/rooms/{roomNumber}/coin")]
         public async Task<IActionResult> ThrowCoinAsync(int roomNumber, CoinType typeOfCoin)
         {
             await this.NaasHubContext.ThrowCoinAsync(this.Repository, roomNumber, typeOfCoin);
             return NoContent();
-        }
-
-        [HttpGet("/api/rooms/{roomNumber}/twitterhashtag")]// TODO: キャッシュ制御, OutputCache(Duration = 0, NoStore = true)]
-        public async Task<IActionResult> GetTwitterHashtagAsync(int roomNumber)
-        {
-            var room = await this.Repository.FindRoomAsync(roomNumber);
-            return Ok(new { twitterHashtag = room.TwitterHashtag });
         }
 
         [HttpPost("/api/rooms/{roomNumber}/screenshot")]

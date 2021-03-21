@@ -8,6 +8,8 @@ namespace NaaS {
 
         private onConnectedCallBacks: (() => void)[] = [];
 
+        private get connected(): boolean { return this.connection.state === signalR.HubConnectionState.Connected; }
+
         constructor() {
             this.init();
         }
@@ -46,17 +48,29 @@ namespace NaaS {
 
         public onConnected(callback: () => void) {
             this.onConnectedCallBacks.push(callback);
-            if (this.connection.state === signalR.HubConnectionState.Connected) callback();
+            if (this.connected) callback();
         }
 
-        public enterRoomAsync(roomNumber: number): Promise<RoomContext> {
-            return this.connection.invoke<RoomContext>('EnterRoom', roomNumber);
+        public enterRoomAsBoxAsync(roomNumber: number): Promise<RoomContext> {
+            return this.connection.invoke<RoomContext>('EnterRoomAsBoxAsync', roomNumber);
+        }
+
+        public enterRoomAsControllerAsync(roomNumber: number): Promise<RoomContextSummary> {
+            return this.connection.invoke<RoomContextSummary>('EnterRoomAsControllerAsync', roomNumber);
+        }
+
+        public async updateRoomSettingsAsync(roomNumber: number, roomSettings: RoomSettings): Promise<void> {
+            if (!this.connected) return;
+            await this.connection.invoke('UpdateRoomSettingsAsync', roomNumber, roomSettings);
         }
 
         public onThrow(callback: (args: ThrowCoinEventArgs) => void): void {
             this.connection.on('Throw', callback);
         }
 
+        public onUpdatedRoomSettings(callback: (args: RoomContextSummary) => void): void {
+            this.connection.on('UpdatedRoomSettings', callback);
+        }
     }
 
     export const hubConnService = new HubConnectionService();
