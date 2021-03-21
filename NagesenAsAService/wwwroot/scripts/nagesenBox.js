@@ -33,6 +33,7 @@ var NaaS;
             document.getElementById('reset-room-button').addEventListener('click', e => this.onClickResetRoomButton());
             document.getElementById('tweet-score-button').addEventListener('click', e => this.onClickTweetScoreButton());
             document.getElementById('settings-mask').addEventListener('click', e => this.onClickSettingsMask());
+            window.addEventListener('beforeunload', e => this.onBeforeUnload(e));
             this.update();
         }
         update() {
@@ -76,6 +77,10 @@ var NaaS;
         onClickSettingsMask() {
             this.visibleSettings = false;
             this.update();
+        }
+        onBeforeUnload(e) {
+            e.preventDefault();
+            return e.returnValue = NaaS.localize.IfYouLeaveThisPageYouLostCoinsImage;
         }
     }
     NaaS.nagesenBoxController = new NagesenBoxController(NaaS.urlService, NaaS.tweetService);

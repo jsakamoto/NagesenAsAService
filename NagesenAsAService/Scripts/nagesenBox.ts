@@ -49,6 +49,8 @@
             document.getElementById('tweet-score-button')!.addEventListener('click', e => this.onClickTweetScoreButton());
             document.getElementById('settings-mask')!.addEventListener('click', e => this.onClickSettingsMask());
 
+            window.addEventListener('beforeunload', e => this.onBeforeUnload(e));
+
             this.update();
         }
 
@@ -99,6 +101,11 @@
         onClickSettingsMask(): void {
             this.visibleSettings = false;
             this.update();
+        }
+
+        onBeforeUnload(e: BeforeUnloadEvent): string {
+            e.preventDefault();
+            return e.returnValue = NaaS.localize.IfYouLeaveThisPageYouLostCoinsImage;
         }
     }
 
