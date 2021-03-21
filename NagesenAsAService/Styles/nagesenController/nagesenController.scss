@@ -27,15 +27,19 @@ body {
 
 #coin {
     background-image: url(/images/coin.png);
+    overflow: hidden;
 }
 
 #stone {
+    @include all-linear-transition();
     background-image: url(/images/stone.png);
-    display: none;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
-.dis-coin.allow #stone {
-    display: inline-block;
+.dis-coin.deny #stone {
+    width: 0;
 }
 
 .item {

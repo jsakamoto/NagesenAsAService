@@ -26,14 +26,21 @@ body {
     height: 2.3em; }
 
 #coin {
-  background-image: url(/images/coin.png); }
+  background-image: url(/images/coin.png);
+  overflow: hidden; }
 
 #stone {
+  -moz-transition: all linear 0.2s;
+  -o-transition: all linear 0.2s;
+  -webkit-transition: all linear 0.2s;
+  transition: all linear 0.2s;
   background-image: url(/images/stone.png);
-  display: none; }
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden; }
 
-.dis-coin.allow #stone {
-  display: inline-block; }
+.dis-coin.deny #stone {
+  width: 0; }
 
 .item {
   margin: 10px 10px 0;
