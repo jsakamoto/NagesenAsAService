@@ -157,21 +157,18 @@
         }
 
         async countUpLike(price: number): Promise<void> {
-            this.countOfLike += price;
-            await this.countUp(CoinType.Like);
+            await this.countUp(CoinType.Like, () => this.countOfLike += price);
         }
 
         async countUpDis(price: number): Promise<void> {
-            this.countOfDis += price;
-            await this.countUp(CoinType.Dis);
+            await this.countUp(CoinType.Dis, () => this.countOfDis += price);
         }
 
-        async countUp(typeOfCoin: CoinType): Promise<void> {
-            await fetch(this.urlService.apiBaseUrl + '/coin', {
-                method: 'POST',
-                headers,
-                body: JSON.stringify({ typeOfCoin })
-            });
+        async countUp(typeOfCoin: CoinType, callback: () => void): Promise<void> {
+            const success = await this.hubConn.throwCoinAsync(this.urlService.roomNumber, typeOfCoin);
+            if (success === false) return;
+
+            callback();
             this.saveState();
             this.update();
         }

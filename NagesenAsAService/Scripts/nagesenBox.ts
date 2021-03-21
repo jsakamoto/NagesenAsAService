@@ -123,6 +123,9 @@
 
         onThrowCoin(args: ThrowCoinEventArgs): void {
             console.log('onThrowCoin', args);
+            this.roomContext.countOfLike = args.countOfLike;
+            this.roomContext.countOfDis = args.countOfDis;
+            this.update();
         }
 
         onUpdatedRoomSettings(args: RoomContextSummary): void {

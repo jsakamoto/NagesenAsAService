@@ -118,19 +118,16 @@ var NaaS;
             this.saveState();
         }
         async countUpLike(price) {
-            this.countOfLike += price;
-            await this.countUp(0);
+            await this.countUp(0, () => this.countOfLike += price);
         }
         async countUpDis(price) {
-            this.countOfDis += price;
-            await this.countUp(1);
+            await this.countUp(1, () => this.countOfDis += price);
         }
-        async countUp(typeOfCoin) {
-            await fetch(this.urlService.apiBaseUrl + '/coin', {
-                method: 'POST',
-                headers,
-                body: JSON.stringify({ typeOfCoin })
-            });
+        async countUp(typeOfCoin, callback) {
+            const success = await this.hubConn.throwCoinAsync(this.urlService.roomNumber, typeOfCoin);
+            if (success === false)
+                return;
+            callback();
             this.saveState();
             this.update();
         }

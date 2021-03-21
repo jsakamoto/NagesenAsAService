@@ -62,13 +62,6 @@ namespace NagesenAsAService.Controllers
             return Ok(newRoomNumber);
         }
 
-        [HttpPost("/api/rooms/{roomNumber}/coin")]
-        public async Task<IActionResult> ThrowCoinAsync(int roomNumber, CoinType typeOfCoin)
-        {
-            await this.NaasHubContext.ThrowCoinAsync(this.Repository, roomNumber, typeOfCoin);
-            return NoContent();
-        }
-
         [HttpPost("/api/rooms/{roomNumber}/screenshot")]
         public async Task<IActionResult> PostScreenShotAsync(int roomNumber, string imageDataUrl)
         {

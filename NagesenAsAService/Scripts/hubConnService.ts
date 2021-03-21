@@ -69,6 +69,12 @@ namespace NaaS {
             await this.connection.invoke('ResetScoreAsync', roomNumber);
         }
 
+        public async throwCoinAsync(roomNumber: number, typeOfCoin: CoinType): Promise<boolean> {
+            if (!this.connected) return false;
+            await this.connection.invoke('throwCoinAsync', roomNumber, typeOfCoin);
+            return true;
+        }
+
         public onThrow(callback: (args: ThrowCoinEventArgs) => void): void {
             this.connection.on('Throw', callback);
         }

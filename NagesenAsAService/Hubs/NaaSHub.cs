@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using NagesenAsAService.Models;
 using NagesenAsAService.Services.RoomRepository;
@@ -7,6 +8,8 @@ namespace NagesenAsAService.Hubs
 {
     public class NaaSHub : Hub<INaaSHubEvents>
     {
+        private readonly Random _Random = new Random(DateTime.UtcNow.Millisecond);
+
         private IRoomRepository Repository { get; set; }
 
         public NaaSHub(IRoomRepository repository)
@@ -64,9 +67,33 @@ namespace NagesenAsAService.Hubs
             return true;
         }
 
-        public Task ThrowCoin(int roomNumber, CoinType typeOfCoin)
+        public async Task ThrowCoinAsync(int roomNumber, CoinType typeOfCoin)
         {
-            return this.Clients.ThrowCoinAsync(this.Repository, roomNumber, typeOfCoin);
+            var room = await this.Repository.UpdateRoomAsync(roomNumber, r =>
+            {
+                if (typeOfCoin == CoinType.Like)
+                {
+                    r.CountOfNageSen += 10;
+                }
+                else
+                {
+                    r.CountOfAoriSen += 10;
+                }
+                return true;
+            });
+
+            var countOfCoin = new { room.CountOfNageSen, room.CountOfAoriSen };
+
+            var throwPoint = default(double);
+            lock (_Random) throwPoint = _Random.NextDouble();
+            var args = new ThrowCoinEventArgs
+            (
+                throwPoint,
+                typeOfCoin,
+                countOfCoin.CountOfNageSen,
+                countOfCoin.CountOfAoriSen
+            );
+            await Clients.Group(roomNumber.ToString()).Throw(args);
         }
 
         public async Task ResetScoreAsync(int roomNumber)
