@@ -9,7 +9,7 @@ var NaaS;
             const text = `投げ銭 as a Service - Room ${this.urlService.roomNumber} に今すぐアクセス☆`;
             this.tweet(text, this.urlService.controllerUrl);
         }
-        tweetToPrice(tweetType, context) {
+        tweetScore(tweetType, context) {
             let title = context.title || '';
             title = title == '' ? 'この枠' : `「${title}」`;
             const text = tweetType == 0 ?

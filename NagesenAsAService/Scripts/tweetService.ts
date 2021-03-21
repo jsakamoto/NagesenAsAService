@@ -15,13 +15,7 @@
             this.tweet(text, this.urlService.controllerUrl);
         }
 
-        public tweetToPrice(tweetType: TweetType, context: {
-            title: string,
-            countOfLike: number,
-            countOfDis: number,
-            allowDisCoin: boolean,
-            sessionID: string
-        }): void {
+        public tweetScore(tweetType: TweetType, context: RoomContext): void {
 
             let title = context.title || '';
             title = title == '' ? 'この枠' : `「${title}」`;

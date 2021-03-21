@@ -23,7 +23,7 @@ var NaaS;
             document.getElementById('stone-image').addEventListener('click', () => this.countUpDis(10));
             this.countOfLikeElement = document.getElementById('count-of-like');
             this.countOfDisElement = document.getElementById('count-of-dis');
-            document.getElementById('tweet-to-price-button').addEventListener('click', () => this.onClickTweetToPrice());
+            document.getElementById('tweet-score-button').addEventListener('click', () => this.onClickTweetScoreButton());
             ['touchmove', 'touchend', 'gesturestart', 'gesturechange', 'gestureend'].forEach(eventType => {
                 document.addEventListener(eventType, e => { e.preventDefault(); });
             });
@@ -125,8 +125,8 @@ var NaaS;
             this.saveState();
             this.update();
         }
-        onClickTweetToPrice() {
-            this.tweeter.tweetToPrice(1, this);
+        onClickTweetScoreButton() {
+            this.tweeter.tweetScore(1, this);
         }
     }
     NaaS.nagesenControllerController = new NagesenControllerController(NaaS.urlService, NaaS.tweetService);

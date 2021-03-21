@@ -1,10 +1,80 @@
-﻿@section head {
+﻿@model NagesenAsAService.Models.Room
+@using System.Text.Encodings.Web
+@{
+    var room = Model;
+    var isOwner = room.OwnerUserID == this.User.Identity.Name;
+}
+@section head {
     <link href="~/styles/nagesenBox.min.css" rel="stylesheet" />
 }
-<div id="room-number-holder">
+@section headerLeft {
+    <a href="/" class="go-home"></a>
+    @if (isOwner)
+    {
+        <div id="settings-button"><i class="material-icons">menu</i></div>
+    }
+}
+@section headerRight{
+    <partial name="_ShareBox" model="room" />
+    <a id="tweet-score-button">t</a>
+}
+
+<div class="room-page">
+
+    <div id="box-container">
+        <div id="box">
+
+            <div id="session-title"></div>
+
+            <div id="score-box">
+                <div class="count-of-coin like">
+                    <span id="count-of-like" class="score"></span><span class="unit">Yen</span>
+                </div>
+                <div class="count-of-coin dis">
+                    <span id="count-of-dis" class="score"></span><span class="unit">Dis</span>
+                </div>
+            </div>
+
+            <canvas id="canvas" width="800" height="540"></canvas>
+        </div>
+    </div>
+
+    <div id="settings-container">
+        <div id="settings-mask"></div>
+        <div id="settings-content">
+            <div class="menu-item">
+                <label for="session-title-input">@Localize.SessionTitle</label>
+                <input type="text" id="session-title-input" />
+            </div>
+            <div class="menu-item">
+                <label for="twitter-hashtag-input">@Localize.TwitterHashtag #</label>
+                <input type="text" id="twitter-hashtag-input" />
+            </div>
+            <div class="menu-item">
+                <label for="allow-dis-coin-input">
+                    <input type="checkbox" id="allow-dis-coin-input" />
+                    @Localize.AllowDisCoin
+                </label>
+            </div>
+            <div class="menu-item">
+                <button id="reset-room-button">@Localize.ResetRoom</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section scripts {
+
+    <script>
+        var NaaS = NaaS || {};
+        NaaS.localize = NaaS.localize || {};
+        NaaS.localize.IfYouLeaveThisPageYouLostCoinsImage = '@JavaScriptEncoder.Default.Encode(Localize.IfYouLeaveThisPageYouLostCoinsImage)';
+        NaaS.localize.ConfirmResetRoom = '@JavaScriptEncoder.Default.Encode(Localize.ConfirmResetRoom)';
+    </script>
+
     @*<script src="~/scripts/signalr.js"></script>*@
+    <script src="~/scripts/urlService.js"></script>
+    <script src="~/scripts/tweetService.js"></script>
+    <script src="~/scripts/sharedBoxController.js"></script>
     <script src="~/scripts/nagesenBox.js"></script>
 }

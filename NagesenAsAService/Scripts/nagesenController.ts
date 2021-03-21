@@ -48,7 +48,7 @@
 
             this.countOfLikeElement = document.getElementById('count-of-like')!;
             this.countOfDisElement = document.getElementById('count-of-dis')!;
-            document.getElementById('tweet-to-price-button')!.addEventListener('click', () => this.onClickTweetToPrice());
+            document.getElementById('tweet-score-button')!.addEventListener('click', () => this.onClickTweetScoreButton());
 
             ['touchmove', 'touchend', 'gesturestart', 'gesturechange', 'gestureend'].forEach(eventType => {
                 document.addEventListener(eventType, e => { e.preventDefault(); })
@@ -165,8 +165,8 @@
             this.update();
         }
 
-        onClickTweetToPrice(): void {
-            this.tweeter.tweetToPrice(TweetType.FromController, this);
+        onClickTweetScoreButton(): void {
+            this.tweeter.tweetScore(TweetType.FromController, this);
         }
     }
 
