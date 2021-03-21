@@ -60,7 +60,7 @@ namespace NagesenAsAService
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<TestHub>("/testhub");
+                endpoints.MapHub<NaaSHub>("/naashub");
             });
         }
     }

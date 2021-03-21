@@ -23,13 +23,15 @@
 
         constructor(
             private urlService: UrlService,
+            private hubConn: HubConnectionService,
             private tweeter: TweetService
         ) {
             this.init();
             this.update();
         }
 
-        init(): void {
+        async init(): Promise<void> {
+
             this.countOfLikeElement = document.getElementById('count-of-like')!;
             this.countOfDisElement = document.getElementById('count-of-dis')!;
             this.settingsContainerElement = document.getElementById('settings-container')!;
@@ -51,6 +53,14 @@
 
             window.addEventListener('beforeunload', e => this.onBeforeUnload(e));
 
+            this.hubConn.onThrow(args => this.onThrowCoin(args));
+            this.hubConn.onConnected(() => this.onHubConnectedAsync());
+
+            this.update();
+        }
+
+        async onHubConnectedAsync(): Promise<void> {
+            this.roomContext = await this.hubConn.enterRoomAsync(this.urlService.roomNumber);
             this.update();
         }
 
@@ -107,7 +117,14 @@
             e.preventDefault();
             return e.returnValue = NaaS.localize.IfYouLeaveThisPageYouLostCoinsImage;
         }
+
+        onThrowCoin(args: ThrowCoinEventArgs): void {
+            console.log('onThrowCoin', args);
+        }
     }
 
-    export const nagesenBoxController = new NagesenBoxController(urlService, tweetService);
+    export const nagesenBoxController = new NagesenBoxController(
+        urlService,
+        hubConnService,
+        tweetService);
 }

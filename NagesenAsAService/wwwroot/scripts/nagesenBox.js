@@ -2,8 +2,9 @@
 var NaaS;
 (function (NaaS) {
     class NagesenBoxController {
-        constructor(urlService, tweeter) {
+        constructor(urlService, hubConn, tweeter) {
             this.urlService = urlService;
+            this.hubConn = hubConn;
             this.tweeter = tweeter;
             this.roomContext = {
                 title: '',
@@ -17,7 +18,7 @@ var NaaS;
             this.init();
             this.update();
         }
-        init() {
+        async init() {
             this.countOfLikeElement = document.getElementById('count-of-like');
             this.countOfDisElement = document.getElementById('count-of-dis');
             this.settingsContainerElement = document.getElementById('settings-container');
@@ -34,6 +35,12 @@ var NaaS;
             document.getElementById('tweet-score-button').addEventListener('click', e => this.onClickTweetScoreButton());
             document.getElementById('settings-mask').addEventListener('click', e => this.onClickSettingsMask());
             window.addEventListener('beforeunload', e => this.onBeforeUnload(e));
+            this.hubConn.onThrow(args => this.onThrowCoin(args));
+            this.hubConn.onConnected(() => this.onHubConnectedAsync());
+            this.update();
+        }
+        async onHubConnectedAsync() {
+            this.roomContext = await this.hubConn.enterRoomAsync(this.urlService.roomNumber);
             this.update();
         }
         update() {
@@ -82,6 +89,9 @@ var NaaS;
             e.preventDefault();
             return e.returnValue = NaaS.localize.IfYouLeaveThisPageYouLostCoinsImage;
         }
+        onThrowCoin(args) {
+            console.log('onThrowCoin', args);
+        }
     }
-    NaaS.nagesenBoxController = new NagesenBoxController(NaaS.urlService, NaaS.tweetService);
+    NaaS.nagesenBoxController = new NagesenBoxController(NaaS.urlService, NaaS.hubConnService, NaaS.tweetService);
 })(NaaS || (NaaS = {}));
