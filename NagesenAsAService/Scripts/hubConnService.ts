@@ -1,4 +1,6 @@
-﻿namespace NaaS {
+﻿/// <reference types="@microsoft/signalr" />
+
+namespace NaaS {
 
     export class HubConnectionService {
 
