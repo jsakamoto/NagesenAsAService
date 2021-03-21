@@ -53,7 +53,6 @@ namespace NagesenAsAService.Models
         {
             this.SessionID = Guid.NewGuid();
             this.UpdateScreenSnapshotAt = DateTime.MaxValue;
-            this.Title = "";
             this.CountOfNageSen = 0;
             this.CountOfAoriSen = 0;
         }

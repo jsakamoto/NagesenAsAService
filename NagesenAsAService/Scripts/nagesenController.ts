@@ -85,6 +85,7 @@
 
             this.hubConn.onConnected(() => this.onHubConnectedAsync());
             this.hubConn.onUpdatedRoomSettings(args => this.onUpdatedRoomSettings(args));
+            this.hubConn.onResetedScore(newSessionId => this.onResetedScore(newSessionId));
         }
 
         update(): void {
@@ -144,6 +145,15 @@
             }
             this.roomContextSummary = args;
             this.update();
+            this.saveState();
+        }
+
+        onResetedScore(newSessionId: string): void {
+            this.roomContextSummary.sessionID = newSessionId;
+            this.countOfLike = 0;
+            this.countOfDis = 0;
+            this.update();
+            this.saveState();
         }
 
         async countUpLike(price: number): Promise<void> {

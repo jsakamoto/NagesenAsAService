@@ -49,11 +49,19 @@ var NaaS;
                 return;
             await this.connection.invoke('UpdateRoomSettingsAsync', roomNumber, roomSettings);
         }
+        async resetScoreAsync(roomNumber) {
+            if (!this.connected)
+                return;
+            await this.connection.invoke('ResetScoreAsync', roomNumber);
+        }
         onThrow(callback) {
             this.connection.on('Throw', callback);
         }
         onUpdatedRoomSettings(callback) {
             this.connection.on('UpdatedRoomSettings', callback);
+        }
+        onResetedScore(callback) {
+            this.connection.on('ResetedScore', callback);
         }
     }
     NaaS.HubConnectionService = HubConnectionService;

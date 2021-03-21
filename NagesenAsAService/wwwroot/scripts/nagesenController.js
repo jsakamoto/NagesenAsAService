@@ -54,6 +54,7 @@ var NaaS;
             }
             this.hubConn.onConnected(() => this.onHubConnectedAsync());
             this.hubConn.onUpdatedRoomSettings(args => this.onUpdatedRoomSettings(args));
+            this.hubConn.onResetedScore(newSessionId => this.onResetedScore(newSessionId));
         }
         update() {
             this.controllerHolderElement.classList.toggle('has-title', this.roomContextSummary.title !== '');
@@ -107,6 +108,14 @@ var NaaS;
             }
             this.roomContextSummary = args;
             this.update();
+            this.saveState();
+        }
+        onResetedScore(newSessionId) {
+            this.roomContextSummary.sessionID = newSessionId;
+            this.countOfLike = 0;
+            this.countOfDis = 0;
+            this.update();
+            this.saveState();
         }
         async countUpLike(price) {
             this.countOfLike += price;

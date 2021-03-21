@@ -39,6 +39,7 @@ var NaaS;
             window.addEventListener('beforeunload', e => this.onBeforeUnload(e));
             this.hubConn.onThrow(args => this.onThrowCoin(args));
             this.hubConn.onUpdatedRoomSettings(args => this.onUpdatedRoomSettings(args));
+            this.hubConn.onResetedScore(newSessionId => this.onResetedScore(newSessionId));
             this.hubConn.onConnected(() => this.onHubConnectedAsync());
             this.update();
         }
@@ -77,9 +78,9 @@ var NaaS;
             this.roomContext.allowDisCoin = this.allowDisCoinInputElement.checked;
             this.update();
         }
-        onClickResetRoomButton() {
+        async onClickResetRoomButton() {
             const res = confirm(NaaS.localize.ConfirmResetRoom);
-            console.log('reset', res);
+            await this.hubConn.resetScoreAsync(this.urlService.roomNumber);
         }
         onClickTweetScoreButton() {
             this.tweeter.tweetScore(0, this.roomContext);
@@ -97,6 +98,12 @@ var NaaS;
         }
         onUpdatedRoomSettings(args) {
             Object.assign(this.roomContext, args);
+            this.update();
+        }
+        onResetedScore(newSessionId) {
+            this.roomContext.sessionID = newSessionId;
+            this.roomContext.countOfLike = 0;
+            this.roomContext.countOfDis = 0;
             this.update();
         }
     }

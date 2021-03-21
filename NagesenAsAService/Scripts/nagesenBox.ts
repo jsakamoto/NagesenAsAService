@@ -56,6 +56,7 @@
 
             this.hubConn.onThrow(args => this.onThrowCoin(args));
             this.hubConn.onUpdatedRoomSettings(args => this.onUpdatedRoomSettings(args));
+            this.hubConn.onResetedScore(newSessionId => this.onResetedScore(newSessionId));
             this.hubConn.onConnected(() => this.onHubConnectedAsync());
 
             this.update();
@@ -101,9 +102,9 @@
             this.update();
         }
 
-        onClickResetRoomButton(): void {
+        async onClickResetRoomButton(): Promise<void> {
             const res = confirm(NaaS.localize.ConfirmResetRoom);
-            console.log('reset', res);
+            await this.hubConn.resetScoreAsync(this.urlService.roomNumber);
         }
 
         onClickTweetScoreButton(): void {
@@ -126,6 +127,13 @@
 
         onUpdatedRoomSettings(args: RoomContextSummary): void {
             Object.assign(this.roomContext, args);
+            this.update();
+        }
+
+        onResetedScore(newSessionId: string): void {
+            this.roomContext.sessionID = newSessionId;
+            this.roomContext.countOfLike = 0;
+            this.roomContext.countOfDis = 0;
             this.update();
         }
     }

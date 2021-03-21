@@ -35,9 +35,7 @@ namespace NagesenAsAService.Hubs
             var hasChanged = false;
             await this.Repository.UpdateRoomAsync(roomNumber, room =>
             {
-                if (room == null) return false;
-                var isOwner = room.OwnerUserID == this.Context.User.Identity.Name;
-                if (isOwner == false) return false;
+                if (Authorize(room) == false) return false;
 
                 hasChanged =
                     (room.Title != settings.Title) ||
@@ -58,20 +56,35 @@ namespace NagesenAsAService.Hubs
             }
         }
 
+        private bool Authorize(Room room)
+        {
+            if (room == null) return false;
+            var isOwner = room.OwnerUserID == this.Context.User.Identity.Name;
+            if (isOwner == false) return false;
+            return true;
+        }
+
         public Task ThrowCoin(int roomNumber, CoinType typeOfCoin)
         {
             return this.Clients.ThrowCoinAsync(this.Repository, roomNumber, typeOfCoin);
         }
 
-        public async Task ResetRoom(int roomNumber)
+        public async Task ResetScoreAsync(int roomNumber)
         {
+            var hasReseted = false;
             var room = await this.Repository.UpdateRoomAsync(roomNumber, r =>
             {
+                if (Authorize(r) == false) return false;
                 r.Reset();
+                hasReseted = true;
                 return true;
             });
 
-            await Clients.Group(roomNumber.ToString()).ResetedRoom(room.SessionID);
+            if (hasReseted)
+            {
+                await Clients.Groups(roomNumber.ToString(), roomNumber.ToString() + "/controller")
+                    .ResetedScore(room.SessionID);
+            }
         }
     }
 }

@@ -64,12 +64,21 @@ namespace NaaS {
             await this.connection.invoke('UpdateRoomSettingsAsync', roomNumber, roomSettings);
         }
 
+        public async resetScoreAsync(roomNumber: number): Promise<void> {
+            if (!this.connected) return;
+            await this.connection.invoke('ResetScoreAsync', roomNumber);
+        }
+
         public onThrow(callback: (args: ThrowCoinEventArgs) => void): void {
             this.connection.on('Throw', callback);
         }
 
         public onUpdatedRoomSettings(callback: (args: RoomContextSummary) => void): void {
             this.connection.on('UpdatedRoomSettings', callback);
+        }
+
+        public onResetedScore(callback: (newSessionId: string) => void): void {
+            this.connection.on('ResetedScore', callback)
         }
     }
 

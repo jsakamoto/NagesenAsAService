@@ -8,7 +8,7 @@ namespace NagesenAsAService.Hubs
     {
         Task UpdatedRoomSettings(RoomContextSummary settings);
 
-        Task ResetedRoom(Guid sessionId);
+        Task ResetedScore(Guid sessionId);
 
         Task Throw(ThrowCoinEventArgs args);
     }
