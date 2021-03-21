@@ -80,7 +80,9 @@ var NaaS;
         }
         async onClickResetRoomButton() {
             const res = confirm(NaaS.localize.ConfirmResetRoom);
-            await this.hubConn.resetScoreAsync(this.urlService.roomNumber);
+            if (res === true) {
+                await this.hubConn.resetScoreAsync(this.urlService.roomNumber);
+            }
         }
         onClickTweetScoreButton() {
             this.tweeter.tweetScore(0, this.roomContext);

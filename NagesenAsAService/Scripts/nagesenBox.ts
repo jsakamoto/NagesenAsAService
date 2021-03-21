@@ -104,7 +104,9 @@
 
         async onClickResetRoomButton(): Promise<void> {
             const res = confirm(NaaS.localize.ConfirmResetRoom);
-            await this.hubConn.resetScoreAsync(this.urlService.roomNumber);
+            if (res === true) {
+                await this.hubConn.resetScoreAsync(this.urlService.roomNumber);
+            }
         }
 
         onClickTweetScoreButton(): void {
