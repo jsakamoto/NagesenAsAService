@@ -39,28 +39,31 @@
         </div>
     </div>
 
-    <div id="settings-container">
-        <div id="settings-mask"></div>
-        <div id="settings-content">
-            <div class="menu-item">
-                <label for="session-title-input">@Localize.SessionTitle</label>
-                <input type="text" id="session-title-input" />
-            </div>
-            <div class="menu-item">
-                <label for="twitter-hashtag-input">@Localize.TwitterHashtag #</label>
-                <input type="text" id="twitter-hashtag-input" />
-            </div>
-            <div class="menu-item">
-                <label for="allow-dis-coin-input">
-                    <input type="checkbox" id="allow-dis-coin-input" />
-                    @Localize.AllowDisCoin
-                </label>
-            </div>
-            <div class="menu-item">
-                <button id="reset-room-button">@Localize.ResetRoom</button>
+    @if (isOwner)
+    {
+        <div id="settings-container">
+            <div id="settings-mask"></div>
+            <div id="settings-content">
+                <div class="menu-item">
+                    <label for="session-title-input">@Localize.SessionTitle</label>
+                    <input type="text" id="session-title-input" />
+                </div>
+                <div class="menu-item">
+                    <label for="twitter-hashtag-input">@Localize.TwitterHashtag #</label>
+                    <input type="text" id="twitter-hashtag-input" />
+                </div>
+                <div class="menu-item">
+                    <label for="allow-dis-coin-input">
+                        <input type="checkbox" id="allow-dis-coin-input" />
+                        @Localize.AllowDisCoin
+                    </label>
+                </div>
+                <div class="menu-item">
+                    <button id="reset-room-button">@Localize.ResetRoom</button>
+                </div>
             </div>
         </div>
-    </div>
+    }
 </div>
 
 @section scripts {

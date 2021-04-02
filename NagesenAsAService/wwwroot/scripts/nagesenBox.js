@@ -15,27 +15,40 @@ var NaaS;
                 twitterHashtag: ''
             };
             this.visibleSettings = false;
+            this.settingsContainerElement = null;
+            this.titleInputElement = null;
+            this.twitterHashtagInputElement = null;
+            this.allowDisCoinInputElement = null;
             this.init();
             this.update();
         }
         async init() {
             this.countOfLikeElement = document.getElementById('count-of-like');
             this.countOfDisElement = document.getElementById('count-of-dis');
-            this.settingsContainerElement = document.getElementById('settings-container');
             this.boxElement = document.getElementById('box');
             this.titleElement = document.getElementById('session-title');
-            this.titleInputElement = document.getElementById('session-title-input');
-            this.twitterHashtagInputElement = document.getElementById('twitter-hashtag-input');
-            this.allowDisCoinInputElement = document.getElementById('allow-dis-coin-input');
             const settingButtonElement = document.getElementById('settings-button');
             if (settingButtonElement !== null)
                 settingButtonElement.addEventListener('click', e => this.onClickSettingButton());
-            this.titleInputElement.addEventListener('input', e => this.onInputTitle());
-            this.twitterHashtagInputElement.addEventListener('input', e => this.onInputTwitterHashtag());
-            this.allowDisCoinInputElement.addEventListener('change', e => this.onChageAllowDisCoin());
-            document.getElementById('reset-room-button').addEventListener('click', e => this.onClickResetRoomButton());
-            document.getElementById('tweet-score-button').addEventListener('click', e => this.onClickTweetScoreButton());
-            document.getElementById('settings-mask').addEventListener('click', e => this.onClickSettingsMask());
+            this.settingsContainerElement = document.getElementById('settings-container');
+            this.titleInputElement = document.getElementById('session-title-input');
+            this.twitterHashtagInputElement = document.getElementById('twitter-hashtag-input');
+            this.allowDisCoinInputElement = document.getElementById('allow-dis-coin-input');
+            if (this.titleInputElement !== null)
+                this.titleInputElement.addEventListener('input', e => this.onInputTitle());
+            if (this.twitterHashtagInputElement !== null)
+                this.twitterHashtagInputElement.addEventListener('input', e => this.onInputTwitterHashtag());
+            if (this.allowDisCoinInputElement !== null)
+                this.allowDisCoinInputElement.addEventListener('change', e => this.onChageAllowDisCoin());
+            const resetRoomButton = document.getElementById('reset-room-button');
+            if (resetRoomButton !== null)
+                resetRoomButton.addEventListener('click', e => this.onClickResetRoomButton());
+            const tweetScoreButton = document.getElementById('tweet-score-button');
+            if (tweetScoreButton !== null)
+                tweetScoreButton.addEventListener('click', e => this.onClickTweetScoreButton());
+            const settingsMask = document.getElementById('settings-mask');
+            if (settingsMask !== null)
+                settingsMask.addEventListener('click', e => this.onClickSettingsMask());
             window.addEventListener('beforeunload', e => this.onBeforeUnload(e));
             this.hubConn.onThrow(args => this.onThrowCoin(args));
             this.hubConn.onUpdatedRoomSettings(args => this.onUpdatedRoomSettings(args));
@@ -46,16 +59,21 @@ var NaaS;
         update() {
             this.countOfLikeElement.textContent = this.roomContext.countOfLike.toLocaleString();
             this.countOfDisElement.textContent = this.roomContext.countOfDis.toLocaleString();
-            this.settingsContainerElement.classList.toggle('visible', this.visibleSettings);
             this.boxElement.classList.toggle('has-title', this.roomContext.title !== '');
             this.boxElement.classList.toggle('allow-dis-coin', this.roomContext.allowDisCoin);
             this.titleElement.textContent = this.roomContext.title;
-            if (this.titleInputElement.value !== this.roomContext.title)
-                this.titleInputElement.value = this.roomContext.title;
-            if (this.twitterHashtagInputElement.value !== this.roomContext.twitterHashtag)
-                this.twitterHashtagInputElement.value = this.roomContext.twitterHashtag || '';
-            if (this.allowDisCoinInputElement.checked !== this.roomContext.allowDisCoin)
-                this.allowDisCoinInputElement.checked = this.roomContext.allowDisCoin;
+            if (this.settingsContainerElement !== null &&
+                this.titleInputElement !== null &&
+                this.twitterHashtagInputElement !== null &&
+                this.allowDisCoinInputElement !== null) {
+                this.settingsContainerElement.classList.toggle('visible', this.visibleSettings);
+                if (this.titleInputElement.value !== this.roomContext.title)
+                    this.titleInputElement.value = this.roomContext.title;
+                if (this.twitterHashtagInputElement.value !== this.roomContext.twitterHashtag)
+                    this.twitterHashtagInputElement.value = this.roomContext.twitterHashtag || '';
+                if (this.allowDisCoinInputElement.checked !== this.roomContext.allowDisCoin)
+                    this.allowDisCoinInputElement.checked = this.roomContext.allowDisCoin;
+            }
             this.hubConn.updateRoomSettingsAsync(this.urlService.roomNumber, this.roomContext);
         }
         async onHubConnectedAsync() {
@@ -67,14 +85,20 @@ var NaaS;
             this.update();
         }
         onInputTitle() {
+            if (this.titleInputElement === null)
+                return;
             this.roomContext.title = this.titleInputElement.value;
             this.update();
         }
         onInputTwitterHashtag() {
+            if (this.twitterHashtagInputElement === null)
+                return;
             this.roomContext.twitterHashtag = this.twitterHashtagInputElement.value;
             this.update();
         }
         onChageAllowDisCoin() {
+            if (this.allowDisCoinInputElement === null)
+                return;
             this.roomContext.allowDisCoin = this.allowDisCoinInputElement.checked;
             this.update();
         }
