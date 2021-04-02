@@ -17,6 +17,8 @@
 
     class NagesenControllerController {
 
+        roomEntered: boolean = false;
+
         roomContextSummary: RoomContextSummary = {
             sessionID: '',
             title: '',
@@ -29,7 +31,7 @@
 
         controllerHolderElement!: HTMLElement;
         sessionTitleElement!: HTMLElement;
-        itemsElement!: HTMLElement;
+        coinsContainerElement!: HTMLElement;
         countOfLikeElement!: HTMLElement;
         countOfDisElement!: HTMLElement;
 
@@ -46,10 +48,10 @@
 
             this.controllerHolderElement = document.getElementById('controller-holder')!;
             this.sessionTitleElement = document.getElementById('session-title')!;
-            this.itemsElement = document.getElementById('items')!;
+            this.coinsContainerElement = document.getElementById('coins-container')!;
 
-            document.getElementById('coin-image')!.addEventListener('click', () => this.countUpLike(10));
-            document.getElementById('stone-image')!.addEventListener('click', () => this.countUpDis(10));
+            document.getElementById('like-coin-image')!.addEventListener('click', () => this.countUpLike(10));
+            document.getElementById('dis-coin-image')!.addEventListener('click', () => this.countUpDis(10));
 
             this.countOfLikeElement = document.getElementById('count-of-like')!;
             this.countOfDisElement = document.getElementById('count-of-dis')!;
@@ -65,7 +67,7 @@
 
             // Wireup the animation of coins.
             const coinAnimationCssClass = 'slideOutUp';
-            document.querySelectorAll('img.coin').forEach(element => {
+            document.querySelectorAll('.coin img').forEach(element => {
                 element.addEventListener('click', e => {
                     element.classList.remove(coinAnimationCssClass);
                     element.classList.add(coinAnimationCssClass);
@@ -89,16 +91,25 @@
         }
 
         update(): void {
+            this.controllerHolderElement.classList.toggle('room-entered', this.roomEntered);
             this.controllerHolderElement.classList.toggle('has-title', this.roomContextSummary.title !== '');
             this.sessionTitleElement.textContent = this.roomContextSummary.title;
-            this.itemsElement.classList.toggle('allow', this.roomContextSummary.allowDisCoin);
-            this.itemsElement.classList.toggle('deny', !this.roomContextSummary.allowDisCoin);
+            this.coinsContainerElement.classList.toggle('deny-dis-coin', !this.roomContextSummary.allowDisCoin);
             this.countOfLikeElement.textContent = '' + this.countOfLike;
             this.countOfDisElement.textContent = '' + this.countOfDis;
         }
 
         async onHubConnectedAsync(): Promise<void> {
             this.roomContextSummary = await this.hubConn.enterRoomAsControllerAsync(this.urlService.roomNumber);
+
+            // Supress CSS transitions before entering the room.
+            if (this.roomEntered === false) {
+                setTimeout(() => {
+                    this.roomEntered = true;
+                    this.update();
+                }, 100);
+            }
+
             this.update();
         }
 

@@ -8,6 +8,7 @@ var NaaS;
             this.urlService = urlService;
             this.hubConn = hubConn;
             this.tweeter = tweeter;
+            this.roomEntered = false;
             this.roomContextSummary = {
                 sessionID: '',
                 title: '',
@@ -22,9 +23,9 @@ var NaaS;
         init() {
             this.controllerHolderElement = document.getElementById('controller-holder');
             this.sessionTitleElement = document.getElementById('session-title');
-            this.itemsElement = document.getElementById('items');
-            document.getElementById('coin-image').addEventListener('click', () => this.countUpLike(10));
-            document.getElementById('stone-image').addEventListener('click', () => this.countUpDis(10));
+            this.coinsContainerElement = document.getElementById('coins-container');
+            document.getElementById('like-coin-image').addEventListener('click', () => this.countUpLike(10));
+            document.getElementById('dis-coin-image').addEventListener('click', () => this.countUpDis(10));
             this.countOfLikeElement = document.getElementById('count-of-like');
             this.countOfDisElement = document.getElementById('count-of-dis');
             document.getElementById('tweet-score-button').addEventListener('click', () => this.onClickTweetScoreButton());
@@ -36,7 +37,7 @@ var NaaS;
                 e.srcElement.click();
             });
             const coinAnimationCssClass = 'slideOutUp';
-            document.querySelectorAll('img.coin').forEach(element => {
+            document.querySelectorAll('.coin img').forEach(element => {
                 element.addEventListener('click', e => {
                     element.classList.remove(coinAnimationCssClass);
                     element.classList.add(coinAnimationCssClass);
@@ -57,15 +58,21 @@ var NaaS;
             this.hubConn.onResetedScore(newSessionId => this.onResetedScore(newSessionId));
         }
         update() {
+            this.controllerHolderElement.classList.toggle('room-entered', this.roomEntered);
             this.controllerHolderElement.classList.toggle('has-title', this.roomContextSummary.title !== '');
             this.sessionTitleElement.textContent = this.roomContextSummary.title;
-            this.itemsElement.classList.toggle('allow', this.roomContextSummary.allowDisCoin);
-            this.itemsElement.classList.toggle('deny', !this.roomContextSummary.allowDisCoin);
+            this.coinsContainerElement.classList.toggle('deny-dis-coin', !this.roomContextSummary.allowDisCoin);
             this.countOfLikeElement.textContent = '' + this.countOfLike;
             this.countOfDisElement.textContent = '' + this.countOfDis;
         }
         async onHubConnectedAsync() {
             this.roomContextSummary = await this.hubConn.enterRoomAsControllerAsync(this.urlService.roomNumber);
+            if (this.roomEntered === false) {
+                setTimeout(() => {
+                    this.roomEntered = true;
+                    this.update();
+                }, 100);
+            }
             this.update();
         }
         loadState() {

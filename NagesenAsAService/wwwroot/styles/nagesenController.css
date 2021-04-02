@@ -25,34 +25,33 @@ body {
   .has-title #session-title {
     height: 2.3em; }
 
-#coin {
-  background-image: url(/images/coin.png);
-  overflow: hidden; }
-
-#stone {
-  -moz-transition: all linear 0.2s;
-  -o-transition: all linear 0.2s;
-  -webkit-transition: all linear 0.2s;
-  transition: all linear 0.2s;
-  background-image: url(/images/stone.png);
-  display: inline-block;
-  white-space: nowrap;
-  overflow: hidden; }
-
-.dis-coin.deny #stone {
-  width: 0; }
-
-.item {
+.coin {
   margin: 10px 10px 0;
   background-repeat: no-repeat;
   background-size: contain;
   width: 40%;
-  display: inline-block; }
-  .item img.coin {
+  display: inline-block;
+  white-space: nowrap; }
+  .coin img {
     width: 100%;
     cursor: pointer;
     animation-duration: 0.1s;
     animation-fill-mode: both; }
+  .coin .score {
+    overflow: hidden; }
+
+#like-coin {
+  background-image: url(/images/like-coin.png); }
+
+#dis-coin {
+  background-image: url(/images/dis-coin.png); }
+  .room-entered #dis-coin {
+    -moz-transition: all linear 0.2s;
+    -o-transition: all linear 0.2s;
+    -webkit-transition: all linear 0.2s;
+    transition: all linear 0.2s; }
+  .deny-dis-coin #dis-coin {
+    width: 0; }
 
 .slideOutUp {
   animation-name: slideOutUp; }
@@ -72,22 +71,19 @@ body {
     width: 640px; } }
 
 @media screen and (max-width: 700px) {
-  #coin,
-  #stone {
+  .coin {
     margin: 5px; }
   #controller {
     width: 320px; } }
 
 @media screen and (max-width: 400px) {
-  #coin,
-  #stone {
-    margin: 0 0 5px; }
+  .coin {
+    margin: 0 0 5px;
+    width: 100%; }
   #controller {
     margin: 0 auto;
     width: 40%;
-    text-align: center; }
-  .item {
-    width: 100%; } }
+    text-align: center; } }
 
 @media screen and (min-height: 501px) {
   #controller {

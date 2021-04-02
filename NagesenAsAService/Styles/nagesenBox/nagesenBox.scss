@@ -93,13 +93,13 @@ header {
     }
 
     .count-of-coin.like {
-        background-image: url(/images/coin.png);
+        background-image: url(/images/like-coin.png);
     }
 
     .count-of-coin.dis {
         height: 0;
         overflow-y: hidden;
-        background-image: url(/images/stone.png);
+        background-image: url(/images/dis-coin.png);
     }
 
     .allow-dis-coin & {
