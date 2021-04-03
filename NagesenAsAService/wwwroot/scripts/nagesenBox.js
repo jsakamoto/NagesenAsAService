@@ -7,6 +7,10 @@ var NaaS;
             this.urlService = urlService;
             this.hubConn = hubConn;
             this.tweeter = tweeter;
+            this.coinAssets = [
+                new NaaS.CoinAsset(0, '/images/like-coin.png', 20, null),
+                new NaaS.CoinAsset(1, '/images/dis-coin.png', 15, null)
+            ];
             this.init();
             this.update();
         }
@@ -43,6 +47,12 @@ var NaaS;
             this.roomContext.countOfLike = args.countOfLike;
             this.roomContext.countOfDis = args.countOfDis;
             this.update();
+            this.OnEnqueueThrowing(args);
+        }
+        OnEnqueueThrowing(data) {
+            let coinAsset = this.coinAssets[data.typeOfCoin];
+            if (coinAsset.seUrl != null)
+                (new Audio(coinAsset.seUrl)).play();
         }
     }
     NaaS.nagesenBoxController = new NagesenBoxController(NaaS.roomContextService, NaaS.urlService, NaaS.hubConnService, NaaS.tweetService);
