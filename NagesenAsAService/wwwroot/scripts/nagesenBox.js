@@ -11,6 +11,12 @@ var NaaS;
                 new NaaS.CoinAsset(0, '/images/like-coin.png', 20, null),
                 new NaaS.CoinAsset(1, '/images/dis-coin.png', 15, null)
             ];
+            this.worldWidth = 0;
+            this.worldHeight = 0;
+            this.throwingBandHeight = 120;
+            this.worldScale = 30.0;
+            this.frameRate = 60;
+            this.boxIsFull = false;
             this.init();
             this.update();
         }
@@ -26,6 +32,8 @@ var NaaS;
             window.addEventListener('beforeunload', e => this.onBeforeUnload(e));
             this.hubConn.onThrow(args => this.onThrowCoin(args));
             this.roomContextService.subscribeChanges(() => this.update());
+            this.worker = new Worker('/scripts/nagesenBox.worker.js');
+            this.worker.addEventListener('message', e => this.onWorkerMessage(e));
             this.update();
         }
         update() {
@@ -44,15 +52,25 @@ var NaaS;
         }
         onThrowCoin(args) {
             console.log('onThrowCoin', args);
-            this.roomContext.countOfLike = args.countOfLike;
-            this.roomContext.countOfDis = args.countOfDis;
-            this.update();
-            this.OnEnqueueThrowing(args);
+            this.worker.postMessage({ cmd: 'Enqueue', args });
         }
-        OnEnqueueThrowing(data) {
-            let coinAsset = this.coinAssets[data.typeOfCoin];
+        onWorkerMessage(e) {
+            switch (e.data.cmd) {
+                case 'Interval':
+                    break;
+                case 'Enqueue':
+                    this.onEnqueueThrowing(e.data.args);
+                    break;
+            }
+        }
+        onEnqueueThrowing(args) {
+            let coinAsset = this.coinAssets[args.typeOfCoin];
             if (coinAsset.seUrl != null)
                 (new Audio(coinAsset.seUrl)).play();
+            this.roomContext.countOfLike = Math.max(this.roomContext.countOfLike, args.countOfLike);
+            this.roomContext.countOfDis = Math.max(this.roomContext.countOfDis, args.countOfDis);
+            this.update();
+            this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
         }
     }
     NaaS.nagesenBoxController = new NagesenBoxController(NaaS.roomContextService, NaaS.urlService, NaaS.hubConnService, NaaS.tweetService);
