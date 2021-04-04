@@ -7,6 +7,7 @@ var NaaS;
             this.imageUrl = imageUrl;
             this.radius = radius;
             this.seUrl = seUrl;
+            this.fixtureDef = null;
             this.init();
         }
         async init() {

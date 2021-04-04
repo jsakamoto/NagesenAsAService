@@ -7,6 +7,18 @@
       "library": "microsoft-signalr@5.0.3",
       "files": [ "signalr.js" ],
       "destination": "wwwroot/scripts/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "box-2d-web@2.1.3",
+      "files": [ "Box2dWeb-2.1.a.3.js", "Box2dWeb-2.1.a.3.min.js" ],
+      "destination": "wwwroot/scripts/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "@types/box2d@0.0.33",
+      "files": [ "index.d.ts" ],
+      "destination": "Scripts/node_modules/@types/box2d"
     }
   ]
 }

@@ -2,7 +2,7 @@
     export class CoinAsset {
         public image!: HTMLImageElement;
 
-        //public fixtureDef: b2.FixtureDef = null;
+        public fixtureDef: b2.FixtureDef | null = null;
 
         constructor(
             public coinType: CoinType,

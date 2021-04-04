@@ -14,11 +14,13 @@ var NaaS;
                 twitterHashtag: ''
             };
             this.changeListeners = [];
+            this._roomEntered = new Promise((resolve) => this._roomEnteredResolver = resolve);
             this.hubConn.onUpdatedRoomSettings(args => this.onUpdatedRoomSettings(args));
             this.hubConn.onResetedScore(newSessionId => this.onResetedScore(newSessionId));
             this.hubConn.onConnected(() => this.onHubConnectedAsync());
         }
         get roomContext() { return this._roomContext; }
+        get roomEntered() { return this._roomEntered; }
         update(action) {
             if (typeof (action) !== 'undefined')
                 action(this._roomContext);
@@ -29,6 +31,7 @@ var NaaS;
         }
         async onHubConnectedAsync() {
             this._roomContext = await this.hubConn.enterRoomAsBoxAsync(this.urlService.roomNumber);
+            this._roomEnteredResolver();
             this.update();
         }
         onUpdatedRoomSettings(args) {

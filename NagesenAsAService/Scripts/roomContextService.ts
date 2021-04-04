@@ -14,10 +14,20 @@
 
         private changeListeners: ((() => void)[]) = [];
 
+
+        private _roomEntered: Promise<void>;
+
+        private _roomEnteredResolver!: (a: void) => void;
+
+        public get roomEntered(): Promise<void> { return this._roomEntered; }
+
         constructor(
             private urlService: UrlService,
             private hubConn: HubConnectionService
         ) {
+
+            this._roomEntered = new Promise<void>((resolve) => this._roomEnteredResolver = resolve);
+
             this.hubConn.onUpdatedRoomSettings(args => this.onUpdatedRoomSettings(args));
             this.hubConn.onResetedScore(newSessionId => this.onResetedScore(newSessionId));
             this.hubConn.onConnected(() => this.onHubConnectedAsync());
@@ -34,6 +44,7 @@
 
         private async onHubConnectedAsync(): Promise<void> {
             this._roomContext = await this.hubConn.enterRoomAsBoxAsync(this.urlService.roomNumber);
+            this._roomEnteredResolver();
             this.update();
         }
 
