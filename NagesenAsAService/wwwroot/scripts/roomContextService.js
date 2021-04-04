@@ -11,7 +11,8 @@ var NaaS;
                 countOfDis: 0,
                 allowDisCoin: false,
                 sessionID: '',
-                twitterHashtag: ''
+                twitterHashtag: '',
+                isOwnedByCurrentUser: false
             };
             this.changeListeners = [];
             this._roomEntered = new Promise((resolve) => this._roomEnteredResolver = resolve);

@@ -62,8 +62,10 @@ namespace NagesenAsAService.Controllers
             return Ok(newRoomNumber);
         }
 
+        public class PostScreenShotRequest { public string ImageDataUrl { get; set; } }
+
         [HttpPost("/api/rooms/{roomNumber}/screenshot")]
-        public async Task<IActionResult> PostScreenShotAsync(int roomNumber, string imageDataUrl)
+        public async Task<IActionResult> PostScreenShotAsync(int roomNumber, [FromBody] PostScreenShotRequest request)
         {
             var userID = this.User.Identity.Name;
             var room = await this.Repository.FindRoomAsync(roomNumber);
@@ -71,7 +73,7 @@ namespace NagesenAsAService.Controllers
             var isOwner = room.OwnerUserID == userID;
             if (isOwner == false) return StatusCode((int)HttpStatusCode.Forbidden);
 
-            var image = Convert.FromBase64String(imageDataUrl.Split(',').Last());
+            var image = Convert.FromBase64String(request.ImageDataUrl.Split(',').Last());
             await this.Repository.SaveScreenShotAsync(roomNumber, image);
 
             return NoContent();

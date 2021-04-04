@@ -1,4 +1,5 @@
 ﻿/// <reference types="@types/box2d" />
+/// <reference types="@types/html2canvas" />
 
 namespace b2 {
     export import Vec2 = Box2D.Common.Math.b2Vec2;
@@ -79,7 +80,10 @@ namespace NaaS {
 
             this.hubConn.onThrow(args => this.onThrowCoin(args));
             this.hubConn.onResetedScore(_ => this.initWorld());
-            this.roomContextService.subscribeChanges(() => this.update());
+            this.roomContextService.subscribeChanges(() => {
+                this.update();
+                this.takeScreenShotDebounced();
+            });
 
             const canvas = document.getElementById('canvas') as HTMLCanvasElement;
             this.context = canvas.getContext('2d')!;
@@ -113,7 +117,6 @@ namespace NaaS {
         }
 
         private onThrowCoin(args: ThrowCoinEventArgs): void {
-            console.log('onThrowCoin', args);
             this.worker.postMessage({ cmd: 'Enqueue', args });
         }
 
@@ -138,15 +141,9 @@ namespace NaaS {
             this.update();
 
             // ボックスが満杯と判定されていたら、効果音の再生とコイン数の表示更新だけとして、コイン投入のアニメーションはスキップする。
+            // ※ただしコイン数表示の更新は発生するので、スクリーンショットの再取得を行う
             if (this.boxIsFull) {
-
-                //        // ※ただしコイン数表示の更新は発生するので、スクリーンショットの再取得を行う
-                //        if (this.debounceTakingScreenShotId != null) clearTimeout(this.debounceTakingScreenShotId);
-                //        this.debounceTakingScreenShotId = setTimeout(() => {
-                //            this.debounceTakingScreenShotId = null;
-                //            this.takeScreenShot();
-                //        }, 5000);
-
+                this.takeScreenShotDebounced();
                 return;
             }
 
@@ -271,7 +268,7 @@ namespace NaaS {
             if (result.isAwake === false) {
                 this.worker.postMessage({ cmd: 'Stop' });
                 this.saveCoinsState();
-                //if (_app.isOwner) this.takeScreenShot();
+                this.takeScreenShotAsync();
             }
         }
 
@@ -321,6 +318,30 @@ namespace NaaS {
             }).then(() => {
                 this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
             });
+        }
+
+        private async takeScreenShotAsync(): Promise<void> {
+
+            // オーナーである場合のみ
+            if (this.roomContext.isOwnedByCurrentUser === false) return;
+
+            const screenShotCanvas = await html2canvas(this.boxElement);
+            const dataUrl = screenShotCanvas.toDataURL('image/jpeg', 0.6);
+
+            const apiUrl = this.urlService.apiBaseUrl + '/screenshot'
+            const headers = { "Accept": 'application/json', "Content-Type": 'application/json' };
+            const body = JSON.stringify({ "imageDataUrl": dataUrl });
+            await fetch(apiUrl, { method: 'post', headers, body });
+        }
+
+        private screenShotDebounceTimerId: NodeJS.Timeout | number = -1;
+
+        private takeScreenShotDebounced(): void {
+            if (this.screenShotDebounceTimerId !== -1) clearTimeout(this.screenShotDebounceTimerId as any);
+            this.screenShotDebounceTimerId = setTimeout(() => {
+                this.takeScreenShotAsync();
+                this.screenShotDebounceTimerId = -1;
+            }, 5000);
         }
     }
 

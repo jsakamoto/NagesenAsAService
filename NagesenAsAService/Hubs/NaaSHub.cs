@@ -22,7 +22,7 @@ namespace NagesenAsAService.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId, roomNumber.ToString());
             var room = await this.Repository.FindRoomAsync(roomNumber);
 
-            return new RoomContext(room);
+            return new RoomContext(room, Authorize(room));
         }
 
         public async Task<RoomContextSummary> EnterRoomAsControllerAsync(int roomNumber)

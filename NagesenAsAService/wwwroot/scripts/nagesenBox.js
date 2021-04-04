@@ -29,6 +29,7 @@ var NaaS;
             this.worldScale = 30.0;
             this.frameRate = 60;
             this.boxIsFull = false;
+            this.screenShotDebounceTimerId = -1;
             this.init();
             this.update();
         }
@@ -45,7 +46,10 @@ var NaaS;
             await this.roomContextService.roomEntered;
             this.hubConn.onThrow(args => this.onThrowCoin(args));
             this.hubConn.onResetedScore(_ => this.initWorld());
-            this.roomContextService.subscribeChanges(() => this.update());
+            this.roomContextService.subscribeChanges(() => {
+                this.update();
+                this.takeScreenShotDebounced();
+            });
             const canvas = document.getElementById('canvas');
             this.context = canvas.getContext('2d');
             this.worldWidth = canvas.width;
@@ -71,7 +75,6 @@ var NaaS;
             return e.returnValue = NaaS.localize.IfYouLeaveThisPageYouLostCoinsImage;
         }
         onThrowCoin(args) {
-            console.log('onThrowCoin', args);
             this.worker.postMessage({ cmd: 'Enqueue', args });
         }
         onWorkerMessage(e) {
@@ -92,6 +95,7 @@ var NaaS;
             this.roomContext.countOfDis = Math.max(this.roomContext.countOfDis, args.countOfDis);
             this.update();
             if (this.boxIsFull) {
+                this.takeScreenShotDebounced();
                 return;
             }
             const radius = coinAsset.radius;
@@ -180,6 +184,7 @@ var NaaS;
             if (result.isAwake === false) {
                 this.worker.postMessage({ cmd: 'Stop' });
                 this.saveCoinsState();
+                this.takeScreenShotAsync();
             }
         }
         saveCoinsState() {
@@ -223,6 +228,24 @@ var NaaS;
             }).then(() => {
                 this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
             });
+        }
+        async takeScreenShotAsync() {
+            if (this.roomContext.isOwnedByCurrentUser === false)
+                return;
+            const screenShotCanvas = await html2canvas(this.boxElement);
+            const dataUrl = screenShotCanvas.toDataURL('image/jpeg', 0.6);
+            const apiUrl = this.urlService.apiBaseUrl + '/screenshot';
+            const headers = { "Accept": 'application/json', "Content-Type": 'application/json' };
+            const body = JSON.stringify({ "imageDataUrl": dataUrl });
+            await fetch(apiUrl, { method: 'post', headers, body });
+        }
+        takeScreenShotDebounced() {
+            if (this.screenShotDebounceTimerId !== -1)
+                clearTimeout(this.screenShotDebounceTimerId);
+            this.screenShotDebounceTimerId = setTimeout(() => {
+                this.takeScreenShotAsync();
+                this.screenShotDebounceTimerId = -1;
+            }, 5000);
         }
     }
     NaaS.nagesenBoxController = new NagesenBoxController(NaaS.roomContextService, NaaS.urlService, NaaS.hubConnService, NaaS.tweetService);

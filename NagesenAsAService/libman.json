@@ -10,6 +10,18 @@
     },
     {
       "provider": "jsdelivr",
+      "library": "html2canvas@1.0.0-rc.7",
+      "files": [ "dist/html2canvas.js" ],
+      "destination": "wwwroot/scripts/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "@types/html2canvas@0.0.36",
+      "files": [ "index.d.ts" ],
+      "destination": "Scripts/node_modules/@types/html2canvas"
+    },
+    {
+      "provider": "jsdelivr",
       "library": "box-2d-web@2.1.3",
       "files": [ "Box2dWeb-2.1.a.3.js", "Box2dWeb-2.1.a.3.min.js" ],
       "destination": "wwwroot/scripts/"

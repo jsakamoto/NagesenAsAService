@@ -7,7 +7,8 @@
             countOfDis: 0,
             allowDisCoin: false,
             sessionID: '',
-            twitterHashtag: ''
+            twitterHashtag: '',
+            isOwnedByCurrentUser: false
         };
 
         public get roomContext(): RoomContext { return this._roomContext; }
