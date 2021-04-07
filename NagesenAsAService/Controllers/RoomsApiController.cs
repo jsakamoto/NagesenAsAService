@@ -52,8 +52,9 @@ namespace NagesenAsAService.Controllers
 
             var urlOfThisRoom = this.Url.AppUrl() + $"/Room/{newRoomNumber}";
             var shortUrlOfThisRoom = await this.UrlShorter.ShortenUrlAsync(urlOfThisRoom);
-            await this.Repository.AddRoomAsync(new Room(newRoomNumber)
+            await this.Repository.AddRoomAsync(new Room
             {
+                RoomNumber = newRoomNumber,
                 OwnerUserID = this.User.Identity.Name,
                 Title = "",
                 Url = urlOfThisRoom,

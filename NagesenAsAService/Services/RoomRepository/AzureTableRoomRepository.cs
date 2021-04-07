@@ -10,53 +10,63 @@ namespace NagesenAsAService.Services.RoomRepository
 {
     public class AzureTableRoomRepository : IRoomRepository
     {
-        private Lazy<CloudTable> Rooms { get; }
+        private CloudTable Rooms { get; }
 
-        private Lazy<BlobContainerClient> ScreenShots { get; }
+        private CloudTable ArchivedRooms { get; }
+
+        private BlobContainerClient ScreenShots { get; }
 
         private Random RandomNumberGenerator { get; } = new Random();
 
         public AzureTableRoomRepository(IConfiguration configuration)
         {
             var connStr = configuration.GetConnectionString("NaaSStorage");
+            var storageAccount = CloudStorageAccount.Parse(connStr);
+            var tableClient = storageAccount.CreateCloudTableClient();
 
-            this.Rooms = new Lazy<CloudTable>(() =>
-            {
-                var storageAccount = CloudStorageAccount.Parse(connStr);
-                var tableClient = storageAccount.CreateCloudTableClient();
-                var rooms = tableClient.GetTableReference("NaaSRooms");
-                rooms.CreateIfNotExists();
-                return rooms;
-            });
+            this.Rooms = tableClient.GetTableReference("NaaSRooms");
+            this.Rooms.CreateIfNotExists();
 
-            this.ScreenShots = new Lazy<BlobContainerClient>(() =>
-            {
-                var blobServiceClient = new BlobServiceClient(connStr);
-                var screenShots = blobServiceClient.CreateBlobContainer("naasscreenshots").Value;
-                screenShots.CreateIfNotExists();
-                return screenShots;
-            });
+            this.ArchivedRooms = tableClient.GetTableReference("NaaSRoomsArchived");
+            this.ArchivedRooms.CreateIfNotExists();
+
+            var blobServiceClient = new BlobServiceClient(connStr);
+            this.ScreenShots = blobServiceClient.GetBlobContainerClient("naasscreenshots");
+            this.ScreenShots.CreateIfNotExists();
         }
 
         public bool RoomExists(int roomNumber)
         {
-            var partitionKey = Room.RoomNumberToPartitionKey(roomNumber);
-            var rowKey = Room.RoomNumberToRowKey(roomNumber);
-            var result = this.Rooms.Value.Execute(TableOperation.Retrieve<Room>(partitionKey, rowKey));
+            var (partitionKey, rowKey) = Room.GetKeys(roomNumber);
+            var result = this.Rooms.Execute(TableOperation.Retrieve<Room>(partitionKey, rowKey));
             return result.Result != null;
         }
 
         public Task AddRoomAsync(Room room)
         {
-            return this.Rooms.Value.ExecuteAsync(TableOperation.Insert(room));
+            var (partitionKey, rowKey) = Room.GetKeys(room.RoomNumber);
+            room.PartitionKey = partitionKey;
+            room.RowKey = rowKey;
+            return this.Rooms.ExecuteAsync(TableOperation.Insert(room));
         }
 
         public async Task<Room> FindRoomAsync(int roomNumber)
         {
-            var partitionKey = Room.RoomNumberToPartitionKey(roomNumber);
-            var rowKey = Room.RoomNumberToRowKey(roomNumber);
-            var result = await this.Rooms.Value.ExecuteAsync(TableOperation.Retrieve<Room>(partitionKey, rowKey));
+            var (partitionKey, rowKey) = Room.GetKeys(roomNumber);
+            var result = await this.Rooms.ExecuteAsync(TableOperation.Retrieve<Room>(partitionKey, rowKey));
             return result.Result as Room;
+        }
+
+        public async Task<Room> FindRoomIncludesArchivedAsync(int roomNumber, Guid sessionId)
+        {
+            var activeRoom = await this.FindRoomAsync(roomNumber);
+            if (activeRoom != null && activeRoom.SessionID == sessionId) return activeRoom;
+
+            var (partitionKey, rowKey) = Room.GetKeysForArchived(roomNumber, sessionId);
+            var result = this.ArchivedRooms.Execute(TableOperation.Retrieve<Room>(partitionKey, rowKey));
+            if (result.Result != null) return result.Result as Room;
+
+            return null;
         }
 
         public async Task<Room> UpdateRoomAsync(int roomNumber, Func<Room, bool> action)
@@ -85,7 +95,18 @@ namespace NagesenAsAService.Services.RoomRepository
 
         public Task UpdateRoomAsync(Room room)
         {
-            return this.Rooms.Value.ExecuteAsync(TableOperation.Replace(room));
+            return this.Rooms.ExecuteAsync(TableOperation.Replace(room));
+        }
+
+        public async Task ArchiveRoomAsync(int roomNumber)
+        {
+            var room = await this.FindRoomAsync(roomNumber);
+            if (room == null) return;
+
+            var (partitionKey, rowKey) = Room.GetKeysForArchived(room.RoomNumber, room.SessionID);
+            room.PartitionKey = partitionKey;
+            room.RowKey = rowKey;
+            await this.ArchivedRooms.ExecuteAsync(TableOperation.Insert(room));
         }
 
         public async Task SweepRoomsAsync(DateTime limit)
@@ -93,10 +114,10 @@ namespace NagesenAsAService.Services.RoomRepository
             var rangeQuery = new TableQuery<Room>()
                 .Where(TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.LessThan, limit));
 
-            var roomsToSwep = this.Rooms.Value.ExecuteQuery(rangeQuery);
+            var roomsToSwep = this.Rooms.ExecuteQuery(rangeQuery);
             foreach (var room in roomsToSwep)
             {
-                await this.Rooms.Value.ExecuteAsync(TableOperation.Delete(room));
+                await this.Rooms.ExecuteAsync(TableOperation.Delete(room));
             }
         }
 
@@ -108,14 +129,14 @@ namespace NagesenAsAService.Services.RoomRepository
                 return true;
             });
 
-            var blockBlob = this.ScreenShots.Value.GetBlobClient(room.SessionID.ToString("N"));
+            var blockBlob = this.ScreenShots.GetBlobClient(room.SessionID.ToString("N"));
             using var memoryStream = new MemoryStream(image);
-            await blockBlob.UploadAsync(memoryStream);
+            await blockBlob.UploadAsync(memoryStream, overwrite: true);
         }
 
         public async Task<Picture> GetScreenShotAsync(Guid sessionId)
         {
-            var blockBlob = this.ScreenShots.Value.GetBlobClient(sessionId.ToString("N"));
+            var blockBlob = this.ScreenShots.GetBlobClient(sessionId.ToString("N"));
 
             try
             {

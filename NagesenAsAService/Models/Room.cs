@@ -38,16 +38,15 @@ namespace NagesenAsAService.Models
             this.Reset();
         }
 
-        public Room(int roomNumber) : this()
+        public static (string PartitionKey, string RowKey) GetKeys(int roomNumber)
         {
-            this.RoomNumber = roomNumber;
-            this.PartitionKey = Room.RoomNumberToPartitionKey(roomNumber);
-            this.RowKey = Room.RoomNumberToRowKey(roomNumber);
+            return ((roomNumber / 100).ToString(), roomNumber.ToString("D4"));
         }
 
-        public static string RoomNumberToPartitionKey(int roomNumber) => (roomNumber / 100).ToString();
-
-        public static string RoomNumberToRowKey(int roomNumber) => roomNumber.ToString("D4");
+        public static (string PartitionKey, string RowKey) GetKeysForArchived(int roomNumber, Guid sessionId)
+        {
+            return (roomNumber.ToString("D4"), sessionId.ToString("N"));
+        }
 
         public void Reset()
         {

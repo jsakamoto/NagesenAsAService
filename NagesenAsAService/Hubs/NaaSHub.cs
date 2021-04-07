@@ -98,20 +98,19 @@ namespace NagesenAsAService.Hubs
 
         public async Task ResetScoreAsync(int roomNumber)
         {
-            var hasReseted = false;
-            var room = await this.Repository.UpdateRoomAsync(roomNumber, r =>
+            var room = await this.Repository.FindRoomAsync(roomNumber);
+            if (room == null) return;
+            if (Authorize(room) == false) return;
+
+            await this.Repository.ArchiveRoomAsync(roomNumber);
+            await this.Repository.UpdateRoomAsync(roomNumber, r =>
             {
-                if (Authorize(r) == false) return false;
                 r.Reset();
-                hasReseted = true;
                 return true;
             });
 
-            if (hasReseted)
-            {
-                await Clients.Groups(roomNumber.ToString(), roomNumber.ToString() + "/controller")
-                    .ResetedScore(room.SessionID);
-            }
+            await Clients.Groups(roomNumber.ToString(), roomNumber.ToString() + "/controller")
+                .ResetedScore(room.SessionID);
         }
     }
 }
