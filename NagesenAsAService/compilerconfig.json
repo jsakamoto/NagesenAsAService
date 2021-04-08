@@ -14,5 +14,9 @@
   {
     "inputFile": "Styles/nagesenController/nagesenController.scss",
     "outputFile": "wwwroot/styles/nagesenController.css"
+  },
+  {
+    "inputFile": "Styles/screenShot/screenShot.scss",
+    "outputFile": "wwwroot/styles/screenShot.css"
   }
 ]

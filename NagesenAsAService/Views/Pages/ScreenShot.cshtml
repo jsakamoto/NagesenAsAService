@@ -1,0 +1,34 @@
+﻿@model NagesenAsAService.Models.Room
+@{
+    var room = Model;
+    var screenShotImageUrl = $"/api/rooms/{room.RoomNumber}/screenshot?session={room.SessionID.ToString("N")}";
+    var roomTitle = room.Title.IsNullOrEmpty() ? $"Room {room.RoomNumber} " : $"「{room.Title}」";
+    var caption = $"{roomTitle}に {room.CountOfNageSen} 円分の投げ銭";
+    if (room.AllowDisCoin) caption += $"と {room.CountOfAoriSen} Dis";
+    caption += "が集まりました⭐";
+}
+
+@section head {
+    <link href="~/styles/nagesenBox.min.css" rel="stylesheet" />
+    <link href="~/styles/screenShot.min.css" rel="stylesheet" />
+}
+
+@section headerLeft {
+    <a href="/" class="go-home"></a>
+}
+
+<div class="room-page">
+
+    <div id="box-container">
+
+        <div class="caption">@caption</div>
+
+        <div id="box">
+
+            <div class="screen-shot">
+                <img src="@screenShotImageUrl" />
+            </div>
+        </div>
+    </div>
+
+</div>

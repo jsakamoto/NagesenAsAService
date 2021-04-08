@@ -81,7 +81,7 @@ namespace NagesenAsAService.Controllers
         }
 
         [AcceptVerbs("GET", "HEAD"), Route("/api/rooms/{roomNumber}/screenshot")]
-        public async Task<IActionResult> GetScreenShotAsync(int roomNumber, [FromQuery] Guid? session)
+        public async Task<IActionResult> GetScreenShotAsync([FromQuery] Guid? session)
         {
             if (session.HasValue)
             {

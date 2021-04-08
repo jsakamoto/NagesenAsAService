@@ -36,11 +36,25 @@ namespace NagesenAsAService.Controllers
             return await this.RoomViewAsync(roomNumber, viewName: "NagesenController");
         }
 
+        [HttpGet("/room/{roomNumber}/screenshot")]
+        public async Task<IActionResult> GetScreenShotPageAsync(string roomNumber, [FromQuery] Guid session)
+        {
+            return await RoomViewAsync(
+                roomNumber,
+                "ScreenShot",
+                roomNumberValue => this.RoomRepository.FindRoomIncludesArchivedAsync(roomNumberValue, session));
+        }
+
         private async Task<IActionResult> RoomViewAsync(string roomNumber, string viewName)
+        {
+            return await RoomViewAsync(roomNumber, viewName, roomNumberValue => this.RoomRepository.FindRoomAsync(roomNumberValue));
+        }
+
+        private async Task<IActionResult> RoomViewAsync(string roomNumber, string viewName, Func<int, Task<Room>> findRoomAsync)
         {
             if (int.TryParse(roomNumber, out var roomNumberValue))
             {
-                var room = await this.RoomRepository.FindRoomAsync(roomNumberValue);
+                var room = await findRoomAsync(roomNumberValue);
                 if (room != null) return View(viewName, model: room);
             }
 
