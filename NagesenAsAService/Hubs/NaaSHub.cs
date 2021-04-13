@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using NagesenAsAService.Models;
@@ -55,8 +56,15 @@ namespace NagesenAsAService.Hubs
             if (hasChanged)
             {
                 var room = await this.Repository.FindRoomAsync(roomNumber);
-                await Clients.Groups(roomNumber.ToString(), roomNumber.ToString() + "/controller")
-                    .UpdatedRoomSettings(new RoomContextSummary(room));
+                var roomContextSummary = new RoomContextSummary(room);
+
+                var notificationTasks = new[]{
+                        this.Clients.OthersInGroup(roomNumber.ToString()),
+                        this.Clients.Group(roomNumber.ToString() + "/controller")
+                    }
+                    .Select(client => client.UpdatedRoomSettings(roomContextSummary))
+                    .ToArray();
+                await Task.WhenAll(notificationTasks);
             }
         }
 

@@ -13,7 +13,7 @@
 
         public get roomContext(): RoomContext { return this._roomContext; }
 
-        private changeListeners: ((() => void)[]) = [];
+        private changeListeners: (((invoker?: any) => void)[]) = [];
 
 
         private _roomEntered: Promise<void>;
@@ -34,12 +34,12 @@
             this.hubConn.onConnected(() => this.onHubConnectedAsync());
         }
 
-        public update(action?: (context: RoomContext) => void) {
+        public update(action?: (context: RoomContext) => void, invoker?: any) {
             if (typeof (action) !== 'undefined') action(this._roomContext);
-            this.changeListeners.forEach(listener => listener());
+            this.changeListeners.forEach(listener => listener(invoker));
         }
 
-        public subscribeChanges(listener: () => void): void {
+        public subscribeChanges(listener: (invoker?: any) => void): void {
             this.changeListeners.push(listener);
         }
 

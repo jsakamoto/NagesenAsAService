@@ -36,12 +36,12 @@
             const settingsMask = document.getElementById('settings-mask');
             if (settingsMask !== null) settingsMask.addEventListener('click', e => this.onClickSettingsMask());
 
-            this.roomContextService.subscribeChanges(() => this.update());
+            this.roomContextService.subscribeChanges((invoker: any) => this.update(invoker));
 
             this.update();
         }
 
-        private update(): void {
+        private update(invoker?: any): void {
             if (
                 this.settingsContainerElement !== null &&
                 this.titleInputElement !== null &&
@@ -49,6 +49,9 @@
                 this.allowDisCoinInputElement !== null
             ) {
                 this.settingsContainerElement.classList.toggle('visible', this.visibleSettings);
+
+                if (this === invoker) return;
+
                 if (this.titleInputElement.value !== this.roomContext.title) this.titleInputElement.value = this.roomContext.title;
                 if (this.twitterHashtagInputElement.value !== this.roomContext.twitterHashtag) this.twitterHashtagInputElement.value = this.roomContext.twitterHashtag || '';
                 if (this.allowDisCoinInputElement.checked !== this.roomContext.allowDisCoin) this.allowDisCoinInputElement.checked = this.roomContext.allowDisCoin;
@@ -66,9 +69,8 @@
         }
 
         private changeRoomSetings(action: (context: RoomContext) => void): void {
-            const context = Object.assign({}, this.roomContext);
-            action(context);
-            this.hubConn.updateRoomSettingsAsync(this.urlService.roomNumber, context);
+            this.roomContextService.update(action, this);
+            this.hubConn.updateRoomSettingsAsync(this.urlService.roomNumber, this.roomContext);
         }
 
         private onInputTitle(): void {

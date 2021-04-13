@@ -22,10 +22,10 @@ var NaaS;
         }
         get roomContext() { return this._roomContext; }
         get roomEntered() { return this._roomEntered; }
-        update(action) {
+        update(action, invoker) {
             if (typeof (action) !== 'undefined')
                 action(this._roomContext);
-            this.changeListeners.forEach(listener => listener());
+            this.changeListeners.forEach(listener => listener(invoker));
         }
         subscribeChanges(listener) {
             this.changeListeners.push(listener);

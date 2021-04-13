@@ -35,15 +35,17 @@ var NaaS;
             const settingsMask = document.getElementById('settings-mask');
             if (settingsMask !== null)
                 settingsMask.addEventListener('click', e => this.onClickSettingsMask());
-            this.roomContextService.subscribeChanges(() => this.update());
+            this.roomContextService.subscribeChanges((invoker) => this.update(invoker));
             this.update();
         }
-        update() {
+        update(invoker) {
             if (this.settingsContainerElement !== null &&
                 this.titleInputElement !== null &&
                 this.twitterHashtagInputElement !== null &&
                 this.allowDisCoinInputElement !== null) {
                 this.settingsContainerElement.classList.toggle('visible', this.visibleSettings);
+                if (this === invoker)
+                    return;
                 if (this.titleInputElement.value !== this.roomContext.title)
                     this.titleInputElement.value = this.roomContext.title;
                 if (this.twitterHashtagInputElement.value !== this.roomContext.twitterHashtag)
@@ -61,9 +63,8 @@ var NaaS;
             this.update();
         }
         changeRoomSetings(action) {
-            const context = Object.assign({}, this.roomContext);
-            action(context);
-            this.hubConn.updateRoomSettingsAsync(this.urlService.roomNumber, context);
+            this.roomContextService.update(action, this);
+            this.hubConn.updateRoomSettingsAsync(this.urlService.roomNumber, this.roomContext);
         }
         onInputTitle() {
             this.changeRoomSetings(context => {
