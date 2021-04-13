@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using NagesenAsAService.Models;
@@ -22,7 +23,7 @@ namespace NagesenAsAService.Hubs
             await Groups.AddToGroupAsync(Context.ConnectionId, roomNumber.ToString());
             var room = await this.Repository.FindRoomAsync(roomNumber);
 
-            return new RoomContext(room, Authorize(room));
+            return new RoomContext(room, room.Authorize(this.Context.User));
         }
 
         public async Task<RoomContextSummary> EnterRoomAsControllerAsync(int roomNumber)
@@ -38,7 +39,7 @@ namespace NagesenAsAService.Hubs
             var hasChanged = false;
             await this.Repository.UpdateRoomAsync(roomNumber, room =>
             {
-                if (Authorize(room) == false) return false;
+                if (room.Authorize(this.Context.User) == false) return false;
 
                 hasChanged =
                     (room.Title != settings.Title) ||
@@ -57,14 +58,6 @@ namespace NagesenAsAService.Hubs
                 await Clients.Groups(roomNumber.ToString(), roomNumber.ToString() + "/controller")
                     .UpdatedRoomSettings(new RoomContextSummary(room));
             }
-        }
-
-        private bool Authorize(Room room)
-        {
-            if (room == null) return false;
-            var isOwner = room.OwnerUserID == this.Context.User.Identity.Name;
-            if (isOwner == false) return false;
-            return true;
         }
 
         public async Task ThrowCoinAsync(int roomNumber, CoinType typeOfCoin)
@@ -100,7 +93,7 @@ namespace NagesenAsAService.Hubs
         {
             var room = await this.Repository.FindRoomAsync(roomNumber);
             if (room == null) return;
-            if (Authorize(room) == false) return;
+            if (room.Authorize(this.Context.User) == false) return;
 
             await this.Repository.ArchiveRoomAsync(roomNumber);
             await this.Repository.UpdateRoomAsync(roomNumber, r =>

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -46,7 +47,7 @@ namespace NagesenAsAService.Controllers
         }
 
         [HttpPost("/api/rooms/new")]
-        public async Task<IActionResult> CreateNewRoom()
+        public async Task<IActionResult> CreateNewRoomAsync()
         {
             var newRoomNumber = _Random
                 .ToEnumerable(r => r.Next(1000, 10000))
@@ -57,7 +58,7 @@ namespace NagesenAsAService.Controllers
             await this.Repository.AddRoomAsync(new Room
             {
                 RoomNumber = newRoomNumber,
-                OwnerUserID = this.User.Identity.Name,
+                OwnerUserID = this.User?.Identity?.Name ?? "",
                 Title = "",
                 Url = urlOfThisRoom,
                 ShortUrl = shortUrlOfThisRoom
@@ -65,18 +66,27 @@ namespace NagesenAsAService.Controllers
             return Ok(newRoomNumber);
         }
 
-        public class PostScreenShotRequest { public string ImageDataUrl { get; set; } }
+        [HttpPost("/api/rooms/{roomNumber}/enter")]
+        public async Task<IActionResult> EnterRoomAsync(int roomNumber)
+        {
+            var room = await this.Repository.FindRoomAsync(roomNumber);
+            if (room == null) return NotFound();
+            return Ok(new RoomContext(room, room.Authorize(this.User)));
+        }
+
+        public class PostScreenShotRequest { public string? ImageDataUrl { get; set; } }
 
         [HttpPost("/api/rooms/{roomNumber}/screenshot")]
         public async Task<IActionResult> PostScreenShotAsync(int roomNumber, [FromBody] PostScreenShotRequest request)
         {
-            var userID = this.User.Identity.Name;
             var room = await this.Repository.FindRoomAsync(roomNumber);
             if (room == null) return NotFound();
-            var isOwner = room.OwnerUserID == userID;
-            if (isOwner == false) return StatusCode((int)HttpStatusCode.Forbidden);
+            if (room.Authorize(this.User) == false) return StatusCode((int)HttpStatusCode.Forbidden);
 
-            var image = Convert.FromBase64String(request.ImageDataUrl.Split(',').Last());
+            var imageDataUrl = request.ImageDataUrl;
+            if (string.IsNullOrEmpty(imageDataUrl)) return BadRequest();
+
+            var image = Convert.FromBase64String(imageDataUrl.Split(',').Last());
             await this.Repository.SaveScreenShotAsync(roomNumber, image);
 
             return NoContent();

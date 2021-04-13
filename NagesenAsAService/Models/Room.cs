@@ -1,5 +1,7 @@
-﻿using System;
+﻿#nullable enable
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Principal;
 using Microsoft.Azure.Cosmos.Table;
 
 namespace NagesenAsAService.Models
@@ -34,6 +36,10 @@ namespace NagesenAsAService.Models
         public Room()
         {
             this.CreatedAt = DateTime.UtcNow;
+            this.Url = "";
+            this.Title = "";
+            this.ShortUrl = "";
+            this.OwnerUserID = "";
             this.TwitterHashtag = "";
             this.Reset();
         }
@@ -46,6 +52,11 @@ namespace NagesenAsAService.Models
         public static (string PartitionKey, string RowKey) GetKeysForArchived(int roomNumber, Guid sessionId)
         {
             return (roomNumber.ToString("D4"), sessionId.ToString("N"));
+        }
+
+        public bool Authorize(IPrincipal? user)
+        {
+            return this.OwnerUserID == (user?.Identity?.Name ?? default(string));
         }
 
         public void Reset()

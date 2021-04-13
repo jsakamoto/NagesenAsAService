@@ -3,6 +3,8 @@
 
         private roomNumber: string = '';
 
+        private roomNumberAvailable: boolean = false;
+
         private enterButton: HTMLAnchorElement;
 
         constructor() {
@@ -14,29 +16,52 @@
 
             const createNewRoomButton = document.getElementById('create-newroom-button') as HTMLAnchorElement;
             createNewRoomButton.addEventListener('click', _ => this.onClickCreateNewRoomButton())
+            this.enterButton.addEventListener('click', _ => this.onClickEnterRoomButton())
         }
 
         private onInputRoomNumberInput(roomNumber: string): void {
-
             this.roomNumber = roomNumber;
             this.update();
         }
 
         private update(): void {
-            const roomNumberAvailable = /^\d{4}$/.test(this.roomNumber);
-            this.enterButton.classList.toggle('disabled', !roomNumberAvailable);
-            this.enterButton.href = roomNumberAvailable ? `/room/${this.roomNumber}` : '';
+            this.roomNumberAvailable = /^\d{4}$/.test(this.roomNumber);
+            this.enterButton.classList.toggle('disabled', !this.roomNumberAvailable);
+            //this.enterButton.href = this.roomNumberAvailable ? `/room/${this.roomNumber}` : '';
         }
 
         private async onClickCreateNewRoomButton(): Promise<void> {
             const res = await fetch('/api/rooms/new', { method: 'post' });
             if (res.status === 200) {
                 const newRoomNumber = await res.json();
-                location.href = `/room/${newRoomNumber}`;
+                location.href = `/room/${newRoomNumber}/box`;
             }
             else {
                 const responseMessage = await res.text();
                 const message = `Creating new room was failed. (HTTP Status ${res.status} ${responseMessage})`;
+                console.error(message);
+                alert(message);
+            }
+        }
+
+        private async onClickEnterRoomButton(): Promise<void> {
+            this.update();
+            if (this.roomNumberAvailable === false) return;
+
+            const res = await fetch(`/api/rooms/${this.roomNumber}/enter`, { method: 'post' });
+            if (res.status === 404/*Room not found */) {
+                location.href = `/room/${this.roomNumber}`;
+            }
+            else if (res.status === 200) {
+                const roomContext: RoomContext = await res.json();
+                if (roomContext.isOwnedByCurrentUser)
+                    location.href = `/room/${this.roomNumber}/box`;
+                else
+                    location.href = `/room/${this.roomNumber}`;
+            }
+            else {
+                const responseMessage = await res.text();
+                const message = `Entering room was failed. (HTTP Status ${res.status} ${responseMessage})`;
                 console.error(message);
                 alert(message);
             }
