@@ -30,7 +30,10 @@
                 `${title}に${col}円分の投げ銭` +
                 (context.allowDisCoin ? `と${cod}Dis` : '') +
                 `をしました☆`;
-            const url = this.urlService.apiBaseUrl + '/screenshot/' + context.sessionID;
+            const url = this.urlService.controllerUrl + '/screenshot?' +
+                `session=${context.sessionID}&` +
+                `col=${col}&` +
+                `cod=${cod}`;
 
             this.tweet(text, url);
         }
