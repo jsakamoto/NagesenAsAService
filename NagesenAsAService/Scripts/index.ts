@@ -27,13 +27,13 @@
         private update(): void {
             this.roomNumberAvailable = /^\d{4}$/.test(this.roomNumber);
             this.enterButton.classList.toggle('disabled', !this.roomNumberAvailable);
-            //this.enterButton.href = this.roomNumberAvailable ? `/room/${this.roomNumber}` : '';
         }
 
         private async onClickCreateNewRoomButton(): Promise<void> {
             const res = await fetch('/api/rooms/new', { method: 'post' });
             if (res.status === 200) {
                 const newRoomNumber = await res.json();
+                await fetch('/api/rooms/expired', { method: 'delete' });
                 location.href = `/room/${newRoomNumber}/box`;
             }
             else {

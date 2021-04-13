@@ -106,7 +106,7 @@ namespace NagesenAsAService.Services.RoomRepository
             var (partitionKey, rowKey) = Room.GetKeysForArchived(room.RoomNumber, room.SessionID);
             room.PartitionKey = partitionKey;
             room.RowKey = rowKey;
-            await this.ArchivedRooms.ExecuteAsync(TableOperation.Insert(room));
+            await this.ArchivedRooms.ExecuteAsync(TableOperation.InsertOrReplace(room));
         }
 
         public async Task SweepRoomsAsync(DateTime limit)
@@ -117,6 +117,7 @@ namespace NagesenAsAService.Services.RoomRepository
             var roomsToSwep = this.Rooms.ExecuteQuery(rangeQuery);
             foreach (var room in roomsToSwep)
             {
+                await ArchiveRoomAsync(room.RoomNumber);
                 await this.Rooms.ExecuteAsync(TableOperation.Delete(room));
             }
         }

@@ -24,6 +24,7 @@ var NaaS;
             const res = await fetch('/api/rooms/new', { method: 'post' });
             if (res.status === 200) {
                 const newRoomNumber = await res.json();
+                await fetch('/api/rooms/expired', { method: 'delete' });
                 location.href = `/room/${newRoomNumber}/box`;
             }
             else {
