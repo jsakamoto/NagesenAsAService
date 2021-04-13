@@ -1,11 +1,19 @@
 ﻿@model NagesenAsAService.Models.Room
+@using Microsoft.AspNetCore.Http.Extensions
 @{
     var room = Model;
-    var screenShotImageUrl = $"/api/rooms/{room.RoomNumber}/screenshot?session={room.SessionID.ToString("N")}";
+    var screenShotImageUrl = $"{Url.AppUrl()}/api/rooms/{room.RoomNumber}/screenshot?session={room.SessionID.ToString("N")}";
     var roomTitle = room.Title.IsNullOrEmpty() ? $"Room {room.RoomNumber} " : $"「{room.Title}」";
     var caption = $"{roomTitle}に {room.CountOfNageSen} 円分の投げ銭";
     if (room.AllowDisCoin) caption += $"と {room.CountOfAoriSen} Dis";
     caption += "が集まりました⭐";
+
+    ViewBag.OgpTitle = room.Title.IsNullOrEmpty() ? $"Room {room.RoomNumber} " : room.Title;
+    ViewBag.OgpDescription = caption;
+    ViewBag.OgpUrl = this.Context.Request.GetDisplayUrl();
+    ViewBag.OgpImage = screenShotImageUrl + "&forOgpImage=true";
+    ViewBag.TwitterCardType = "summary_large_image";
+    ViewBag.TwitterCardImage = screenShotImageUrl + "&forOgpImage=true";
 }
 
 @section head {

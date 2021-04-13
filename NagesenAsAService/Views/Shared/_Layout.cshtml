@@ -1,5 +1,15 @@
 ﻿@{
     ViewBag.AppTitle = "投げ銭BOX as a Service";
+
+    var ogpTitle = ViewBag.OgpTitle ?? "";
+    if (!string.IsNullOrEmpty(ogpTitle)) ogpTitle += " | ";
+    ogpTitle += ViewBag.AppTitle;
+
+    var ogpUrl = ViewBag.OgpUrl ?? Url.AppUrl();
+    var ogpDescription = ViewBag.OgpDescription ?? Localize.appDescription;
+    var ogpImage = ViewBag.OgpImage ?? $"{Url.AppUrl()}/Content/images/ogpimage.png";
+    var twitterCardType = ViewBag.TwitterCardType ?? "summary";
+    var twitterCardImage = ViewBag.TwitterCardImage ?? $"{Url.AppUrl()}/Content/images/twittercard-image.png";
 }
 <!DOCTYPE html>
 <html>
@@ -8,13 +18,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
-    <meta property="og:title" content="@ViewBag.AppTitle" />
-    <meta property="og:description" content="@Localize.appDescription" />
-    <meta property="og:url" content="@Url.AppUrl()" />
-    <meta property="og:image" content="@Url.AppUrl()/Content/images/ogpimage.png" />
+    <meta property="og:title" content="@ogpTitle" />
+    <meta property="og:description" content="@ogpDescription" />
+    <meta property="og:url" content="@ogpUrl" />
+    <meta property="og:image" content="@ogpImage" />
     @* The size of ogpimage.png for facebook is 200px x 200px. *@
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:image" content="@Url.AppUrl()/Content/images/twittercard-image.png">
+    <meta name="twitter:card" content="@twitterCardType">
+    <meta name="twitter:image" content="@twitterCardImage">
     @* The size of twittercard-image.png for twitter card is 120px x 120px. *@
 
     <meta name="keywords" content="@Localize.appKeywords" />
@@ -40,7 +50,7 @@
     <meta name="msapplication-config" content="~/favicons/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
 
-    <title>@ViewBag.AppTitle</title>
+    <title>@ogpTitle</title>
 
     <link href="~/styles/site.min.css" rel="stylesheet" />
     @RenderSection("head", required: false)

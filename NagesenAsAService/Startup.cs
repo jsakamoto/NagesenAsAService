@@ -44,8 +44,11 @@ namespace NagesenAsAService
                 app.UseDeveloperExceptionPage();
                 app.UseCssLiveReload();
             }
-
-            app.UseHttpsRedirection();
+            else
+            {
+                app.UseHsts();
+                app.UseHttpsRedirection();
+            }
 
             app.UseAuthentication();
             app.UseMiddleware<TrackingAuthMiddleware>();

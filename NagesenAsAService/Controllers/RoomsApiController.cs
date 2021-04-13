@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -81,20 +83,47 @@ namespace NagesenAsAService.Controllers
         }
 
         [AcceptVerbs("GET", "HEAD"), Route("/api/rooms/{roomNumber}/screenshot")]
-        public async Task<IActionResult> GetScreenShotAsync([FromQuery] Guid? session)
+        public async Task<IActionResult> GetScreenShotAsync([FromQuery] Guid? session, [FromQuery] bool forOgpImage)
         {
-            if (session.HasValue)
-            {
-                var picture = await this.Repository.GetScreenShotAsync(session.Value);
-                if (picture != null)
-                {
-                    return new CacheableContentResult(
-                            contentType: "image/jpeg",
-                            lastModified: picture.LastModified,
-                            getContent: picture.GetImageBytes);
-                }
-            }
+            if (!session.HasValue) return ExpiredRoomImageResult();
 
+            var picture = await this.Repository.GetScreenShotAsync(session.Value);
+            if (picture == null) return ExpiredRoomImageResult();
+
+            return new CacheableContentResult(
+                    contentType: "image/jpeg",
+                    lastModified: picture.LastModified,
+                    getContent: () => GetImageBytes(picture, forOgpImage));
+        }
+
+        internal static byte[] GetImageBytes(Picture picture, bool forOgpImage)
+        {
+            var pictureImageBytes = picture.GetImageBytes();
+            if (forOgpImage == false) return pictureImageBytes;
+
+            using var originalImageStream = new MemoryStream(pictureImageBytes);
+            using var originalImage = Image.FromStream(originalImageStream);
+
+            var margin = (int)(originalImage.Height * 0.027);
+
+            using var resizedImage = new Bitmap(
+                width: (originalImage.Height + margin * 2) * 2,
+                height: (originalImage.Height + margin * 2));
+
+            using var g = Graphics.FromImage(resizedImage);
+            g.FillRectangle(Brushes.LightGray, x: 0, y: 0, resizedImage.Width, resizedImage.Height);
+            g.DrawImageUnscaled(originalImage,
+                x: (resizedImage.Width - originalImage.Width) / 2,
+                y: (resizedImage.Height - originalImage.Height) / 2);
+
+            using var resizedImageStream = new MemoryStream();
+            resizedImage.Save(resizedImageStream, ImageFormat.Jpeg);
+
+            return resizedImageStream.ToArray();
+        }
+
+        private IActionResult ExpiredRoomImageResult()
+        {
             var path = Path.Combine(this.WebHostEnvironment.WebRootPath, "images", "UnavailableRoomNumber.jpg");
             return new CacheableContentResult(
                 contentType: "image/jpeg",
