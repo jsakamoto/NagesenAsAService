@@ -2,7 +2,11 @@
 @using Microsoft.AspNetCore.Http.Extensions
 @{
     var room = Model;
-    var screenShotImageUrl = $"{Url.AppUrl()}/api/rooms/{room.RoomNumber}/screenshot?session={room.SessionID.ToString("N")}";
+
+    var screenShotImageUrl =
+        $"{Url.AppUrl()}/api/rooms/{room.RoomNumber}/screenshot?" +
+        $"session={room.SessionID.ToString("N")}&" +
+        $"t={room.UpdateScreenSnapshotAt.Ticks}";
     var roomTitle = room.Title.IsNullOrEmpty() ? $"Room {room.RoomNumber} " : $"「{room.Title}」";
     var caption = $"{roomTitle}に {room.CountOfNageSen} 円分の投げ銭";
     if (room.AllowDisCoin) caption += $"と {room.CountOfAoriSen} Dis";
