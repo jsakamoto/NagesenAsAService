@@ -27,6 +27,7 @@ namespace NagesenAsAService
             services.AddHttpClient();
             services.AddControllersWithViews();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
+            services.AddApplicationInsightsTelemetry();
 
             var signalRServerBuilder = services.AddSignalR();
             if (!string.IsNullOrEmpty(this.Configuration["Azure:SignalR:ConnectionString"]))
