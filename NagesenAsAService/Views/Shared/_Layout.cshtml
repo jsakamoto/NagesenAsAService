@@ -1,4 +1,5 @@
-﻿@{
+﻿@inject Microsoft.ApplicationInsights.AspNetCore.JavaScriptSnippet JavaScriptSnippet
+@{
     ViewBag.AppTitle = "投げ銭BOX as a Service";
 
     var ogpTitle = ViewBag.OgpTitle ?? "";
@@ -54,6 +55,7 @@
 
     <link href="~/styles/site.min.css" rel="stylesheet" />
     @RenderSection("head", required: false)
+    @Html.Raw(JavaScriptSnippet.FullScript)
 </head>
 <body>
     <div class="modal-mask"></div>
