@@ -7,11 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NagesenAsAService", "Nagese
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "README", "README", "{E495C92B-ED04-4BBB-8B44-7BFC1A58DEE0}"
 	ProjectSection(SolutionItems) = preProject
+		FOR-VISUALSTUDIO-USER.md = FOR-VISUALSTUDIO-USER.md
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NagesenAsAService.Test", "NagesenAsAService.Test\NagesenAsAService.Test.csproj", "{6D77155E-36D0-4E56-8ABB-134C9A8C8737}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NagesenAsAService.Test", "NagesenAsAService.Test\NagesenAsAService.Test.csproj", "{6D77155E-36D0-4E56-8ABB-134C9A8C8737}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

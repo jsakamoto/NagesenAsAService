@@ -65,3 +65,5 @@ Windows OS 上で Visual Studio を用いて開発・実行する場合は、[�
 ## ライセンス
 
 [GNU General Public License Ver.2](LICENSE)
+
+サードパーティー製品のライセンスについては[こちら](THIRD-PARTY-NOTICES.txt)
