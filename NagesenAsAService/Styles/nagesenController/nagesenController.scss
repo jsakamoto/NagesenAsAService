@@ -65,6 +65,13 @@ body {
     animation-name: slideOutUp;
 }
 
+#tweet-score-button {
+    .naas-icon {
+        margin-right: 4px;
+        vertical-align: middle;
+    }
+}
+
 @keyframes slideOutUp {
     0% {
         transform: translateY(0);

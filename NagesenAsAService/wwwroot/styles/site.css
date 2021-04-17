@@ -355,61 +355,36 @@ th {
   padding: 0; }
 
 @font-face {
-  font-family: 'Material Icons';
-  font-style: normal;
-  font-weight: 400;
-  src: url(/fonts/MaterialIcons-Regular.eot);
-  /* For IE6-8 */
-  src: local("Material Icons"), local("MaterialIcons-Regular"), url(/fonts/MaterialIcons-Regular.woff2) format("woff2"), url(/fonts/MaterialIcons-Regular.woff) format("woff"), url(/fonts/MaterialIcons-Regular.ttf) format("truetype"); }
-
-.material-icons {
-  font-family: 'Material Icons';
+  font-family: 'naas';
+  src: url("/fonts/naas.ttf?mityqh") format("truetype"), url("/fonts/naas.woff?mityqh") format("woff"), url("/fonts/naas.svg?mityqh#naas") format("svg");
   font-weight: normal;
   font-style: normal;
-  font-size: 24px;
-  /* Preferred icon size */
-  display: inline-block;
-  line-height: 1;
+  font-display: block; }
+
+[class^="naas-icon"], [class*=" naas-icon"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'naas' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
   text-transform: none;
-  letter-spacing: normal;
-  word-wrap: normal;
-  white-space: nowrap;
-  direction: ltr;
-  /* Support for all WebKit browsers. */
+  line-height: 1;
+  /* Enable Ligatures ================ */
+  letter-spacing: 0;
+  -webkit-font-feature-settings: "liga";
+  -moz-font-feature-settings: "liga=1";
+  -moz-font-feature-settings: "liga";
+  -ms-font-feature-settings: "liga" 1;
+  font-feature-settings: "liga";
+  -webkit-font-variant-ligatures: discretionary-ligatures;
+  font-variant-ligatures: discretionary-ligatures;
+  /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
-  /* Support for Safari and Chrome. */
-  text-rendering: optimizeLegibility;
-  /* Support for Firefox. */
-  -moz-osx-font-smoothing: grayscale;
-  /* Support for IE. */
-  font-feature-settings: 'liga'; }
+  -moz-osx-font-smoothing: grayscale; }
 
-/* Rules for sizing the icon. */
-.material-icons.md-18 {
-  font-size: 18px; }
-
-.material-icons.md-24 {
-  font-size: 24px; }
-
-.material-icons.md-36 {
-  font-size: 36px; }
-
-.material-icons.md-48 {
-  font-size: 48px; }
-
-/* Rules for using icons as black on a light background. */
-.material-icons.md-dark {
-  color: rgba(0, 0, 0, 0.54); }
-
-.material-icons.md-dark.md-inactive {
-  color: rgba(0, 0, 0, 0.26); }
-
-/* Rules for using icons as white on a dark background. */
-.material-icons.md-light {
-  color: white; }
-
-.material-icons.md-light.md-inactive {
-  color: rgba(255, 255, 255, 0.3); }
+:root {
+  --header-height: 48px; }
 
 * {
   box-sizing: border-box;
@@ -425,7 +400,9 @@ input::-webkit-inner-spin-button {
 body {
   text-align: center;
   font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-  background-repeat: repeat; }
+  background-repeat: repeat;
+  height: 100vh;
+  width: 100vw; }
 
 .modal-mask {
   position: fixed;
@@ -438,48 +415,28 @@ body {
   display: none; }
 
 header {
-  height: 3em;
-  line-height: 3em;
+  height: var(--header-height);
+  line-height: var(--header-height);
   display: block;
   background-color: #eee;
   font-weight: bold;
   position: relative; }
-
-header a.go-home {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background-image: url(/images/back.png);
-  background-size: contain;
-  opacity: 0.5; }
-
-header a.go-home:hover {
-  opacity: 0.3; }
+  header a.go-home .naas-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    color: #aaa;
+    transition: color linear 0.2s; }
+    header a.go-home .naas-icon:hover {
+      color: #444; }
 
 .main {
   padding-top: 10px;
   display: inline-block;
   width: 100%; }
-  .main .home-page {
-    display: inline-block;
-    width: 85%;
-    max-width: 640px; }
-
-.app-description {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 95%;
-  background-color: #fff;
-  border-radius: 4px 4px;
-  text-align: center;
-  padding: 0 8px; }
-
-.app-description:after {
-  display: block;
-  content: "";
-  clear: both; }
 
 a {
   color: #1284ff;
@@ -497,32 +454,11 @@ input.btn-primary {
   color: white;
   height: 2.5em;
   line-height: 2.5em;
-  border-radius: 4px 4px; }
+  border-radius: 4px 4px;
+  transition: background-color linear 0.2s; }
 
 .btn-primary.disabled {
   background-color: #ccc; }
-
-input.room-number {
-  outline: none;
-  border: none;
-  border-bottom: solid 1px #ccc;
-  font-size: 150%;
-  width: 4em;
-  padding: 0.1em 0.5em;
-  -moz-appearance: textfield; }
-
-input.room-number::-webkit-outer-spin-button,
-input.room-number::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0; }
-
-input.room-number:invalid {
-  box-shadow: none !important; }
-
-.warning-of-expiration {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #888; }
 
 /* room page */
 /* room page - room number */

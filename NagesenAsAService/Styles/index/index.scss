@@ -1,1 +1,63 @@
 ﻿@import 'footer.scss';
+
+.home-page {
+    position: absolute;
+    top: var(--header-height);
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+
+    .main-form-container {
+        flex: 1;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+
+        .main-form {
+            display: inline-block;
+            width: 85%;
+            max-width: 640px;
+
+            .app-description {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                font-size: 95%;
+                text-align: center;
+                padding: 0 8px;
+
+                &:after {
+                    display: block;
+                    content: "";
+                    clear: both;
+                }
+            }
+        }
+    }
+
+    input.room-number {
+        outline: none;
+        border: none;
+        border-bottom: solid 1px #ccc;
+        font-size: 150%;
+        width: 4em;
+        padding: 0.1em 0.5em;
+        -moz-appearance: textfield;
+
+        &:invalid {
+            box-shadow: none !important;
+        }
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    }
+
+    .warning-of-expiration {
+        margin-top: 8px;
+        font-size: 12px;
+        color: #888;
+    }
+}

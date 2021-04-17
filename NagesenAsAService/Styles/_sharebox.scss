@@ -6,16 +6,20 @@
 }
 
 .qr-code-icon {
-    position: absolute;
-    display: inline-block;
-    width: 28px;
-    height: 28px;
-    top: 0;
-    bottom: 0;
-    margin: auto;
-    margin-left: 4px;
-    background-color: white;
-    background-image: url(/images/qrcode.png);
+    .naas-icon {
+        //border: solid 1px red;
+        position: absolute;
+        //display: inline-block;
+        width: 28px;
+        height: 28px;
+        line-height: 28px;
+        font-size: 26px;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        margin-left: 4px;
+        color: #000;
+    }
 }
 
 #share-box-container {
@@ -24,7 +28,7 @@
     left: 0;
     bottom: 0;
     right: 0;
-    z-index: 1;
+    z-index: 2;
     opacity: 0;
     visibility: hidden;
     transition: all ease-in 0.2s;
@@ -59,6 +63,14 @@
         margin-top: -10px;
         position: relative;
         top: 0;
+        padding: 0;
+        height: 34px;
+        line-height: 32px;
+
+        .naas-icon {
+            vertical-align: middle;
+            margin-right: 4px;
+        }
     }
 
     .room-url {

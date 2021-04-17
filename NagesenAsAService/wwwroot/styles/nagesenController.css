@@ -56,6 +56,10 @@ body {
 .slideOutUp {
   animation-name: slideOutUp; }
 
+#tweet-score-button .naas-icon {
+  margin-right: 4px;
+  vertical-align: middle; }
+
 @keyframes slideOutUp {
   0% {
     transform: translateY(0); }
@@ -101,17 +105,17 @@ body {
 .room-url {
   color: #0026ff; }
 
-.qr-code-icon {
+.qr-code-icon .naas-icon {
   position: absolute;
-  display: inline-block;
   width: 28px;
   height: 28px;
+  line-height: 28px;
+  font-size: 26px;
   top: 0;
   bottom: 0;
   margin: auto;
   margin-left: 4px;
-  background-color: white;
-  background-image: url(/images/qrcode.png); }
+  color: #000; }
 
 #share-box-container {
   position: fixed;
@@ -119,7 +123,7 @@ body {
   left: 0;
   bottom: 0;
   right: 0;
-  z-index: 1;
+  z-index: 2;
   opacity: 0;
   visibility: hidden;
   transition: all ease-in 0.2s;
@@ -148,7 +152,13 @@ body {
     margin-left: 8px;
     margin-top: -10px;
     position: relative;
-    top: 0; }
+    top: 0;
+    padding: 0;
+    height: 34px;
+    line-height: 32px; }
+    #share-box .button.tweet .naas-icon {
+      vertical-align: middle;
+      margin-right: 4px; }
   #share-box .room-url {
     display: inline-block;
     font-size: 32px; }

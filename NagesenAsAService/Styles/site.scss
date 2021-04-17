@@ -1,5 +1,9 @@
 ﻿@import 'normalize.scss';
-@import 'md-iconfont.scss';
+@import 'naas-iconfont.scss';
+
+:root {
+    --header-height: 48px;
+}
 
 * {
     box-sizing: border-box;
@@ -17,6 +21,8 @@ body {
     text-align: center;
     font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
     background-repeat: repeat;
+    height: 100vh;
+    width: 100vw;
 }
 
 .modal-mask {
@@ -31,55 +37,37 @@ body {
 }
 
 header {
-    height: 3em;
-    line-height: 3em;
+    height: var(--header-height);
+    line-height: var(--header-height);
     display: block;
     background-color: #eee;
     font-weight: bold;
     position: relative;
-}
 
-header a.go-home {
-    display: inline-block;
-    width: 32px;
-    height: 32px;
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    background-image: url(/images/back.png);
-    background-size: contain;
-    opacity: 0.5;
-}
+    a.go-home {
+        .naas-icon {
+            //border: solid 1px red;
+            font-size: 32px;
+            // display: inline-block;
+            width: 32px;
+            height: 32px;
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            color: #aaa;
+            transition: color linear 0.2s;
 
-header a.go-home:hover {
-    opacity: 0.3;
+            &:hover {
+                color: #444;
+            }
+        }
+    }
 }
 
 .main {
     padding-top: 10px;
     display: inline-block;
     width: 100%;
-
-    .home-page {
-        display: inline-block;
-        width: 85%;
-        max-width: 640px;
-    }
-}
-
-.app-description {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 95%;
-    background-color: #fff;
-    border-radius: 4px 4px;
-    text-align: center;
-    padding: 0 8px;
-}
-
-.app-description:after {
-    display: block;
-    content: "";
-    clear: both;
 }
 
 a {
@@ -102,36 +90,11 @@ input.btn-primary {
     height: 2.5em;
     line-height: 2.5em;
     border-radius: 4px 4px;
+    transition: background-color linear 0.2s;
 }
 
 .btn-primary.disabled {
     background-color: #ccc;
-}
-
-input.room-number {
-    outline: none;
-    border: none;
-    border-bottom: solid 1px #ccc;
-    font-size: 150%;
-    width: 4em;
-    padding: 0.1em 0.5em;
-    -moz-appearance: textfield;
-}
-
-input.room-number::-webkit-outer-spin-button,
-input.room-number::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-input.room-number:invalid {
-    box-shadow: none !important;
-}
-
-.warning-of-expiration {
-    margin-top: 8px;
-    font-size: 12px;
-    color: #888;
 }
 
 /* room page */

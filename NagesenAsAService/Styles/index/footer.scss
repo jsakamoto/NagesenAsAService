@@ -1,86 +1,69 @@
 ﻿footer {
-    margin-top: 64px;
-}
+    padding-bottom: 12px;
 
-footer p {
-    margin: 0;
-}
+    * {
+        display: inline-block;
+        width: auto;
+        height: 24px;
+        line-height: 24px;
+    }
 
-.main footer * {
-    display: inline-block;
-    width: auto;
-    height: 24px;
-    line-height: 24px;
-}
+    p {
+        margin: 0;
+    }
 
-footer .social-buttons {
-    display: block;
-    position: relative;
-    height: 48px;
-    line-height: 48px;
-}
+    a {
+        display: inline-block;
+        height: 16px;
+        line-height: 16px;
+        color: #aaa;
+        background-repeat: no-repeat;
+        text-decoration: underline;
+        transition: color linear 0.2s;
 
-footer .social-buttons .twitter-share-button {
-    color: rgba(0,0,0,0);
-}
+        &:hover {
+            color: black;
+        }
+    }
 
-footer .social-buttons .fb-like span {
-    vertical-align: top !important;
-    top: -2px;
-}
+    .social-buttons {
+        display: block;
+        position: relative;
+        height: 48px;
+        line-height: 48px;
 
-footer .special-thanks,
-footer .powered-by {
-    width: 100%;
-    font-size: 12px;
-    color: #aaa;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: solid 1px #ddd;
-}
+        .twitter-share-button {
+            color: rgba(0,0,0,0);
+        }
 
-footer .special-thanks a,
-footer .powered-by a {
-    display: inline-block;
-    height: 16px;
-    line-height: 16px;
-    color: #aaa;
-    background-repeat: no-repeat;
-    text-decoration: underline;
-}
+        .fb-like span {
+            vertical-align: top !important;
+            top: -2px;
+        }
+    }
 
-footer .special-thanks a:hover,
-footer .powered-by a:hover {
-    color: black;
-}
+    .special-thanks,
+    .powered-by {
+        width: 100%;
+        font-size: 12px;
+        color: #aaa;
+        margin-top: 8px;
+        padding: 8px;
+        border-top: solid 1px #ddd;
+    }
 
-footer .powered-by .aspnet {
-    background-image: url(/images/powered-by/aspnet-g-16.png);
-    padding-left: 26px;
-}
+    .powered-by {
+        .naas-icon {
+            font-size: 16px;
+            margin-right: 4px;
+            vertical-align: middle;
+            line-height: 32px;
+            height: 32px;
+        }
 
-footer .powered-by .typescript {
-    background-image: url(/images/powered-by/typescript-g-16.png);
-    padding-left: 18px;
-}
-
-footer .powered-by .angularjs {
-    background-image: url(/images/powered-by/angularjs-g-16.png);
-    padding-left: 18px;
-}
-
-
-footer .powered-by .azure-webapps {
-    background-image: url(/images/powered-by/azure-webapps-g-16.png);
-    padding-left: 18px;
-}
-
-footer .powered-by .real-favicon-gen {
-    background-image: url(/images/powered-by/real-favicon-gen-g-16.png);
-    padding-left: 18px;
-}
-
-footer .powered-by .github {
-    background-image: url(/images/powered-by/github-g-16.png);
-    padding-left: 18px;
+        .real-favicon-gen {
+            background-image: url(/images/powered-by/real-favicon-gen-g-16.png);
+            padding-left: 18px;
+        }
+    }
 }

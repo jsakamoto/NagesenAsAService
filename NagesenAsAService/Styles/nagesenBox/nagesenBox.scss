@@ -9,11 +9,13 @@ header {
     #settings-button {
         position: absolute;
         right: 0;
-        width: 3em;
-        height: 3em;
-        line-height: 3.7em;
+        width: 3rem;
+        height: 3rem;
+        line-height: 3rem;
         color: #888;
         cursor: pointer;
+        font-size: 1.5rem;
+        transition: color linear 0.2s;
 
         &:hover {
             color: #000;

@@ -8,15 +8,15 @@
     <link href="~/styles/nagesenBox.min.css" rel="stylesheet" />
 }
 @section headerLeft {
-    <a href="/" class="go-home"></a>
+    <a href="/" class="go-home"><i class="naas-icon">arrow-left-circle</i></a>
     @if (isOwner)
     {
-        <div id="settings-button"><i class="material-icons">menu</i></div>
+        <div id="settings-button"><i class="naas-icon">menu</i></div>
     }
 }
 @section headerRight{
     <partial name="_ShareBox" model="room" />
-    <a id="tweet-score-button">t</a>
+    <a id="tweet-score-button"><i class="naas-icon">twitter</i></a>
 }
 
 <div class="room-page">

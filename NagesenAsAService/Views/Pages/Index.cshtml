@@ -5,35 +5,38 @@
 }
 <div class="home-page">
 
-    <div class="app-description">
-        @Localize.appDescription
-    </div>
+    <div class="main-form-container">
+        <div class="main-form">
+            <div class="app-description">
+                @Localize.appDescription
+            </div>
 
-    <div>
-        <p>
-            @Localize.EnterRoomNumber
-        </p>
-        <p>
-            <input type="number" value="" autofocus required class="room-number" id="room-number-input" />
-        </p>
-        <p>
-            <a class="btn btn-primary disabled" id="enter-button">
-                @Localize.Enter
-            </a>
-        </p>
-    </div>
+            <div>
+                <p>
+                    @Localize.EnterRoomNumber
+                </p>
+                <p>
+                    <input type="number" value="" autofocus required class="room-number" id="room-number-input" />
+                </p>
+                <p>
+                    <a class="btn btn-primary disabled" id="enter-button">
+                        @Localize.Enter
+                    </a>
+                </p>
+            </div>
 
-    <p>
-        <div>
-            <a id="create-newroom-button">@Localize.OrCreateNewRoom</a>
+            <p>
+                <div>
+                    <a id="create-newroom-button">@Localize.OrCreateNewRoom</a>
+                </div>
+                <div class="warning-of-expiration">
+                    @Localize.TheRoomWillExpireAfter7days
+                </div>
+            </p>
         </div>
-        <div class="warning-of-expiration">
-            @Localize.TheRoomWillExpireAfter7days
-        </div>
-    </p>
+    </div>
+    <partial name="Index_Footer" />
 </div>
-
-<partial name="Index_Footer" />
 
 @section scripts {
     <script src="~/scripts/index.js"></script>
