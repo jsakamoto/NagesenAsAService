@@ -2,7 +2,8 @@
 var NaaS;
 (function (NaaS) {
     class IndexController {
-        constructor() {
+        constructor(httpClient) {
+            this.httpClient = httpClient;
             this.roomNumber = '';
             this.roomNumberAvailable = false;
             const roomNumberInput = document.getElementById('room-number-input');
@@ -21,10 +22,10 @@ var NaaS;
             this.enterButton.classList.toggle('disabled', !this.roomNumberAvailable);
         }
         async onClickCreateNewRoomButton() {
-            const res = await fetch('/api/rooms/new', { method: 'post' });
+            const res = await this.httpClient.postAsync('/api/rooms/new');
             if (res.status === 200) {
                 const newRoomNumber = await res.json();
-                await fetch('/api/rooms/expired', { method: 'delete' });
+                await this.httpClient.deleteAsync('/api/rooms/expired');
                 location.href = `/room/${newRoomNumber}/box`;
             }
             else {
@@ -38,7 +39,7 @@ var NaaS;
             this.update();
             if (this.roomNumberAvailable === false)
                 return;
-            const res = await fetch(`/api/rooms/${this.roomNumber}/enter`, { method: 'post' });
+            const res = await this.httpClient.postAsync(`/api/rooms/${this.roomNumber}/enter`);
             if (res.status === 404) {
                 location.href = `/room/${this.roomNumber}`;
             }
@@ -57,5 +58,5 @@ var NaaS;
             }
         }
     }
-    NaaS.controller = new IndexController();
+    NaaS.controller = new IndexController(NaaS.httpClientService);
 })(NaaS || (NaaS = {}));

@@ -57,6 +57,7 @@ namespace NaaS {
         constructor(
             private roomContextService: RoomContextService,
             private urlService: UrlService,
+            private httpClient: HttpClientService,
             private hubConn: HubConnectionService,
             private tweeter: TweetService
         ) {
@@ -326,12 +327,9 @@ namespace NaaS {
             if (this.roomContext.isOwnedByCurrentUser === false) return;
 
             const screenShotCanvas = await html2canvas(this.boxElement);
-            const dataUrl = screenShotCanvas.toDataURL('image/jpeg', 0.6);
-
+            const imageDataUrl = screenShotCanvas.toDataURL('image/jpeg', 0.6);
             const apiUrl = this.urlService.apiBaseUrl + '/screenshot'
-            const headers = { "Accept": 'application/json', "Content-Type": 'application/json' };
-            const body = JSON.stringify({ "imageDataUrl": dataUrl });
-            await fetch(apiUrl, { method: 'post', headers, body });
+            await this.httpClient.postAsync(apiUrl, { imageDataUrl });
         }
 
         private screenShotDebounceTimerId: NodeJS.Timeout | number = -1;
@@ -348,6 +346,7 @@ namespace NaaS {
     export const nagesenBoxController = new NagesenBoxController(
         roomContextService,
         urlService,
+        httpClientService,
         hubConnService,
         tweetService);
 }

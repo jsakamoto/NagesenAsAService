@@ -14,9 +14,10 @@ var b2;
 var NaaS;
 (function (NaaS) {
     class NagesenBoxController {
-        constructor(roomContextService, urlService, hubConn, tweeter) {
+        constructor(roomContextService, urlService, httpClient, hubConn, tweeter) {
             this.roomContextService = roomContextService;
             this.urlService = urlService;
+            this.httpClient = httpClient;
             this.hubConn = hubConn;
             this.tweeter = tweeter;
             this.coinAssets = [
@@ -233,11 +234,9 @@ var NaaS;
             if (this.roomContext.isOwnedByCurrentUser === false)
                 return;
             const screenShotCanvas = await html2canvas(this.boxElement);
-            const dataUrl = screenShotCanvas.toDataURL('image/jpeg', 0.6);
+            const imageDataUrl = screenShotCanvas.toDataURL('image/jpeg', 0.6);
             const apiUrl = this.urlService.apiBaseUrl + '/screenshot';
-            const headers = { "Accept": 'application/json', "Content-Type": 'application/json' };
-            const body = JSON.stringify({ "imageDataUrl": dataUrl });
-            await fetch(apiUrl, { method: 'post', headers, body });
+            await this.httpClient.postAsync(apiUrl, { imageDataUrl });
         }
         takeScreenShotDebounced() {
             if (this.screenShotDebounceTimerId !== -1)
@@ -248,5 +247,5 @@ var NaaS;
             }, 5000);
         }
     }
-    NaaS.nagesenBoxController = new NagesenBoxController(NaaS.roomContextService, NaaS.urlService, NaaS.hubConnService, NaaS.tweetService);
+    NaaS.nagesenBoxController = new NagesenBoxController(NaaS.roomContextService, NaaS.urlService, NaaS.httpClientService, NaaS.hubConnService, NaaS.tweetService);
 })(NaaS || (NaaS = {}));

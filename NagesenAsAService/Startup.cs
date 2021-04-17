@@ -28,6 +28,7 @@ namespace NagesenAsAService
             services.AddControllersWithViews();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
             services.AddApplicationInsightsTelemetry();
+            services.AddAntiforgery(options => options.HeaderName = "X-ANTIFORGERY-TOKEN");
 
             var signalRServerBuilder = services.AddSignalR();
             if (!string.IsNullOrEmpty(this.Configuration["Azure:SignalR:ConnectionString"]))

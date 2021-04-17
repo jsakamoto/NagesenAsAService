@@ -46,7 +46,7 @@ namespace NagesenAsAService.Controllers
             UrlShorter = urlShorter;
         }
 
-        [HttpPost("/api/rooms/new")]
+        [HttpPost("/api/rooms/new"), AutoValidateAntiforgeryToken]
         public async Task<IActionResult> CreateNewRoomAsync()
         {
             var newRoomNumber = _Random
@@ -76,7 +76,7 @@ namespace NagesenAsAService.Controllers
 
         public class PostScreenShotRequest { public string? ImageDataUrl { get; set; } }
 
-        [HttpPost("/api/rooms/{roomNumber}/screenshot")]
+        [HttpPost("/api/rooms/{roomNumber}/screenshot"), AutoValidateAntiforgeryToken]
         public async Task<IActionResult> PostScreenShotAsync(int roomNumber, [FromBody] PostScreenShotRequest request)
         {
             var room = await this.Repository.FindRoomAsync(roomNumber);

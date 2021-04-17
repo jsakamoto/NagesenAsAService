@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NagesenAsAService.Models;
 using NagesenAsAService.Services.RoomRepository;
@@ -13,20 +12,33 @@ namespace NagesenAsAService.Controllers
     {
         private IRoomRepository RoomRepository { get; }
 
-        public PagesController(IRoomRepository roomRepository)
+        private IAntiforgery Antiforgery { get; }
+
+        public PagesController(IRoomRepository roomRepository, IAntiforgery antiforgery)
         {
             RoomRepository = roomRepository;
+            Antiforgery = antiforgery;
+        }
+        private void InjectAntiForgeryToken()
+        {
+            var tokens = this.Antiforgery.GetAndStoreTokens(this.HttpContext);
+            this.Response.Cookies.Append(
+                key: "X-ANTIFORGERY-TOKEN",
+                value: tokens.RequestToken,
+                options: new CookieOptions { SameSite = SameSiteMode.Strict, HttpOnly = false });
         }
 
         [HttpGet("/")]
         public IActionResult GetIndexPage()
         {
+            InjectAntiForgeryToken();
             return View(viewName: "Index");
         }
 
         [HttpGet("/room/{roomNumber}/box")]
         public async Task<IActionResult> GetNagesenBoxPageAsync(string roomNumber)
         {
+            InjectAntiForgeryToken();
             return await this.RoomViewAsync(roomNumber, viewName: "NagesenBox");
         }
 

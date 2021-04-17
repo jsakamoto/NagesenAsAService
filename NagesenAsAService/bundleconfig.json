@@ -2,6 +2,7 @@
   {
     "outputFileName": "wwwroot/scripts/index.min.js",
     "inputFiles": [
+      "Scripts/httpClientService.js",
       "Scripts/index.js"
     ]
   },
@@ -17,6 +18,7 @@
       "Scripts/roomContextService.js",
       "Scripts/coinAsset.js",
       "Scripts/sharedBoxController.js",
+      "Scripts/httpClientService.js",
       "Scripts/nagesenBox.js",
       "Scripts/nagesenBox.settings.js"
     ]

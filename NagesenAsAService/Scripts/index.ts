@@ -7,7 +7,7 @@
 
         private enterButton: HTMLAnchorElement;
 
-        constructor() {
+        constructor(private httpClient: HttpClientService) {
 
             const roomNumberInput = document.getElementById('room-number-input') as HTMLInputElement;
             roomNumberInput.addEventListener('input', _ => this.onInputRoomNumberInput(roomNumberInput.value));
@@ -30,10 +30,10 @@
         }
 
         private async onClickCreateNewRoomButton(): Promise<void> {
-            const res = await fetch('/api/rooms/new', { method: 'post' });
+            const res = await this.httpClient.postAsync('/api/rooms/new');
             if (res.status === 200) {
                 const newRoomNumber = await res.json();
-                await fetch('/api/rooms/expired', { method: 'delete' });
+                await this.httpClient.deleteAsync('/api/rooms/expired');
                 location.href = `/room/${newRoomNumber}/box`;
             }
             else {
@@ -48,7 +48,7 @@
             this.update();
             if (this.roomNumberAvailable === false) return;
 
-            const res = await fetch(`/api/rooms/${this.roomNumber}/enter`, { method: 'post' });
+            const res = await this.httpClient.postAsync(`/api/rooms/${this.roomNumber}/enter`);
             if (res.status === 404/*Room not found */) {
                 location.href = `/room/${this.roomNumber}`;
             }
@@ -68,5 +68,5 @@
         }
     }
 
-    export var controller: any = new IndexController();
+    export var controller: any = new IndexController(httpClientService);
 }
