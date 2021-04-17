@@ -1,0 +1,41 @@
+[
+  {
+    "outputFileName": "wwwroot/scripts/index.min.js",
+    "inputFiles": [
+      "Scripts/index.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/scripts/nagesenBox.min.js",
+    "inputFiles": [
+      "Scripts/signalr.js",
+      "Scripts/Box2dWeb-2.1.a.3.js",
+      "Scripts/dist/html2canvas.js",
+      "Scripts/urlService.js",
+      "Scripts/tweetService.js",
+      "Scripts/hubConnService.js",
+      "Scripts/roomContextService.js",
+      "Scripts/coinAsset.js",
+      "Scripts/sharedBoxController.js",
+      "Scripts/nagesenBox.js",
+      "Scripts/nagesenBox.settings.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/scripts/nagesenController.min.js",
+    "inputFiles": [
+      "Scripts/signalr.js",
+      "Scripts/urlService.js",
+      "Scripts/tweetService.js",
+      "Scripts/hubConnService.js",
+      "Scripts/sharedBoxController.js",
+      "Scripts/nagesenController.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/scripts/nagesenBox.worker.min.js",
+    "inputFiles": [
+      "Scripts/nagesenBox.worker.js"
+    ]
+  }
+]

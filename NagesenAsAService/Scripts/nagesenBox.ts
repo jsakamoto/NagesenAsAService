@@ -1,5 +1,5 @@
-﻿/// <reference types="@types/box2d" />
-/// <reference types="@types/html2canvas" />
+﻿/// <reference types="box2d" />
+/// <reference types="html2canvas" />
 
 namespace b2 {
     export import Vec2 = Box2D.Common.Math.b2Vec2;
@@ -93,7 +93,7 @@ namespace NaaS {
             this.initWorld();
             this.restoreCoinsState();
 
-            this.worker = new Worker('/scripts/nagesenBox.worker.js');
+            this.worker = new Worker('/scripts/nagesenBox.worker.min.js');
             this.worker.addEventListener('message', e => this.onWorkerMessage(e));
 
             this.update();

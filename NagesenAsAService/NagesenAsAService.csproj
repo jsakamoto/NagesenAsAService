@@ -20,14 +20,19 @@
     <PackageReference Include="QRCoder" Version="1.4.1" />
     <PackageReference Include="Toolbelt.AspNetCore.CssLiveReloader" Version="1.1.4" />
     <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="2.0.2" />
+    <PackageReference Include="BuildWebCompiler" Version="1.12.394" />
+    <PackageReference Include="BuildBundlerMinifier" Version="3.2.449" />
   </ItemGroup>
 
   <ItemGroup>
-    <TypeScriptCompile Remove="Scripts\node_modules\**" />
-    <Content Remove="App_Data\**" />
+    <TypeScriptCompile Remove="Scripts/node_modules/**" />
+    <Content Remove="App_Data/**" />
+    <Content Remove="bundleconfig.json" />
     <Content Remove="compilerconfig.json" />
+    <None Include="bundleconfig.json" />
     <None Include="compilerconfig.json" />
-    <None Include="Views\Shared\_Layout.cshtml" />
+    <Watch Include="Styles/**/*.scss" />
+    <Watch Include="Scripts/**/*.ts" Exclude="node_modules/**/*" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,13 +41,14 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Localize.resx</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Update="Localize.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Localize.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+
+  <Target Name="PrepareNodeModules" BeforeTargets="PreBuildEvent" Condition="!Exists('./Scripts/node_modules')">
+    <Exec Command="npm install" WorkingDirectory="Scripts" />
+  </Target>
 
 </Project>

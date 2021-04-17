@@ -6,7 +6,7 @@ var NaaS;
             this.urlService = urlService;
         }
         tweetToShare() {
-            const text = `投げ銭 as a Service - Room ${this.urlService.roomNumber} に今すぐアクセス☆`;
+            const text = `投げ銭 BOX as a Service - Room ${this.urlService.roomNumber} に今すぐアクセス☆`;
             this.tweet(text, this.urlService.controllerUrl);
         }
         tweetScore(tweetType, context, countOfLike, countOfDis) {

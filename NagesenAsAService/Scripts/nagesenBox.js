@@ -56,7 +56,7 @@ var NaaS;
             this.worldHeight = canvas.height + this.throwingBandHeight;
             this.initWorld();
             this.restoreCoinsState();
-            this.worker = new Worker('/scripts/nagesenBox.worker.js');
+            this.worker = new Worker('/scripts/nagesenBox.worker.min.js');
             this.worker.addEventListener('message', e => this.onWorkerMessage(e));
             this.update();
         }
