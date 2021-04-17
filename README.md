@@ -54,6 +54,14 @@ MacOS 用アプリ + iPhone アプリとして実装されたのを始まりと�
 
 - クライアント側実装のコーディングにあたり、生の JavaScript で直接記述するのではなく、AltJS 言語の一派である "[TypeScript](https://www.typescriptlang.org/)"を使用しました。
 
+### ビルドするには
+
+- OS にあわせた [.NET SDK 5.0.x 以降](https://dotnet.microsoft.com/download/dotnet/5.0) と、[Node.js v.14 以降](https://nodejs.org/) が必要です。
+- この Git リポジトリを clone したら、ターミナルにて `./NagesenAsAService` サブフォルダに移動し、`dotnet watch` コマンドを実行することで、ビルドと実行が行なわれ、ブラウザが起動して動作を試すことができます。
+- その状態でソースファイル (.cs, .cshtml, .ts, .scss) を編集するとビルドが再実行され、ブラウザで再読み込みが行なわれます。
+
+Windows OS 上で Visual Studio を用いて開発・実行する場合は、[こちらの注意事項](FOR-VISUALSTUDIO-USER.md)を参照下さい。
+
 ## ライセンス
 
 [GNU General Public License Ver.2](LICENSE)
