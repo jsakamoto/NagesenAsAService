@@ -7,12 +7,15 @@
 
         private enterButton: HTMLAnchorElement;
 
+        private creatingRoomMask: HTMLElement;
+
         constructor(private httpClient: HttpClientService) {
 
             const roomNumberInput = document.getElementById('room-number-input') as HTMLInputElement;
             roomNumberInput.addEventListener('input', _ => this.onInputRoomNumberInput(roomNumberInput.value));
 
             this.enterButton = document.getElementById('enter-button') as HTMLAnchorElement;
+            this.creatingRoomMask = document.getElementById('creating-room-mask') as HTMLElement;
 
             const createNewRoomButton = document.getElementById('create-newroom-button') as HTMLAnchorElement;
             createNewRoomButton.addEventListener('click', _ => this.onClickCreateNewRoomButton())
@@ -30,18 +33,26 @@
         }
 
         private async onClickCreateNewRoomButton(): Promise<void> {
-            const reCAPTCHAResponse = await this.getreCAPTCHAResponseAsync();
-            const res = await this.httpClient.postAsync('/api/rooms/new', { reCAPTCHAResponse });
-            if (res.status === 200) {
-                const newRoomNumber = await res.json();
-                await this.httpClient.deleteAsync('/api/rooms/expired');
-                location.href = `/room/${newRoomNumber}/box`;
+            this.creatingRoomMask.style.display = 'block';
+            try {
+                const reCAPTCHAResponse = await this.getreCAPTCHAResponseAsync();
+                const res = await this.httpClient.postAsync('/api/rooms/new', { reCAPTCHAResponse });
+                if (res.status === 200) {
+                    const newRoomNumber = await res.json();
+                    await this.httpClient.deleteAsync('/api/rooms/expired');
+                    location.href = `/room/${newRoomNumber}/box`;
+                }
+                else {
+                    this.creatingRoomMask.style.display = 'none';
+                    const responseMessage = await res.text();
+                    const message = `Creating new room was failed. (HTTP Status ${res.status} ${responseMessage})`;
+                    console.error(message);
+                    alert(message);
+                }
             }
-            else {
-                const responseMessage = await res.text();
-                const message = `Creating new room was failed. (HTTP Status ${res.status} ${responseMessage})`;
-                console.error(message);
-                alert(message);
+            catch (error) {
+                this.creatingRoomMask.style.display = 'none';
+                throw error;
             }
         }
 
