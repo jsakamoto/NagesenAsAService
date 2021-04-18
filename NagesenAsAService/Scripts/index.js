@@ -22,7 +22,8 @@ var NaaS;
             this.enterButton.classList.toggle('disabled', !this.roomNumberAvailable);
         }
         async onClickCreateNewRoomButton() {
-            const res = await this.httpClient.postAsync('/api/rooms/new');
+            const reCAPTCHAResponse = await this.getreCAPTCHAResponseAsync();
+            const res = await this.httpClient.postAsync('/api/rooms/new', { reCAPTCHAResponse });
             if (res.status === 200) {
                 const newRoomNumber = await res.json();
                 await this.httpClient.deleteAsync('/api/rooms/expired');
@@ -34,6 +35,17 @@ var NaaS;
                 console.error(message);
                 alert(message);
             }
+        }
+        async getreCAPTCHAResponseAsync() {
+            var _a;
+            const grecaptchaScript = document.querySelector('script#grecaptcha');
+            const sitekey = (_a = grecaptchaScript === null || grecaptchaScript === void 0 ? void 0 : grecaptchaScript.dataset.sitekey) !== null && _a !== void 0 ? _a : '';
+            if (sitekey !== '' && typeof (grecaptcha) !== 'undefined') {
+                await new Promise(resolve => grecaptcha.ready(() => resolve()));
+                const reCAPTCHAResponse = await grecaptcha.execute(sitekey, { action: 'submit' });
+                return reCAPTCHAResponse;
+            }
+            return '';
         }
         async onClickEnterRoomButton() {
             this.update();

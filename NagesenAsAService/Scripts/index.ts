@@ -30,7 +30,8 @@
         }
 
         private async onClickCreateNewRoomButton(): Promise<void> {
-            const res = await this.httpClient.postAsync('/api/rooms/new');
+            const reCAPTCHAResponse = await this.getreCAPTCHAResponseAsync();
+            const res = await this.httpClient.postAsync('/api/rooms/new', { reCAPTCHAResponse });
             if (res.status === 200) {
                 const newRoomNumber = await res.json();
                 await this.httpClient.deleteAsync('/api/rooms/expired');
@@ -42,6 +43,17 @@
                 console.error(message);
                 alert(message);
             }
+        }
+
+        private async getreCAPTCHAResponseAsync(): Promise<string> {
+            const grecaptchaScript = document.querySelector('script#grecaptcha') as HTMLScriptElement | null;
+            const sitekey = grecaptchaScript?.dataset.sitekey ?? '';
+            if (sitekey !== '' && typeof (grecaptcha) !== 'undefined') {
+                await new Promise<void>(resolve => grecaptcha!.ready(() => resolve()));
+                const reCAPTCHAResponse = await grecaptcha!.execute(sitekey, { action: 'submit' });
+                return reCAPTCHAResponse;
+            }
+            return '';
         }
 
         private async onClickEnterRoomButton(): Promise<void> {

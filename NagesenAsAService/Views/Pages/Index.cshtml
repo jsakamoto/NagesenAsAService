@@ -1,5 +1,9 @@
 ﻿@page
-@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@{
+    var reCAPTCHA_SiteKey = Configuration.GetValue(key: "reCAPTCHA:SiteKey", defaultValue: "");
+}
 @section head {
     <link href="~/styles/index.min.css" rel="stylesheet" />
 }
@@ -39,5 +43,9 @@
 </div>
 
 @section scripts {
+    @if (!reCAPTCHA_SiteKey.IsNullOrEmpty())
+    {
+        <script id="grecaptcha" src="https://www.google.com/recaptcha/api.js?render=@reCAPTCHA_SiteKey" data-sitekey="@reCAPTCHA_SiteKey"></script>
+    }
     <script src="~/scripts/index.min.js"></script>
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Newtonsoft.Json;
 
@@ -6,7 +7,7 @@ namespace NagesenAsAService.Extensions
 {
     public static class StringExtension
     {
-        public static bool IsNullOrEmpty(this string value)
+        public static bool IsNullOrEmpty([NotNullWhen(false)] this string value)
         {
             return String.IsNullOrEmpty(value);
         }

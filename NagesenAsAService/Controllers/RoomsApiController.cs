@@ -1,18 +1,20 @@
 ﻿#nullable enable
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using NagesenAsAService.Extensions;
-using NagesenAsAService.Hubs;
 using NagesenAsAService.Models;
 using NagesenAsAService.Services.RoomRepository;
 using NagesenAsAService.Services.UrlShorter;
@@ -26,29 +28,42 @@ namespace NagesenAsAService.Controllers
     {
         private static readonly Random _Random = new(DateTime.UtcNow.Millisecond);
 
+        private IConfiguration Configuration { get; }
+
         private IWebHostEnvironment WebHostEnvironment { get; }
+
+        private IHttpClientFactory HttpClientFactory { get; }
 
         private IRoomRepository Repository { get; }
 
-        private IHubContext<NaaSHub, INaaSHubEvents> NaasHubContext { get; }
-
         private IUrlShorter UrlShorter { get; }
 
+        private ILogger<RoomsApiController> Logger { get; }
+
         public RoomsApiController(
+            IConfiguration configuration,
             IWebHostEnvironment webHostEnvironment,
+            IHttpClientFactory httpClientFactory,
             IRoomRepository repository,
-            IHubContext<NaaSHub, INaaSHubEvents> naasHubContext,
-            IUrlShorter urlShorter)
+            IUrlShorter urlShorter,
+            ILogger<RoomsApiController> logger)
         {
+            this.Configuration = configuration;
             this.WebHostEnvironment = webHostEnvironment;
+            this.HttpClientFactory = httpClientFactory;
             this.Repository = repository;
-            this.NaasHubContext = naasHubContext;
-            UrlShorter = urlShorter;
+            this.UrlShorter = urlShorter;
+            this.Logger = logger;
         }
 
+        public class CreateNewRoomRequest { public string? reCAPTCHAResponse { get; set; } }
+
         [HttpPost("/api/rooms/new"), AutoValidateAntiforgeryToken]
-        public async Task<IActionResult> CreateNewRoomAsync()
+        public async Task<IActionResult> CreateNewRoomAsync([FromBody] CreateNewRoomRequest request)
         {
+            var isValid = await VerifyreCAPTCHAResponse(request);
+            if (isValid == false) return BadRequest("The reCAPTCHA validation was failed.");
+
             var newRoomNumber = _Random
                 .ToEnumerable(r => r.Next(1000, 10000))
                 .First(n => this.Repository.RoomExists(n) == false);
@@ -64,6 +79,32 @@ namespace NagesenAsAService.Controllers
                 ShortUrl = shortUrlOfThisRoom
             });
             return Ok(newRoomNumber);
+        }
+
+        private async Task<bool> VerifyreCAPTCHAResponse(CreateNewRoomRequest request)
+        {
+            var reCAPTCHASecret = this.Configuration.GetValue(key: "reCAPTCHA:SecretKey", defaultValue: "");
+            if (!reCAPTCHASecret.IsNullOrEmpty() && !request.reCAPTCHAResponse.IsNullOrEmpty())
+            {
+                var url = "https://www.google.com/recaptcha/api/siteverify";
+                var content = new FormUrlEncodedContent(new Dictionary<string, string?>
+                {
+                    {"secret", reCAPTCHASecret},
+                    {"response", request.reCAPTCHAResponse}
+                }!);
+
+                var httpClient = this.HttpClientFactory.CreateClient();
+                var response = await httpClient.PostAsync(url, content);
+                response.EnsureSuccessStatusCode();
+
+                var verificationResponse = await response.Content.ReadAsAsync<reCAPTCHAVerificationResponse>();
+                if (verificationResponse == null || verificationResponse.Success == false)
+                {
+                    this.Logger.LogWarning("The reCAPTCHA validation was faile: " + JsonSerializer.Serialize(verificationResponse));
+                    return false;
+                }
+            }
+            return true;
         }
 
         [HttpPost("/api/rooms/{roomNumber}/enter")]
