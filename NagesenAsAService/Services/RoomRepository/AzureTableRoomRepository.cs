@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading.Tasks;
+using Azure;
 using Azure.Storage.Blobs;
 using Microsoft.Azure.Cosmos.Table;
 using Microsoft.Extensions.Configuration;
@@ -137,10 +138,9 @@ namespace NagesenAsAService.Services.RoomRepository
 
         public async Task<Picture> GetScreenShotAsync(Guid sessionId)
         {
-            var blockBlob = this.ScreenShots.GetBlobClient(sessionId.ToString("N"));
-
             try
             {
+                var blockBlob = this.ScreenShots.GetBlobClient(sessionId.ToString("N"));
                 var response = await blockBlob.GetPropertiesAsync();
                 var properties = response.Value;
 
@@ -152,6 +152,10 @@ namespace NagesenAsAService.Services.RoomRepository
                         blockBlob.DownloadTo(memoryStream);
                         return memoryStream.ToArray();
                     });
+            }
+            catch (RequestFailedException e) when (e.Status == 404)
+            {
+                return null;
             }
             catch (StorageException e) when (e.RequestInformation.HttpStatusCode == 404)
             {
