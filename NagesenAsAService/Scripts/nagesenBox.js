@@ -32,7 +32,6 @@ var NaaS;
             this.boxIsFull = false;
             this.screenShotDebounceTimerId = -1;
             this.init();
-            this.update();
         }
         get roomContext() { return this.roomContextService.roomContext; }
         async init() {
@@ -60,6 +59,9 @@ var NaaS;
             this.worker = new Worker('/scripts/nagesenBox.worker.min.js');
             this.worker.addEventListener('message', e => this.onWorkerMessage(e));
             this.update();
+            if (this.roomContext.countOfLike === 0 && this.roomContext.countOfDis === 0) {
+                await this.takeScreenShotAsync();
+            }
         }
         update() {
             this.countOfLikeElement.textContent = this.roomContext.countOfLike.toLocaleString();

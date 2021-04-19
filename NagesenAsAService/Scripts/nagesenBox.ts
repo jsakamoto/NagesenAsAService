@@ -62,7 +62,6 @@ namespace NaaS {
             private tweeter: TweetService
         ) {
             this.init();
-            this.update();
         }
 
         async init(): Promise<void> {
@@ -98,6 +97,10 @@ namespace NaaS {
             this.worker.addEventListener('message', e => this.onWorkerMessage(e));
 
             this.update();
+
+            if (this.roomContext.countOfLike === 0 && this.roomContext.countOfDis === 0) {
+                await this.takeScreenShotAsync();
+            }
         }
 
         private update(): void {
