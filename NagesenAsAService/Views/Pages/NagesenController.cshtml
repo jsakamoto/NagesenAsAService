@@ -4,13 +4,13 @@
     var room = Model;
 }
 @section head {
-    <link href="~/styles/nagesenController.min.css" rel="stylesheet" />
+<link href="~/styles/nagesenController.min.css" rel="stylesheet" />
 }
 @section headerLeft {
-    <a href="/" class="go-home"><i class="naas-icon">arrow-left-circle</i></a>
+<a href="/" class="go-home"><i class="naas-icon">arrow-left-circle</i></a>
 }
 @section headerRight{
-    <partial name="_ShareBox" model="room" />
+<partial name="_ShareBox" model="room" />
 }
 
 <div id="controller-holder">
@@ -23,11 +23,11 @@
         <div id="coins-container" class="deny-dis-coin">
             <div id="like-coin" class="coin">
                 <img id="like-coin-image" class="img-throwing" src="~/images/like-coin.png" />
-                <div class="score"><span id="count-of-like">0</span> Yen</div>
+                <div class="score"><span id="count-of-like">0</span> <span id="unit-of-like"></span></div>
             </div>
             <div id="dis-coin" class="coin">
                 <img id="dis-coin-image" class="img-throwing" src="~/images/dis-coin.png">
-                <div class="score"><span id="count-of-dis">0</span> Dis</div>
+                <div class="score"><span id="count-of-dis">0</span> <span id="unit-of-dis"></span></div>
             </div>
         </div>
         <div id="buttons">
@@ -37,5 +37,5 @@
 </div>
 
 @section scripts {
-    <script src="~/scripts/nagesenController.min.js"></script>
+<script src="~/scripts/nagesenController.min.js"></script>
 }

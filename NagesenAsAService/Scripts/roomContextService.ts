@@ -8,6 +8,8 @@
             allowDisCoin: false,
             sessionID: '',
             twitterHashtag: '',
+            unitOfLikeCoin: '',
+            unitOfDisCoin: '',
             isOwnedByCurrentUser: false
         };
 

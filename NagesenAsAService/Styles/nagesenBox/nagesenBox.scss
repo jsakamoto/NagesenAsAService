@@ -63,10 +63,10 @@ header {
 #score-box {
     @include overwrap-style();
     @include all-linear-transition();
-    width: 6.7em;
     position: absolute;
     top: 1em;
-    left: 680px;
+    left: unset;
+    right: 1em;
     z-index: 1;
 
     $count-of-coin-height: 26px;
@@ -76,21 +76,22 @@ header {
         font-size: 95%;
         background-size: 1.3em;
         background-position: 0.3em center;
-        text-align: right;
+        text-align: left;
         height: $count-of-coin-height;
         line-height: $count-of-coin-height;
+        white-space: nowrap;
 
         .score {
             display: inline-block;
-            vertical-align: middle;
+            width: 52px;
+            text-align: right;
+            margin-left: 22px;
         }
 
         .unit {
             display: inline-block;
             padding: 0 0.3em 0 0.3em;
-            width: 36px;
             text-align: left;
-            vertical-align: middle;
         }
     }
 
@@ -123,6 +124,7 @@ header {
 @media screen and (max-width: 800px) {
     #score-box {
         left: 1em;
+        right: unset;
     }
 }
 

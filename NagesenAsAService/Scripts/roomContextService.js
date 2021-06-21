@@ -12,6 +12,8 @@ var NaaS;
                 allowDisCoin: false,
                 sessionID: '',
                 twitterHashtag: '',
+                unitOfLikeCoin: '',
+                unitOfDisCoin: '',
                 isOwnedByCurrentUser: false
             };
             this.changeListeners = [];

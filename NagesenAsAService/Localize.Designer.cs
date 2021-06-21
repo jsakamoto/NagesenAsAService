@@ -212,5 +212,23 @@ namespace NagesenAsAService {
                 return ResourceManager.GetString("TwitterHashtag", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The unit of &quot;Dis&quot; coin.
+        /// </summary>
+        public static string UnitOfDisCoin {
+            get {
+                return ResourceManager.GetString("UnitOfDisCoin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The unit of &quot;Like&quot; coin.
+        /// </summary>
+        public static string UnitOfLikeCoin {
+            get {
+                return ResourceManager.GetString("UnitOfLikeCoin", resourceCulture);
+            }
+        }
     }
 }

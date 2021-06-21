@@ -9,6 +9,8 @@
         private titleInputElement: HTMLInputElement | null = null;
         private twitterHashtagInputElement: HTMLInputElement | null = null;
         private allowDisCoinInputElement: HTMLInputElement | null = null;
+        private unitOfLikeInputElement: HTMLInputElement | null = null;
+        private unitOfDisInputElement: HTMLInputElement | null = null;
 
         constructor(
             private roomContextService: RoomContextService,
@@ -26,10 +28,14 @@
             this.settingsContainerElement = document.getElementById('settings-container');
             this.titleInputElement = document.getElementById('session-title-input') as HTMLInputElement | null;
             this.twitterHashtagInputElement = document.getElementById('twitter-hashtag-input') as HTMLInputElement | null;
+            this.unitOfLikeInputElement = document.getElementById('unit-of-like-input') as HTMLInputElement | null;
+            this.unitOfDisInputElement = document.getElementById('unit-of-dis-input') as HTMLInputElement | null;
             this.allowDisCoinInputElement = document.getElementById('allow-dis-coin-input') as HTMLInputElement | null;
 
             if (this.titleInputElement !== null) this.titleInputElement.addEventListener('input', e => this.onInputTitle());
             if (this.twitterHashtagInputElement !== null) this.twitterHashtagInputElement.addEventListener('input', e => this.onInputTwitterHashtag());
+            if (this.unitOfLikeInputElement !== null) this.unitOfLikeInputElement.addEventListener('input', e => this.onInputUnitOfLike());
+            if (this.unitOfDisInputElement !== null) this.unitOfDisInputElement.addEventListener('input', e => this.onInputUnitOfDis());
             if (this.allowDisCoinInputElement !== null) this.allowDisCoinInputElement.addEventListener('change', e => this.onChageAllowDisCoin());
             const resetRoomButton = document.getElementById('reset-room-button');
             if (resetRoomButton !== null) resetRoomButton.addEventListener('click', e => this.onClickResetRoomButton());
@@ -46,6 +52,8 @@
                 this.settingsContainerElement !== null &&
                 this.titleInputElement !== null &&
                 this.twitterHashtagInputElement !== null &&
+                this.unitOfLikeInputElement !== null &&
+                this.unitOfDisInputElement !== null &&
                 this.allowDisCoinInputElement !== null
             ) {
                 this.settingsContainerElement.classList.toggle('visible', this.visibleSettings);
@@ -54,6 +62,8 @@
 
                 if (this.titleInputElement.value !== this.roomContext.title) this.titleInputElement.value = this.roomContext.title;
                 if (this.twitterHashtagInputElement.value !== this.roomContext.twitterHashtag) this.twitterHashtagInputElement.value = this.roomContext.twitterHashtag || '';
+                if (this.unitOfLikeInputElement.value !== this.roomContext.unitOfLikeCoin) this.unitOfLikeInputElement.value = this.roomContext.unitOfLikeCoin || '';
+                if (this.unitOfDisInputElement.value !== this.roomContext.unitOfDisCoin) this.unitOfDisInputElement.value = this.roomContext.unitOfDisCoin || '';
                 if (this.allowDisCoinInputElement.checked !== this.roomContext.allowDisCoin) this.allowDisCoinInputElement.checked = this.roomContext.allowDisCoin;
             }
         }
@@ -84,6 +94,20 @@
             this.changeRoomSetings(context => {
                 if (this.twitterHashtagInputElement === null) return;
                 context.twitterHashtag = this.twitterHashtagInputElement.value;
+            });
+        }
+
+        private onInputUnitOfLike(): void {
+            this.changeRoomSetings(context => {
+                if (this.unitOfLikeInputElement === null) return;
+                context.unitOfLikeCoin = this.unitOfLikeInputElement.value;
+            });
+        }
+
+        private onInputUnitOfDis(): void {
+            this.changeRoomSetings(context => {
+                if (this.unitOfDisInputElement === null) return;
+                context.unitOfDisCoin = this.unitOfDisInputElement.value;
             });
         }
 

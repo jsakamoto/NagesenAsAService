@@ -30,7 +30,9 @@ namespace NaaS {
         private get roomContext(): RoomContext { return this.roomContextService.roomContext; }
 
         private countOfLikeElement!: HTMLElement;
+        private unitOfLikeElement!: HTMLElement;
         private countOfDisElement!: HTMLElement;
+        private unitOfDisElement!: HTMLElement;
         private boxElement!: HTMLElement;
         private titleElement!: HTMLElement;
 
@@ -67,7 +69,9 @@ namespace NaaS {
         async init(): Promise<void> {
 
             this.countOfLikeElement = document.getElementById('count-of-like')!;
+            this.unitOfLikeElement = document.getElementById('unit-of-like')!;
             this.countOfDisElement = document.getElementById('count-of-dis')!;
+            this.unitOfDisElement = document.getElementById('unit-of-dis')!;
             this.boxElement = document.getElementById('box')!;
             this.titleElement = document.getElementById('session-title')!;
 
@@ -105,7 +109,9 @@ namespace NaaS {
 
         private update(): void {
             this.countOfLikeElement.textContent = this.roomContext.countOfLike.toLocaleString();
+            this.unitOfLikeElement.textContent = this.roomContext.unitOfLikeCoin;
             this.countOfDisElement.textContent = this.roomContext.countOfDis.toLocaleString();
+            this.unitOfDisElement.textContent = this.roomContext.unitOfDisCoin;
             this.boxElement.classList.toggle('has-title', this.roomContext.title !== '');
             this.boxElement.classList.toggle('allow-dis-coin', this.roomContext.allowDisCoin);
             this.titleElement.textContent = this.roomContext.title;

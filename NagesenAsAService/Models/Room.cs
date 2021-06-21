@@ -25,6 +25,10 @@ namespace NagesenAsAService.Models
 
         public bool AllowDisCoin { get; set; }
 
+        public string UnitOfLikeCoin { get; set; } = "Yen";
+
+        public string UnitOfDisCoin { get; set; } = "Dis";
+
         public int CountOfNageSen { get; set; }
 
         public int CountOfAoriSen { get; set; }

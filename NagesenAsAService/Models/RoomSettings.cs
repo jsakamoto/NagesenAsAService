@@ -8,15 +8,21 @@
 
         public bool AllowDisCoin { get; set; }
 
+        public string UnitOfLikeCoin { get; set; }
+
+        public string UnitOfDisCoin { get; set; }
+
         public RoomSettings()
         {
         }
 
-        public RoomSettings(string title, string twitterHashtag, bool allowDisCoin)
+        public RoomSettings(string title, string twitterHashtag, bool allowDisCoin, string unitOfLineCoin, string unitOfDisCoin)
         {
             Title = title;
             TwitterHashtag = twitterHashtag;
             AllowDisCoin = allowDisCoin;
+            UnitOfLikeCoin = unitOfLineCoin;
+            UnitOfDisCoin = unitOfDisCoin;
         }
     }
 }

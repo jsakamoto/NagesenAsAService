@@ -45,10 +45,14 @@ namespace NagesenAsAService.Hubs
                 hasChanged =
                     (room.Title != settings.Title) ||
                     (room.TwitterHashtag != settings.TwitterHashtag) ||
+                    (room.UnitOfLikeCoin != settings.UnitOfLikeCoin) ||
+                    (room.UnitOfDisCoin != settings.UnitOfDisCoin) ||
                     (room.AllowDisCoin != settings.AllowDisCoin);
 
                 room.Title = settings.Title;
                 room.TwitterHashtag = settings.TwitterHashtag;
+                room.UnitOfLikeCoin = settings.UnitOfLikeCoin;
+                room.UnitOfDisCoin = settings.UnitOfDisCoin;
                 room.AllowDisCoin = settings.AllowDisCoin;
                 return true;
             });

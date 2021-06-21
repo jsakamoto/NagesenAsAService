@@ -15,7 +15,9 @@ namespace NagesenAsAService.Models
         public RoomContextSummary(Room room) : base(
             room.Title,
             room.TwitterHashtag,
-            room.AllowDisCoin)
+            room.AllowDisCoin,
+            room.UnitOfLikeCoin,
+            room.UnitOfDisCoin)
         {
             this.roomNumber = room.RoomNumber;
             this.sessionID = room.SessionID;

@@ -5,18 +5,18 @@
     var isOwner = room.OwnerUserID == this.User.Identity.Name;
 }
 @section head {
-    <link href="~/styles/nagesenBox.min.css" rel="stylesheet" />
+<link href="~/styles/nagesenBox.min.css" rel="stylesheet" />
 }
 @section headerLeft {
-    <a href="/" class="go-home"><i class="naas-icon">arrow-left-circle</i></a>
+<a href="/" class="go-home"><i class="naas-icon">arrow-left-circle</i></a>
     @if (isOwner)
     {
-        <div id="settings-button"><i class="naas-icon">menu</i></div>
+<div id="settings-button"><i class="naas-icon">menu</i></div>
     }
 }
 @section headerRight{
-    <partial name="_ShareBox" model="room" />
-    <a id="tweet-score-button"><i class="naas-icon">twitter</i></a>
+<partial name="_ShareBox" model="room" />
+<a id="tweet-score-button"><i class="naas-icon">twitter</i></a>
 }
 
 <div class="room-page">
@@ -28,10 +28,12 @@
 
             <div id="score-box">
                 <div class="count-of-coin like">
-                    <span id="count-of-like" class="score"></span><span class="unit">Yen</span>
+                    <span id="count-of-like" class="score"></span>
+                    <span id="unit-of-like" class="unit"></span>
                 </div>
                 <div class="count-of-coin dis">
-                    <span id="count-of-dis" class="score"></span><span class="unit">Dis</span>
+                    <span id="count-of-dis" class="score"></span>
+                    <span id="unit-of-dis" class="unit"></span>
                 </div>
             </div>
 
@@ -59,6 +61,14 @@
                     </label>
                 </div>
                 <div class="menu-item">
+                    <label for="unit-of-nagesen-input">@Localize.UnitOfLikeCoin</label>
+                    <input type="text" id="unit-of-like-input" />
+                </div>
+                <div class="menu-item">
+                    <label for="unit-of-aorisen-input">@Localize.UnitOfDisCoin</label>
+                    <input type="text" id="unit-of-dis-input" />
+                </div>
+                <div class="menu-item">
                     <button id="reset-room-button">@Localize.ResetRoom</button>
                 </div>
             </div>
@@ -68,15 +78,15 @@
 
 @section scripts {
 
-    <script>
-        var NaaS = NaaS || {};
-        NaaS.localize = NaaS.localize || {};
-        NaaS.localize.IfYouLeaveThisPageYouLostCoinsImage = '@JavaScriptEncoder.Default.Encode(Localize.IfYouLeaveThisPageYouLostCoinsImage)';
-        NaaS.localize.ConfirmResetRoom = '@JavaScriptEncoder.Default.Encode(Localize.ConfirmResetRoom)';
+<script>
+    var NaaS = NaaS || {};
+    NaaS.localize = NaaS.localize || {};
+    NaaS.localize.IfYouLeaveThisPageYouLostCoinsImage = '@JavaScriptEncoder.Default.Encode(Localize.IfYouLeaveThisPageYouLostCoinsImage)';
+    NaaS.localize.ConfirmResetRoom = '@JavaScriptEncoder.Default.Encode(Localize.ConfirmResetRoom)';
 
-        var module = module || {};
-        module.exports = module.exports || {};
-    </script>
+    var module = module || {};
+    module.exports = module.exports || {};
+</script>
 
-    <script src="~/scripts/nagesenBox.min.js"></script>
+<script src="~/scripts/nagesenBox.min.js"></script>
 }

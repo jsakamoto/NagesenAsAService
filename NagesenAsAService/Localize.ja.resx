@@ -162,4 +162,10 @@
   <data name="TwitterHashtag" xml:space="preserve">
     <value>Twitter ハッシュタグ</value>
   </data>
+  <data name="UnitOfDisCoin" xml:space="preserve">
+    <value>"Dis" 銭の単位</value>
+  </data>
+  <data name="UnitOfLikeCoin" xml:space="preserve">
+    <value>投げ銭の単位</value>
+  </data>
 </root>

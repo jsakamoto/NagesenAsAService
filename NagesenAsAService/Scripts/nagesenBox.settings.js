@@ -11,6 +11,8 @@ var NaaS;
             this.titleInputElement = null;
             this.twitterHashtagInputElement = null;
             this.allowDisCoinInputElement = null;
+            this.unitOfLikeInputElement = null;
+            this.unitOfDisInputElement = null;
             this.init();
             this.update();
         }
@@ -22,11 +24,17 @@ var NaaS;
             this.settingsContainerElement = document.getElementById('settings-container');
             this.titleInputElement = document.getElementById('session-title-input');
             this.twitterHashtagInputElement = document.getElementById('twitter-hashtag-input');
+            this.unitOfLikeInputElement = document.getElementById('unit-of-like-input');
+            this.unitOfDisInputElement = document.getElementById('unit-of-dis-input');
             this.allowDisCoinInputElement = document.getElementById('allow-dis-coin-input');
             if (this.titleInputElement !== null)
                 this.titleInputElement.addEventListener('input', e => this.onInputTitle());
             if (this.twitterHashtagInputElement !== null)
                 this.twitterHashtagInputElement.addEventListener('input', e => this.onInputTwitterHashtag());
+            if (this.unitOfLikeInputElement !== null)
+                this.unitOfLikeInputElement.addEventListener('input', e => this.onInputUnitOfLike());
+            if (this.unitOfDisInputElement !== null)
+                this.unitOfDisInputElement.addEventListener('input', e => this.onInputUnitOfDis());
             if (this.allowDisCoinInputElement !== null)
                 this.allowDisCoinInputElement.addEventListener('change', e => this.onChageAllowDisCoin());
             const resetRoomButton = document.getElementById('reset-room-button');
@@ -42,6 +50,8 @@ var NaaS;
             if (this.settingsContainerElement !== null &&
                 this.titleInputElement !== null &&
                 this.twitterHashtagInputElement !== null &&
+                this.unitOfLikeInputElement !== null &&
+                this.unitOfDisInputElement !== null &&
                 this.allowDisCoinInputElement !== null) {
                 this.settingsContainerElement.classList.toggle('visible', this.visibleSettings);
                 if (this === invoker)
@@ -50,6 +60,10 @@ var NaaS;
                     this.titleInputElement.value = this.roomContext.title;
                 if (this.twitterHashtagInputElement.value !== this.roomContext.twitterHashtag)
                     this.twitterHashtagInputElement.value = this.roomContext.twitterHashtag || '';
+                if (this.unitOfLikeInputElement.value !== this.roomContext.unitOfLikeCoin)
+                    this.unitOfLikeInputElement.value = this.roomContext.unitOfLikeCoin || '';
+                if (this.unitOfDisInputElement.value !== this.roomContext.unitOfDisCoin)
+                    this.unitOfDisInputElement.value = this.roomContext.unitOfDisCoin || '';
                 if (this.allowDisCoinInputElement.checked !== this.roomContext.allowDisCoin)
                     this.allowDisCoinInputElement.checked = this.roomContext.allowDisCoin;
             }
@@ -78,6 +92,20 @@ var NaaS;
                 if (this.twitterHashtagInputElement === null)
                     return;
                 context.twitterHashtag = this.twitterHashtagInputElement.value;
+            });
+        }
+        onInputUnitOfLike() {
+            this.changeRoomSetings(context => {
+                if (this.unitOfLikeInputElement === null)
+                    return;
+                context.unitOfLikeCoin = this.unitOfLikeInputElement.value;
+            });
+        }
+        onInputUnitOfDis() {
+            this.changeRoomSetings(context => {
+                if (this.unitOfDisInputElement === null)
+                    return;
+                context.unitOfDisCoin = this.unitOfDisInputElement.value;
             });
         }
         onChageAllowDisCoin() {

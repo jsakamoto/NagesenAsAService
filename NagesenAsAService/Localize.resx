@@ -168,4 +168,10 @@
   <data name="SessionTitle" xml:space="preserve">
     <value>Title</value>
   </data>
+  <data name="UnitOfDisCoin" xml:space="preserve">
+    <value>The unit of "Dis" coin</value>
+  </data>
+  <data name="UnitOfLikeCoin" xml:space="preserve">
+    <value>The unit of "Like" coin</value>
+  </data>
 </root>

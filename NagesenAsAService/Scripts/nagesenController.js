@@ -13,7 +13,9 @@ var NaaS;
                 sessionID: '',
                 title: '',
                 allowDisCoin: false,
-                twitterHashtag: ''
+                twitterHashtag: '',
+                unitOfLikeCoin: '',
+                unitOfDisCoin: ''
             };
             this.countOfLike = 0;
             this.countOfDis = 0;
@@ -27,7 +29,9 @@ var NaaS;
             document.getElementById('like-coin-image').addEventListener('click', () => this.countUpLike(10));
             document.getElementById('dis-coin-image').addEventListener('click', () => this.countUpDis(10));
             this.countOfLikeElement = document.getElementById('count-of-like');
+            this.unitOfLikeElement = document.getElementById('unit-of-like');
             this.countOfDisElement = document.getElementById('count-of-dis');
+            this.unitOfDisElement = document.getElementById('unit-of-dis');
             document.getElementById('tweet-score-button').addEventListener('click', () => this.onClickTweetScoreButton());
             ['touchmove', 'touchend', 'gesturestart', 'gesturechange', 'gestureend'].forEach(eventType => {
                 document.addEventListener(eventType, e => { e.preventDefault(); });
@@ -63,7 +67,9 @@ var NaaS;
             this.sessionTitleElement.textContent = this.roomContextSummary.title;
             this.coinsContainerElement.classList.toggle('deny-dis-coin', !this.roomContextSummary.allowDisCoin);
             this.countOfLikeElement.textContent = '' + this.countOfLike;
+            this.unitOfLikeElement.textContent = '' + this.roomContextSummary.unitOfLikeCoin;
             this.countOfDisElement.textContent = '' + this.countOfDis;
+            this.unitOfDisElement.textContent = '' + this.roomContextSummary.unitOfDisCoin;
         }
         async onHubConnectedAsync() {
             this.roomContextSummary = await this.hubConn.enterRoomAsControllerAsync(this.urlService.roomNumber);
