@@ -37,7 +37,7 @@ namespace NaaS {
         private titleElement!: HTMLElement;
 
         private coinAssets: CoinAsset[] = [
-            new CoinAsset(CoinType.Like, '/images/like-coin.png', 20),
+            new CoinAsset(CoinType.Like, '/images/like-coin.png', 15),
             new CoinAsset(CoinType.Dis, '/images/dis-coin.png', 15)
         ];
 
@@ -260,18 +260,14 @@ namespace NaaS {
 
                 // userData に設定したコイン画像が取得できない body は処理スキップ。
                 const userData = bodyItem.GetUserData() as CoinAsset;
-                if (userData == null || userData.image == null || userData.image.complete == false) continue;
+                if (userData === null || userData.completed === false) continue;
 
                 // 描画域に降りてきてない body は処理スキップ。
                 if (slideY < -userData.radius) continue;
 
                 // 以上の諸条件をクリアした body を canvas に描画。
-                this.context.save();
-                this.context.translate(slideX, slideY);
-                this.context.rotate(bodyItem.GetAngle());
-                this.context.drawImage(userData.image, -userData.radius, -userData.radius);
-                this.context.restore();
-                //this.context.drawImage(userData.image, slideX - userData.radius, slideY - userData.radius);
+                const image = userData.getRotatedImage(bodyItem.GetAngle());
+                this.context.drawImage(image, slideX - userData.radius, slideY - userData.radius);
             }
 
             const result = { isAwake: isAwakeAnyBody, boxIsFull };
@@ -329,7 +325,7 @@ namespace NaaS {
             }, 5000);
         }
 
-        private restoreCoinsState(): void {
+        private async restoreCoinsState(): Promise<void> {
             const coinsStateJson = sessionStorage.getItem('coinsState') || '';
             if (coinsStateJson == '') return;
 
@@ -341,14 +337,11 @@ namespace NaaS {
 
             coinsState.coins.forEach(state => this.createCoin(state));
 
-            const coinImages = this.coinAssets.map(asset => asset.image);
-            new Promise<void>((resolve) => {
-                const checkAllCoinImagesLoaded = () => { if (coinImages.every(img => img.complete)) resolve(); };
-                coinImages.forEach(img => img.addEventListener('load', () => { checkAllCoinImagesLoaded(); }));
-                checkAllCoinImagesLoaded();
-            }).then(() => {
-                this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
-            });
+            const coinAssetCompletions = this.coinAssets.map(asset => asset.completeAsync);
+            for (const completion of coinAssetCompletions) {
+                await completion;
+            }
+            this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
         }
 
         private screenShotDebounceTimerId: NodeJS.Timeout | number = -1;

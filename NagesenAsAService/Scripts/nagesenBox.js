@@ -21,7 +21,7 @@ var NaaS;
             this.hubConn = hubConn;
             this.tweeter = tweeter;
             this.coinAssets = [
-                new NaaS.CoinAsset(0, '/images/like-coin.png', 20),
+                new NaaS.CoinAsset(0, '/images/like-coin.png', 15),
                 new NaaS.CoinAsset(1, '/images/dis-coin.png', 15)
             ];
             this.worldWidth = 0;
@@ -176,15 +176,12 @@ var NaaS;
                     boxIsFull = true;
                 }
                 const userData = bodyItem.GetUserData();
-                if (userData == null || userData.image == null || userData.image.complete == false)
+                if (userData === null || userData.completed === false)
                     continue;
                 if (slideY < -userData.radius)
                     continue;
-                this.context.save();
-                this.context.translate(slideX, slideY);
-                this.context.rotate(bodyItem.GetAngle());
-                this.context.drawImage(userData.image, -userData.radius, -userData.radius);
-                this.context.restore();
+                const image = userData.getRotatedImage(bodyItem.GetAngle());
+                this.context.drawImage(image, slideX - userData.radius, slideY - userData.radius);
             }
             const result = { isAwake: isAwakeAnyBody, boxIsFull };
             return result;
@@ -227,7 +224,7 @@ var NaaS;
                 sessionStorage.setItem('coinsState', coinsStateJson);
             }, 5000);
         }
-        restoreCoinsState() {
+        async restoreCoinsState() {
             const coinsStateJson = sessionStorage.getItem('coinsState') || '';
             if (coinsStateJson == '')
                 return;
@@ -237,15 +234,11 @@ var NaaS;
                 return;
             }
             coinsState.coins.forEach(state => this.createCoin(state));
-            const coinImages = this.coinAssets.map(asset => asset.image);
-            new Promise((resolve) => {
-                const checkAllCoinImagesLoaded = () => { if (coinImages.every(img => img.complete))
-                    resolve(); };
-                coinImages.forEach(img => img.addEventListener('load', () => { checkAllCoinImagesLoaded(); }));
-                checkAllCoinImagesLoaded();
-            }).then(() => {
-                this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
-            });
+            const coinAssetCompletions = this.coinAssets.map(asset => asset.completeAsync);
+            for (const completion of coinAssetCompletions) {
+                await completion;
+            }
+            this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
         }
         takeScreenShotDebounced(delay) {
             if (this.roomContext.isOwnedByCurrentUser === false)
