@@ -86,7 +86,7 @@ namespace NaaS {
             this.hubConn.onResetedScore(_ => this.initWorld());
             this.roomContextService.subscribeChanges(() => {
                 this.update();
-                this.takeScreenShotDebounced();
+                this.takeScreenShotDebounced(5000);
             });
 
             const canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -103,7 +103,7 @@ namespace NaaS {
             this.update();
 
             if (this.roomContext.countOfLike === 0 && this.roomContext.countOfDis === 0) {
-                await this.takeScreenShotAsync();
+                this.takeScreenShotDebounced(1000);
             }
         }
 
@@ -153,7 +153,7 @@ namespace NaaS {
             // ボックスが満杯と判定されていたら、効果音の再生とコイン数の表示更新だけとして、コイン投入のアニメーションはスキップする。
             // ※ただしコイン数表示の更新は発生するので、スクリーンショットの再取得を行う
             if (this.boxIsFull) {
-                this.takeScreenShotDebounced();
+                this.takeScreenShotDebounced(5000);
                 return;
             }
 
@@ -178,7 +178,7 @@ namespace NaaS {
             this.createFixedBox(0, this.worldHeight - 2, this.worldWidth, 2);
             this.createFixedBox(this.worldWidth - 2, 0, 2, this.worldHeight);
 
-            //this.world.SetDebugDraw(this.getDebugDraw());
+            // this.world.SetDebugDraw(this.getDebugDraw()); // DEBUG:
 
             this.world.ClearForces();
             this.render();
@@ -261,6 +261,7 @@ namespace NaaS {
                 this.context.rotate(bodyItem.GetAngle());
                 this.context.drawImage(userData.image, -userData.radius, -userData.radius);
                 this.context.restore();
+                //this.context.drawImage(userData.image, slideX - userData.radius, slideY - userData.radius);
             }
 
             const result = { isAwake: isAwakeAnyBody, boxIsFull };
@@ -269,7 +270,7 @@ namespace NaaS {
 
         private stepWorld() {
             this.world.Step(1 / this.frameRate, 10, 10);
-            //this.world.DrawDebugData();
+            // this.world.DrawDebugData(); // DEBUG:
             this.world.ClearForces();
 
             const result = this.render();
@@ -277,35 +278,45 @@ namespace NaaS {
 
             if (result.isAwake === false) {
                 this.worker.postMessage({ cmd: 'Stop' });
-                this.saveCoinsState();
-                this.takeScreenShotAsync();
+                this.saveCoinsStateDebounced();
+                this.takeScreenShotDebounced(2000);
             }
         }
 
-        private saveCoinsState(): void {
-            const coinsState: CoinState = {
-                sessionId: this.roomContext.sessionID,
-                coins: []
-            };
-            for (var bodyItem = this.world.GetBodyList(); bodyItem; bodyItem = bodyItem.GetNext()) {
+        private saveCoinsStateDebounceTimerId: NodeJS.Timeout | number = -1;
 
-                // Type が dynamicBody である body だけに絞り込み
-                if (bodyItem.GetType() != b2.Body.b2_dynamicBody) continue;
+        private saveCoinsStateDebounced(): void {
 
-                const coinAsset = bodyItem.GetUserData() as CoinAsset;
-                if (coinAsset == null || coinAsset.coinType == null) continue;
+            if (this.saveCoinsStateDebounceTimerId !== -1) clearTimeout(this.saveCoinsStateDebounceTimerId as any);
 
-                const pos = bodyItem.GetPosition();
-                coinsState.coins.push({
-                    x: pos.x * this.worldScale,
-                    y: pos.y * this.worldScale,
-                    a: bodyItem.GetAngle(),
-                    t: coinAsset.coinType
-                });
-            }
+            this.saveCoinsStateDebounceTimerId = setTimeout(() => {
+                this.saveCoinsStateDebounceTimerId = -1;
 
-            const coinsStateJson = JSON.stringify(coinsState);
-            sessionStorage.setItem('coinsState', coinsStateJson);
+                const coinsState: CoinState = {
+                    sessionId: this.roomContext.sessionID,
+                    coins: []
+                };
+                for (var bodyItem = this.world.GetBodyList(); bodyItem; bodyItem = bodyItem.GetNext()) {
+
+                    // Type が dynamicBody である body だけに絞り込み
+                    if (bodyItem.GetType() != b2.Body.b2_dynamicBody) continue;
+
+                    const coinAsset = bodyItem.GetUserData() as CoinAsset;
+                    if (coinAsset == null || coinAsset.coinType == null) continue;
+
+                    const pos = bodyItem.GetPosition();
+                    coinsState.coins.push({
+                        x: pos.x * this.worldScale,
+                        y: pos.y * this.worldScale,
+                        a: bodyItem.GetAngle(),
+                        t: coinAsset.coinType
+                    });
+                }
+
+                const coinsStateJson = JSON.stringify(coinsState);
+                sessionStorage.setItem('coinsState', coinsStateJson);
+
+            }, 5000);
         }
 
         private restoreCoinsState(): void {
@@ -330,25 +341,23 @@ namespace NaaS {
             });
         }
 
-        private async takeScreenShotAsync(): Promise<void> {
+        private screenShotDebounceTimerId: NodeJS.Timeout | number = -1;
+
+        private takeScreenShotDebounced(delay: number): void {
 
             // オーナーである場合のみ
             if (this.roomContext.isOwnedByCurrentUser === false) return;
 
-            const screenShotCanvas = await html2canvas(this.boxElement);
-            const imageDataUrl = screenShotCanvas.toDataURL('image/jpeg', 0.6);
-            const apiUrl = this.urlService.apiBaseUrl + '/screenshot'
-            await this.httpClient.postAsync(apiUrl, { imageDataUrl });
-        }
-
-        private screenShotDebounceTimerId: NodeJS.Timeout | number = -1;
-
-        private takeScreenShotDebounced(): void {
             if (this.screenShotDebounceTimerId !== -1) clearTimeout(this.screenShotDebounceTimerId as any);
-            this.screenShotDebounceTimerId = setTimeout(() => {
-                this.takeScreenShotAsync();
+
+            this.screenShotDebounceTimerId = setTimeout(async () => {
                 this.screenShotDebounceTimerId = -1;
-            }, 5000);
+
+                const screenShotCanvas = await html2canvas(this.boxElement);
+                const imageDataUrl = screenShotCanvas.toDataURL('image/jpeg', 0.6);
+                const apiUrl = this.urlService.apiBaseUrl + '/screenshot'
+                await this.httpClient.postAsync(apiUrl, { imageDataUrl });
+            }, delay);
         }
     }
 
