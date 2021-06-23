@@ -37,8 +37,8 @@ namespace NaaS {
         private titleElement!: HTMLElement;
 
         private coinAssets: CoinAsset[] = [
-            new CoinAsset(CoinType.Like, '/images/like-coin.png', 20, null),
-            new CoinAsset(CoinType.Dis, '/images/dis-coin.png', 15, null)
+            new CoinAsset(CoinType.Like, '/images/like-coin.png', 20),
+            new CoinAsset(CoinType.Dis, '/images/dis-coin.png', 15)
         ];
 
         private worker!: Worker;
@@ -55,6 +55,8 @@ namespace NaaS {
         /** ボックスがコインで満杯になったかどうかの、render()メソッドでの判定結果を保持します。
             (動かなくなったコインで、中心座標が投入域の1/2.5の高さにまで達したものがあれば、満杯であると判定します) */
         private boxIsFull: boolean = false;
+
+        private sePlayers: { [key: number]: { audio: HTMLMediaElement[], i: number } } = {};
 
         constructor(
             private roomContextService: RoomContextService,
@@ -77,6 +79,13 @@ namespace NaaS {
 
             const tweetScoreButton = document.getElementById('tweet-score-button');
             if (tweetScoreButton !== null) tweetScoreButton.addEventListener('click', e => this.onClickTweetScoreButton());
+
+
+            for (const asset of this.coinAssets) {
+                const seUrl = await asset.loadSEAsync();
+                const sePlayerSet = { audio: Array(5).fill(0).map(_ => new Audio(seUrl)), i: 0 };
+                this.sePlayers[asset.coinType] = sePlayerSet;
+            }
 
             window.addEventListener('beforeunload', e => this.onBeforeUnload(e));
 
@@ -144,7 +153,8 @@ namespace NaaS {
         private onEnqueueThrowing(args: ThrowCoinEventArgs) {
 
             const coinAsset = this.coinAssets[args.typeOfCoin];
-            if (coinAsset.seUrl != null) (new Audio(coinAsset.seUrl)).play();
+            this.playSE(args.typeOfCoin);
+            //if (coinAsset.seUrl != null) (new Audio(coinAsset.seUrl)).play();
 
             this.roomContext.countOfLike = Math.max(this.roomContext.countOfLike, args.countOfLike);
             this.roomContext.countOfDis = Math.max(this.roomContext.countOfDis, args.countOfDis);
@@ -358,6 +368,15 @@ namespace NaaS {
                 const apiUrl = this.urlService.apiBaseUrl + '/screenshot'
                 await this.httpClient.postAsync(apiUrl, { imageDataUrl });
             }, delay);
+        }
+
+        private playSE(typeOfCoin: CoinType): void {
+            const sePlayer = this.sePlayers[typeOfCoin];
+            const audio = sePlayer.audio[sePlayer.i];
+            audio.pause();
+            audio.currentTime = 0;
+            audio.play();
+            sePlayer.i = (sePlayer.i + 1) % sePlayer.audio.length;
         }
     }
 

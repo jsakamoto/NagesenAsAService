@@ -21,8 +21,8 @@ var NaaS;
             this.hubConn = hubConn;
             this.tweeter = tweeter;
             this.coinAssets = [
-                new NaaS.CoinAsset(0, '/images/like-coin.png', 20, null),
-                new NaaS.CoinAsset(1, '/images/dis-coin.png', 15, null)
+                new NaaS.CoinAsset(0, '/images/like-coin.png', 20),
+                new NaaS.CoinAsset(1, '/images/dis-coin.png', 15)
             ];
             this.worldWidth = 0;
             this.worldHeight = 0;
@@ -30,6 +30,7 @@ var NaaS;
             this.worldScale = 30.0;
             this.frameRate = 60;
             this.boxIsFull = false;
+            this.sePlayers = {};
             this.saveCoinsStateDebounceTimerId = -1;
             this.screenShotDebounceTimerId = -1;
             this.init();
@@ -45,6 +46,11 @@ var NaaS;
             const tweetScoreButton = document.getElementById('tweet-score-button');
             if (tweetScoreButton !== null)
                 tweetScoreButton.addEventListener('click', e => this.onClickTweetScoreButton());
+            for (const asset of this.coinAssets) {
+                const seUrl = await asset.loadSEAsync();
+                const sePlayerSet = { audio: Array(5).fill(0).map(_ => new Audio(seUrl)), i: 0 };
+                this.sePlayers[asset.coinType] = sePlayerSet;
+            }
             window.addEventListener('beforeunload', e => this.onBeforeUnload(e));
             await this.roomContextService.roomEntered;
             this.hubConn.onThrow(args => this.onThrowCoin(args));
@@ -97,8 +103,7 @@ var NaaS;
         }
         onEnqueueThrowing(args) {
             const coinAsset = this.coinAssets[args.typeOfCoin];
-            if (coinAsset.seUrl != null)
-                (new Audio(coinAsset.seUrl)).play();
+            this.playSE(args.typeOfCoin);
             this.roomContext.countOfLike = Math.max(this.roomContext.countOfLike, args.countOfLike);
             this.roomContext.countOfDis = Math.max(this.roomContext.countOfDis, args.countOfDis);
             this.update();
@@ -254,6 +259,14 @@ var NaaS;
                 const apiUrl = this.urlService.apiBaseUrl + '/screenshot';
                 await this.httpClient.postAsync(apiUrl, { imageDataUrl });
             }, delay);
+        }
+        playSE(typeOfCoin) {
+            const sePlayer = this.sePlayers[typeOfCoin];
+            const audio = sePlayer.audio[sePlayer.i];
+            audio.pause();
+            audio.currentTime = 0;
+            audio.play();
+            sePlayer.i = (sePlayer.i + 1) % sePlayer.audio.length;
         }
     }
     NaaS.nagesenBoxController = new NagesenBoxController(NaaS.roomContextService, NaaS.urlService, NaaS.httpClientService, NaaS.hubConnService, NaaS.tweetService);

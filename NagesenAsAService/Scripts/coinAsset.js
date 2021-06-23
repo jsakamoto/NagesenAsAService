@@ -2,17 +2,12 @@
 var NaaS;
 (function (NaaS) {
     class CoinAsset {
-        constructor(coinType, imageUrl, radius, seUrl) {
+        constructor(coinType, imageUrl, radius) {
             this.coinType = coinType;
             this.imageUrl = imageUrl;
             this.radius = radius;
-            this.seUrl = seUrl;
             this.fixtureDef = null;
-            this.init();
-        }
-        async init() {
             this.image = this.resizeImage(this.imageUrl, 2 * this.radius);
-            await this.loadSEAsync();
         }
         resizeImage(src, new_size) {
             var image_data = new Image();
@@ -40,7 +35,8 @@ var NaaS;
         async loadSEAsync() {
             const res = await fetch('/api/assets/coinsoundbase64/' + this.coinType);
             const base64str = await res.text();
-            this.seUrl = 'data:audio/mp3;base64,' + base64str;
+            const seUrl = 'data:audio/mp3;base64,' + base64str;
+            return seUrl;
         }
     }
     NaaS.CoinAsset = CoinAsset;

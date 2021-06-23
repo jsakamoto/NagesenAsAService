@@ -1,6 +1,7 @@
 ﻿namespace NaaS {
     export class CoinAsset {
-        public image!: HTMLImageElement;
+
+        public image: HTMLImageElement;
 
         public fixtureDef: b2.FixtureDef | null = null;
 
@@ -8,14 +9,8 @@
             public coinType: CoinType,
             public imageUrl: string,
             public radius: number,
-            public seUrl: string | null
         ) {
-            this.init();
-        }
-
-        private async init(): Promise<void> {
             this.image = this.resizeImage(this.imageUrl, 2 * this.radius);
-            await this.loadSEAsync();
         }
 
         // 参考：http://elicon.blog57.fc2.com/blog-entry-109.html
@@ -47,10 +42,11 @@
             return image_data;
         }
 
-        private async loadSEAsync(): Promise<void> {
+        public async loadSEAsync(): Promise<string> {
             const res = await fetch('/api/assets/coinsoundbase64/' + this.coinType);
             const base64str = await res.text();
-            this.seUrl = 'data:audio/mp3;base64,' + base64str;
+            const seUrl = 'data:audio/mp3;base64,' + base64str;
+            return seUrl;
         }
     }
 }
