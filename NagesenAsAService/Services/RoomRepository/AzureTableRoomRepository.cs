@@ -72,9 +72,9 @@ namespace NagesenAsAService.Services.RoomRepository
 
         public async Task<Room> UpdateRoomAsync(int roomNumber, Func<Room, bool> action)
         {
-            var room = await this.FindRoomAsync(roomNumber);
             for (; ; )
             {
+                var room = await this.FindRoomAsync(roomNumber);
                 var allowUpdate = action(room);
                 try
                 {
@@ -89,8 +89,7 @@ namespace NagesenAsAService.Services.RoomRepository
                     // NOP - random wait & continue to next retry loop...
                 }
                 var rate = this.RandomNumberGenerator.Next(10, 50);
-                await Task.Delay(20 * rate);
-                room = await this.FindRoomAsync(roomNumber);
+                await Task.Delay(10 * rate);
             }
         }
 
