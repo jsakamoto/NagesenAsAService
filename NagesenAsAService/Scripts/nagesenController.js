@@ -19,6 +19,10 @@ var NaaS;
             };
             this.countOfLike = 0;
             this.countOfDis = 0;
+            this.autoFire = false;
+            this.autoFireInterval = 100;
+            this.autoFireTimer = -1;
+            this.throwing = false;
             this.init();
             this.update();
         }
@@ -137,12 +141,31 @@ var NaaS;
             await this.countUp(1, () => this.countOfDis += price);
         }
         async countUp(typeOfCoin, callback) {
-            const success = await this.hubConn.throwCoinAsync(this.urlService.roomNumber, typeOfCoin);
-            if (success === false)
+            if (this.autoFireTimer !== -1) {
+                clearInterval(this.autoFireTimer);
+                this.autoFireTimer = -1;
                 return;
-            callback();
-            this.saveState();
-            this.update();
+            }
+            else if (this.autoFire) {
+                this.autoFireTimer = setInterval(() => { this.countUpInternal(typeOfCoin, callback); }, this.autoFireInterval);
+            }
+            await this.countUpInternal(typeOfCoin, callback);
+        }
+        async countUpInternal(typeOfCoin, callback) {
+            if (this.throwing === true)
+                return;
+            try {
+                this.throwing = true;
+                const success = await this.hubConn.throwCoinAsync(this.urlService.roomNumber, typeOfCoin);
+                if (success === false)
+                    return;
+                callback();
+                this.saveState();
+                this.update();
+            }
+            finally {
+                this.throwing = false;
+            }
         }
         onClickTweetScoreButton() {
             this.tweeter.tweetScore(1, this.roomContextSummary, this.countOfLike, this.countOfDis);
