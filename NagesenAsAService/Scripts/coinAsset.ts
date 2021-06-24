@@ -43,9 +43,9 @@
                     for (var i = 0; i < this.rotatedImages.length; i++) {
                         context.clearRect(0, 0, canvaswidth, canvasheight);
                         context.save();
-                        context.translate(this.radius, this.radius);
+                        context.translate(radius, radius);
                         context.rotate(Math.PI * 2 / resolution * i);
-                        context.drawImage(sourceImage, -this.radius, -this.radius, canvaswidth, canvasheight);
+                        context.drawImage(sourceImage, -radius, -radius, canvaswidth, canvasheight);
                         context.restore();
 
                         this.rotatedImages[i].src = canvas0.toDataURL("image/png");
