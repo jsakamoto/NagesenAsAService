@@ -8,8 +8,8 @@
         $"session={room.SessionID.ToString("N")}&" +
         $"t={room.UpdateScreenSnapshotAt.Ticks}";
     var roomTitle = room.Title.IsNullOrEmpty() ? $"Room {room.RoomNumber} " : $"「{room.Title}」";
-    var caption = $"{roomTitle}に {room.CountOfNageSen} 円分の投げ銭";
-    if (room.AllowDisCoin) caption += $"と {room.CountOfAoriSen} Dis";
+    var caption = $"{roomTitle}に {room.CountOfNageSen:#,0} {room.UnitOfLikeCoin} 分の投げ銭";
+    if (room.AllowDisCoin) caption += $"と {room.CountOfAoriSen} {room.UnitOfDisCoin}";
     caption += "が集まりました⭐";
 
     ViewBag.OgpTitle = room.Title.IsNullOrEmpty() ? $"Room {room.RoomNumber} " : room.Title;
@@ -21,12 +21,12 @@
 }
 
 @section head {
-    <link href="~/styles/nagesenBox.min.css" rel="stylesheet" />
-    <link href="~/styles/screenShot.min.css" rel="stylesheet" />
+<link href="~/styles/nagesenBox.min.css" rel="stylesheet" />
+<link href="~/styles/screenShot.min.css" rel="stylesheet" />
 }
 
 @section headerLeft {
-    <a href="/" class="go-home"><i class="naas-icon">arrow-left-circle</i></a>
+<a href="/" class="go-home"><i class="naas-icon">arrow-left-circle</i></a>
 }
 
 <div class="room-page">
