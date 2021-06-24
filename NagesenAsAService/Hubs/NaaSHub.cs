@@ -1,21 +1,27 @@
 ﻿#nullable enable
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using NagesenAsAService.Models;
+using NagesenAsAService.Services;
 using NagesenAsAService.Services.RoomRepository;
 
 namespace NagesenAsAService.Hubs
 {
     public class NaaSHub : Hub<INaaSHubEvents>
     {
-        private readonly Random _Random = new Random(DateTime.UtcNow.Millisecond);
+        private static readonly ConcurrentDictionary<int, ThrowCoinWorker> _ThrowCoinWorkers = new();
+
+        private IServiceProvider ServiceProvider { get; }
 
         private IRoomRepository Repository { get; set; }
 
-        public NaaSHub(IRoomRepository repository)
+        public NaaSHub(IServiceProvider serviceProvider, IRoomRepository repository)
         {
+            this.ServiceProvider = serviceProvider;
             this.Repository = repository;
         }
 
@@ -72,33 +78,18 @@ namespace NagesenAsAService.Hubs
             }
         }
 
-        public async Task ThrowCoinAsync(int roomNumber, CoinType typeOfCoin)
+        public Task ThrowCoinAsync(int roomNumber, CoinType typeOfCoin)
         {
-            var room = await this.Repository.UpdateRoomAsync(roomNumber, r =>
+            lock (_ThrowCoinWorkers)
             {
-                if (typeOfCoin == CoinType.Like)
-                {
-                    r.CountOfNageSen += 10;
-                }
-                else
-                {
-                    r.CountOfAoriSen += 10;
-                }
-                return true;
-            });
+                var keys = _ThrowCoinWorkers.Where(a => a.Value.CanDispose).Select(a => a.Key).ToArray();
+                foreach (var key in keys) _ThrowCoinWorkers.Remove(key, out var _);
+            }
 
-            var countOfCoin = new { room.CountOfNageSen, room.CountOfAoriSen };
+            var worker = _ThrowCoinWorkers.GetOrAdd(roomNumber, n => new ThrowCoinWorker(ServiceProvider, n));
+            worker.ThrowCoin(this.Repository, typeOfCoin);
 
-            var throwPoint = default(double);
-            lock (_Random) throwPoint = _Random.NextDouble();
-            var args = new ThrowCoinEventArgs
-            (
-                throwPoint,
-                typeOfCoin,
-                countOfCoin.CountOfNageSen,
-                countOfCoin.CountOfAoriSen
-            );
-            await Clients.Group(roomNumber.ToString()).Throw(args);
+            return Task.CompletedTask;
         }
 
         public async Task ResetScoreAsync(int roomNumber)

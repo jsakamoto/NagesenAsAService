@@ -39,6 +39,10 @@
         countOfDisElement!: HTMLElement;
         unitOfDisElement!: HTMLElement;
 
+        autoFire: boolean = false; // FOR DEBUG: Auto Fire mode
+        autoFireInterval: number = 100;
+        autoFireTimer: number = -1;
+
         constructor(
             private urlService: UrlService,
             private hubConn: HubConnectionService,
@@ -184,12 +188,36 @@
         }
 
         async countUp(typeOfCoin: CoinType, callback: () => void): Promise<void> {
-            const success = await this.hubConn.throwCoinAsync(this.urlService.roomNumber, typeOfCoin);
-            if (success === false) return;
 
-            callback();
-            this.saveState();
-            this.update();
+            if (this.autoFireTimer !== -1) {
+                clearInterval(this.autoFireTimer);
+                this.autoFireTimer = -1;
+                return;
+            }
+            else if (this.autoFire) {
+                this.autoFireTimer = setInterval(() => { this.countUpInternal(typeOfCoin, callback); }, this.autoFireInterval) as any;
+            }
+
+            await this.countUpInternal(typeOfCoin, callback);
+        }
+
+        private throwing: boolean = false;
+
+        async countUpInternal(typeOfCoin: CoinType, callback: () => void): Promise<void> {
+            if (this.throwing === true) return;
+
+            try {
+                this.throwing = true;
+                const success = await this.hubConn.throwCoinAsync(this.urlService.roomNumber, typeOfCoin);
+                if (success === false) return;
+
+                callback();
+                this.saveState();
+                this.update();
+
+            } finally {
+                this.throwing = false;
+            }
         }
 
         onClickTweetScoreButton(): void {

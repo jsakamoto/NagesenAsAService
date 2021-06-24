@@ -21,8 +21,8 @@ var NaaS;
             this.hubConn = hubConn;
             this.tweeter = tweeter;
             this.coinAssets = [
-                new NaaS.CoinAsset(0, '/images/like-coin.png', 20, null),
-                new NaaS.CoinAsset(1, '/images/dis-coin.png', 15, null)
+                new NaaS.CoinAsset(0, '/images/like-coin.png', 15),
+                new NaaS.CoinAsset(1, '/images/dis-coin.png', 15)
             ];
             this.worldWidth = 0;
             this.worldHeight = 0;
@@ -30,6 +30,8 @@ var NaaS;
             this.worldScale = 30.0;
             this.frameRate = 60;
             this.boxIsFull = false;
+            this.sePlayers = {};
+            this.saveCoinsStateDebounceTimerId = -1;
             this.screenShotDebounceTimerId = -1;
             this.init();
         }
@@ -44,13 +46,18 @@ var NaaS;
             const tweetScoreButton = document.getElementById('tweet-score-button');
             if (tweetScoreButton !== null)
                 tweetScoreButton.addEventListener('click', e => this.onClickTweetScoreButton());
+            for (const asset of this.coinAssets) {
+                const seUrl = await asset.loadSEAsync();
+                const sePlayerSet = { audio: Array(5).fill(0).map(_ => new Audio(seUrl)), i: 0 };
+                this.sePlayers[asset.coinType] = sePlayerSet;
+            }
             window.addEventListener('beforeunload', e => this.onBeforeUnload(e));
             await this.roomContextService.roomEntered;
             this.hubConn.onThrow(args => this.onThrowCoin(args));
             this.hubConn.onResetedScore(_ => this.initWorld());
             this.roomContextService.subscribeChanges(() => {
                 this.update();
-                this.takeScreenShotDebounced();
+                this.takeScreenShotDebounced(5000);
             });
             const canvas = document.getElementById('canvas');
             this.context = canvas.getContext('2d');
@@ -62,7 +69,7 @@ var NaaS;
             this.worker.addEventListener('message', e => this.onWorkerMessage(e));
             this.update();
             if (this.roomContext.countOfLike === 0 && this.roomContext.countOfDis === 0) {
-                await this.takeScreenShotAsync();
+                this.takeScreenShotDebounced(1000);
             }
         }
         update() {
@@ -96,13 +103,12 @@ var NaaS;
         }
         onEnqueueThrowing(args) {
             const coinAsset = this.coinAssets[args.typeOfCoin];
-            if (coinAsset.seUrl != null)
-                (new Audio(coinAsset.seUrl)).play();
+            this.playSE(args.typeOfCoin);
             this.roomContext.countOfLike = Math.max(this.roomContext.countOfLike, args.countOfLike);
             this.roomContext.countOfDis = Math.max(this.roomContext.countOfDis, args.countOfDis);
             this.update();
             if (this.boxIsFull) {
-                this.takeScreenShotDebounced();
+                this.takeScreenShotDebounced(5000);
                 return;
             }
             const radius = coinAsset.radius;
@@ -170,15 +176,12 @@ var NaaS;
                     boxIsFull = true;
                 }
                 const userData = bodyItem.GetUserData();
-                if (userData == null || userData.image == null || userData.image.complete == false)
+                if (userData === null || userData.completed === false)
                     continue;
                 if (slideY < -userData.radius)
                     continue;
-                this.context.save();
-                this.context.translate(slideX, slideY);
-                this.context.rotate(bodyItem.GetAngle());
-                this.context.drawImage(userData.image, -userData.radius, -userData.radius);
-                this.context.restore();
+                const image = userData.getRotatedImage(bodyItem.GetAngle());
+                this.context.drawImage(image, slideX - userData.radius, slideY - userData.radius);
             }
             const result = { isAwake: isAwakeAnyBody, boxIsFull };
             return result;
@@ -190,33 +193,38 @@ var NaaS;
             this.boxIsFull = result.boxIsFull;
             if (result.isAwake === false) {
                 this.worker.postMessage({ cmd: 'Stop' });
-                this.saveCoinsState();
-                this.takeScreenShotAsync();
+                this.saveCoinsStateDebounced();
+                this.takeScreenShotDebounced(2000);
             }
         }
-        saveCoinsState() {
-            const coinsState = {
-                sessionId: this.roomContext.sessionID,
-                coins: []
-            };
-            for (var bodyItem = this.world.GetBodyList(); bodyItem; bodyItem = bodyItem.GetNext()) {
-                if (bodyItem.GetType() != b2.Body.b2_dynamicBody)
-                    continue;
-                const coinAsset = bodyItem.GetUserData();
-                if (coinAsset == null || coinAsset.coinType == null)
-                    continue;
-                const pos = bodyItem.GetPosition();
-                coinsState.coins.push({
-                    x: pos.x * this.worldScale,
-                    y: pos.y * this.worldScale,
-                    a: bodyItem.GetAngle(),
-                    t: coinAsset.coinType
-                });
-            }
-            const coinsStateJson = JSON.stringify(coinsState);
-            sessionStorage.setItem('coinsState', coinsStateJson);
+        saveCoinsStateDebounced() {
+            if (this.saveCoinsStateDebounceTimerId !== -1)
+                clearTimeout(this.saveCoinsStateDebounceTimerId);
+            this.saveCoinsStateDebounceTimerId = setTimeout(() => {
+                this.saveCoinsStateDebounceTimerId = -1;
+                const coinsState = {
+                    sessionId: this.roomContext.sessionID,
+                    coins: []
+                };
+                for (var bodyItem = this.world.GetBodyList(); bodyItem; bodyItem = bodyItem.GetNext()) {
+                    if (bodyItem.GetType() != b2.Body.b2_dynamicBody)
+                        continue;
+                    const coinAsset = bodyItem.GetUserData();
+                    if (coinAsset == null || coinAsset.coinType == null)
+                        continue;
+                    const pos = bodyItem.GetPosition();
+                    coinsState.coins.push({
+                        x: pos.x * this.worldScale,
+                        y: pos.y * this.worldScale,
+                        a: bodyItem.GetAngle(),
+                        t: coinAsset.coinType
+                    });
+                }
+                const coinsStateJson = JSON.stringify(coinsState);
+                sessionStorage.setItem('coinsState', coinsStateJson);
+            }, 5000);
         }
-        restoreCoinsState() {
+        async restoreCoinsState() {
             const coinsStateJson = sessionStorage.getItem('coinsState') || '';
             if (coinsStateJson == '')
                 return;
@@ -226,31 +234,32 @@ var NaaS;
                 return;
             }
             coinsState.coins.forEach(state => this.createCoin(state));
-            const coinImages = this.coinAssets.map(asset => asset.image);
-            new Promise((resolve) => {
-                const checkAllCoinImagesLoaded = () => { if (coinImages.every(img => img.complete))
-                    resolve(); };
-                coinImages.forEach(img => img.addEventListener('load', () => { checkAllCoinImagesLoaded(); }));
-                checkAllCoinImagesLoaded();
-            }).then(() => {
-                this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
-            });
+            const coinAssetCompletions = this.coinAssets.map(asset => asset.completeAsync);
+            for (const completion of coinAssetCompletions) {
+                await completion;
+            }
+            this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
         }
-        async takeScreenShotAsync() {
+        takeScreenShotDebounced(delay) {
             if (this.roomContext.isOwnedByCurrentUser === false)
                 return;
-            const screenShotCanvas = await html2canvas(this.boxElement);
-            const imageDataUrl = screenShotCanvas.toDataURL('image/jpeg', 0.6);
-            const apiUrl = this.urlService.apiBaseUrl + '/screenshot';
-            await this.httpClient.postAsync(apiUrl, { imageDataUrl });
-        }
-        takeScreenShotDebounced() {
             if (this.screenShotDebounceTimerId !== -1)
                 clearTimeout(this.screenShotDebounceTimerId);
-            this.screenShotDebounceTimerId = setTimeout(() => {
-                this.takeScreenShotAsync();
+            this.screenShotDebounceTimerId = setTimeout(async () => {
                 this.screenShotDebounceTimerId = -1;
-            }, 5000);
+                const screenShotCanvas = await html2canvas(this.boxElement);
+                const imageDataUrl = screenShotCanvas.toDataURL('image/jpeg', 0.6);
+                const apiUrl = this.urlService.apiBaseUrl + '/screenshot';
+                await this.httpClient.postAsync(apiUrl, { imageDataUrl });
+            }, delay);
+        }
+        playSE(typeOfCoin) {
+            const sePlayer = this.sePlayers[typeOfCoin];
+            const audio = sePlayer.audio[sePlayer.i];
+            audio.pause();
+            audio.currentTime = 0;
+            audio.play();
+            sePlayer.i = (sePlayer.i + 1) % sePlayer.audio.length;
         }
     }
     NaaS.nagesenBoxController = new NagesenBoxController(NaaS.roomContextService, NaaS.urlService, NaaS.httpClientService, NaaS.hubConnService, NaaS.tweetService);

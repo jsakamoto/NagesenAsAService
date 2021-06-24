@@ -37,8 +37,8 @@ namespace NaaS {
         private titleElement!: HTMLElement;
 
         private coinAssets: CoinAsset[] = [
-            new CoinAsset(CoinType.Like, '/images/like-coin.png', 20, null),
-            new CoinAsset(CoinType.Dis, '/images/dis-coin.png', 15, null)
+            new CoinAsset(CoinType.Like, '/images/like-coin.png', 15),
+            new CoinAsset(CoinType.Dis, '/images/dis-coin.png', 15)
         ];
 
         private worker!: Worker;
@@ -55,6 +55,8 @@ namespace NaaS {
         /** ボックスがコインで満杯になったかどうかの、render()メソッドでの判定結果を保持します。
             (動かなくなったコインで、中心座標が投入域の1/2.5の高さにまで達したものがあれば、満杯であると判定します) */
         private boxIsFull: boolean = false;
+
+        private sePlayers: { [key: number]: { audio: HTMLMediaElement[], i: number } } = {};
 
         constructor(
             private roomContextService: RoomContextService,
@@ -78,6 +80,13 @@ namespace NaaS {
             const tweetScoreButton = document.getElementById('tweet-score-button');
             if (tweetScoreButton !== null) tweetScoreButton.addEventListener('click', e => this.onClickTweetScoreButton());
 
+
+            for (const asset of this.coinAssets) {
+                const seUrl = await asset.loadSEAsync();
+                const sePlayerSet = { audio: Array(5).fill(0).map(_ => new Audio(seUrl)), i: 0 };
+                this.sePlayers[asset.coinType] = sePlayerSet;
+            }
+
             window.addEventListener('beforeunload', e => this.onBeforeUnload(e));
 
             await this.roomContextService.roomEntered;
@@ -86,7 +95,7 @@ namespace NaaS {
             this.hubConn.onResetedScore(_ => this.initWorld());
             this.roomContextService.subscribeChanges(() => {
                 this.update();
-                this.takeScreenShotDebounced();
+                this.takeScreenShotDebounced(5000);
             });
 
             const canvas = document.getElementById('canvas') as HTMLCanvasElement;
@@ -103,7 +112,7 @@ namespace NaaS {
             this.update();
 
             if (this.roomContext.countOfLike === 0 && this.roomContext.countOfDis === 0) {
-                await this.takeScreenShotAsync();
+                this.takeScreenShotDebounced(1000);
             }
         }
 
@@ -144,7 +153,8 @@ namespace NaaS {
         private onEnqueueThrowing(args: ThrowCoinEventArgs) {
 
             const coinAsset = this.coinAssets[args.typeOfCoin];
-            if (coinAsset.seUrl != null) (new Audio(coinAsset.seUrl)).play();
+            this.playSE(args.typeOfCoin);
+            //if (coinAsset.seUrl != null) (new Audio(coinAsset.seUrl)).play();
 
             this.roomContext.countOfLike = Math.max(this.roomContext.countOfLike, args.countOfLike);
             this.roomContext.countOfDis = Math.max(this.roomContext.countOfDis, args.countOfDis);
@@ -153,7 +163,7 @@ namespace NaaS {
             // ボックスが満杯と判定されていたら、効果音の再生とコイン数の表示更新だけとして、コイン投入のアニメーションはスキップする。
             // ※ただしコイン数表示の更新は発生するので、スクリーンショットの再取得を行う
             if (this.boxIsFull) {
-                this.takeScreenShotDebounced();
+                this.takeScreenShotDebounced(5000);
                 return;
             }
 
@@ -178,7 +188,7 @@ namespace NaaS {
             this.createFixedBox(0, this.worldHeight - 2, this.worldWidth, 2);
             this.createFixedBox(this.worldWidth - 2, 0, 2, this.worldHeight);
 
-            //this.world.SetDebugDraw(this.getDebugDraw());
+            // this.world.SetDebugDraw(this.getDebugDraw()); // DEBUG:
 
             this.world.ClearForces();
             this.render();
@@ -250,17 +260,14 @@ namespace NaaS {
 
                 // userData に設定したコイン画像が取得できない body は処理スキップ。
                 const userData = bodyItem.GetUserData() as CoinAsset;
-                if (userData == null || userData.image == null || userData.image.complete == false) continue;
+                if (userData === null || userData.completed === false) continue;
 
                 // 描画域に降りてきてない body は処理スキップ。
                 if (slideY < -userData.radius) continue;
 
                 // 以上の諸条件をクリアした body を canvas に描画。
-                this.context.save();
-                this.context.translate(slideX, slideY);
-                this.context.rotate(bodyItem.GetAngle());
-                this.context.drawImage(userData.image, -userData.radius, -userData.radius);
-                this.context.restore();
+                const image = userData.getRotatedImage(bodyItem.GetAngle());
+                this.context.drawImage(image, slideX - userData.radius, slideY - userData.radius);
             }
 
             const result = { isAwake: isAwakeAnyBody, boxIsFull };
@@ -269,7 +276,7 @@ namespace NaaS {
 
         private stepWorld() {
             this.world.Step(1 / this.frameRate, 10, 10);
-            //this.world.DrawDebugData();
+            // this.world.DrawDebugData(); // DEBUG:
             this.world.ClearForces();
 
             const result = this.render();
@@ -277,38 +284,48 @@ namespace NaaS {
 
             if (result.isAwake === false) {
                 this.worker.postMessage({ cmd: 'Stop' });
-                this.saveCoinsState();
-                this.takeScreenShotAsync();
+                this.saveCoinsStateDebounced();
+                this.takeScreenShotDebounced(2000);
             }
         }
 
-        private saveCoinsState(): void {
-            const coinsState: CoinState = {
-                sessionId: this.roomContext.sessionID,
-                coins: []
-            };
-            for (var bodyItem = this.world.GetBodyList(); bodyItem; bodyItem = bodyItem.GetNext()) {
+        private saveCoinsStateDebounceTimerId: NodeJS.Timeout | number = -1;
 
-                // Type が dynamicBody である body だけに絞り込み
-                if (bodyItem.GetType() != b2.Body.b2_dynamicBody) continue;
+        private saveCoinsStateDebounced(): void {
 
-                const coinAsset = bodyItem.GetUserData() as CoinAsset;
-                if (coinAsset == null || coinAsset.coinType == null) continue;
+            if (this.saveCoinsStateDebounceTimerId !== -1) clearTimeout(this.saveCoinsStateDebounceTimerId as any);
 
-                const pos = bodyItem.GetPosition();
-                coinsState.coins.push({
-                    x: pos.x * this.worldScale,
-                    y: pos.y * this.worldScale,
-                    a: bodyItem.GetAngle(),
-                    t: coinAsset.coinType
-                });
-            }
+            this.saveCoinsStateDebounceTimerId = setTimeout(() => {
+                this.saveCoinsStateDebounceTimerId = -1;
 
-            const coinsStateJson = JSON.stringify(coinsState);
-            sessionStorage.setItem('coinsState', coinsStateJson);
+                const coinsState: CoinState = {
+                    sessionId: this.roomContext.sessionID,
+                    coins: []
+                };
+                for (var bodyItem = this.world.GetBodyList(); bodyItem; bodyItem = bodyItem.GetNext()) {
+
+                    // Type が dynamicBody である body だけに絞り込み
+                    if (bodyItem.GetType() != b2.Body.b2_dynamicBody) continue;
+
+                    const coinAsset = bodyItem.GetUserData() as CoinAsset;
+                    if (coinAsset == null || coinAsset.coinType == null) continue;
+
+                    const pos = bodyItem.GetPosition();
+                    coinsState.coins.push({
+                        x: pos.x * this.worldScale,
+                        y: pos.y * this.worldScale,
+                        a: bodyItem.GetAngle(),
+                        t: coinAsset.coinType
+                    });
+                }
+
+                const coinsStateJson = JSON.stringify(coinsState);
+                sessionStorage.setItem('coinsState', coinsStateJson);
+
+            }, 5000);
         }
 
-        private restoreCoinsState(): void {
+        private async restoreCoinsState(): Promise<void> {
             const coinsStateJson = sessionStorage.getItem('coinsState') || '';
             if (coinsStateJson == '') return;
 
@@ -320,35 +337,39 @@ namespace NaaS {
 
             coinsState.coins.forEach(state => this.createCoin(state));
 
-            const coinImages = this.coinAssets.map(asset => asset.image);
-            new Promise<void>((resolve) => {
-                const checkAllCoinImagesLoaded = () => { if (coinImages.every(img => img.complete)) resolve(); };
-                coinImages.forEach(img => img.addEventListener('load', () => { checkAllCoinImagesLoaded(); }));
-                checkAllCoinImagesLoaded();
-            }).then(() => {
-                this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
-            });
-        }
-
-        private async takeScreenShotAsync(): Promise<void> {
-
-            // オーナーである場合のみ
-            if (this.roomContext.isOwnedByCurrentUser === false) return;
-
-            const screenShotCanvas = await html2canvas(this.boxElement);
-            const imageDataUrl = screenShotCanvas.toDataURL('image/jpeg', 0.6);
-            const apiUrl = this.urlService.apiBaseUrl + '/screenshot'
-            await this.httpClient.postAsync(apiUrl, { imageDataUrl });
+            const coinAssetCompletions = this.coinAssets.map(asset => asset.completeAsync);
+            for (const completion of coinAssetCompletions) {
+                await completion;
+            }
+            this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
         }
 
         private screenShotDebounceTimerId: NodeJS.Timeout | number = -1;
 
-        private takeScreenShotDebounced(): void {
+        private takeScreenShotDebounced(delay: number): void {
+
+            // オーナーである場合のみ
+            if (this.roomContext.isOwnedByCurrentUser === false) return;
+
             if (this.screenShotDebounceTimerId !== -1) clearTimeout(this.screenShotDebounceTimerId as any);
-            this.screenShotDebounceTimerId = setTimeout(() => {
-                this.takeScreenShotAsync();
+
+            this.screenShotDebounceTimerId = setTimeout(async () => {
                 this.screenShotDebounceTimerId = -1;
-            }, 5000);
+
+                const screenShotCanvas = await html2canvas(this.boxElement);
+                const imageDataUrl = screenShotCanvas.toDataURL('image/jpeg', 0.6);
+                const apiUrl = this.urlService.apiBaseUrl + '/screenshot'
+                await this.httpClient.postAsync(apiUrl, { imageDataUrl });
+            }, delay);
+        }
+
+        private playSE(typeOfCoin: CoinType): void {
+            const sePlayer = this.sePlayers[typeOfCoin];
+            const audio = sePlayer.audio[sePlayer.i];
+            audio.pause();
+            audio.currentTime = 0;
+            audio.play();
+            sePlayer.i = (sePlayer.i + 1) % sePlayer.audio.length;
         }
     }
 
