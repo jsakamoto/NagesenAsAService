@@ -245,13 +245,14 @@ var NaaS;
                 return;
             if (this.screenShotDebounceTimerId !== -1)
                 clearTimeout(this.screenShotDebounceTimerId);
-            this.screenShotDebounceTimerId = setTimeout(async () => {
-                this.screenShotDebounceTimerId = -1;
-                const screenShotCanvas = await html2canvas(this.boxElement);
-                const imageDataUrl = screenShotCanvas.toDataURL('image/jpeg', 0.6);
-                const apiUrl = this.urlService.apiBaseUrl + '/screenshot';
-                await this.httpClient.postAsync(apiUrl, { imageDataUrl });
-            }, delay);
+            this.screenShotDebounceTimerId = setTimeout(() => { this.takeScreenShotCoreAsync(); }, delay);
+        }
+        async takeScreenShotCoreAsync() {
+            this.screenShotDebounceTimerId = -1;
+            const screenShotCanvas = await html2canvas(this.boxElement);
+            const imageDataUrl = screenShotCanvas.toDataURL('image/jpeg', 0.6);
+            const apiUrl = this.urlService.apiBaseUrl + '/screenshot';
+            await this.httpClient.postAsync(apiUrl, { imageDataUrl });
         }
         playSE(typeOfCoin) {
             const sePlayer = this.sePlayers[typeOfCoin];

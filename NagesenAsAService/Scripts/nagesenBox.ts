@@ -353,14 +353,15 @@ namespace NaaS {
 
             if (this.screenShotDebounceTimerId !== -1) clearTimeout(this.screenShotDebounceTimerId as any);
 
-            this.screenShotDebounceTimerId = setTimeout(async () => {
-                this.screenShotDebounceTimerId = -1;
+            this.screenShotDebounceTimerId = setTimeout(() => { this.takeScreenShotCoreAsync(); }, delay);
+        }
 
-                const screenShotCanvas = await html2canvas(this.boxElement);
-                const imageDataUrl = screenShotCanvas.toDataURL('image/jpeg', 0.6);
-                const apiUrl = this.urlService.apiBaseUrl + '/screenshot'
-                await this.httpClient.postAsync(apiUrl, { imageDataUrl });
-            }, delay);
+        private async takeScreenShotCoreAsync(): Promise<void> {
+            this.screenShotDebounceTimerId = -1;
+            const screenShotCanvas = await html2canvas(this.boxElement);
+            const imageDataUrl = screenShotCanvas.toDataURL('image/jpeg', 0.6);
+            const apiUrl = this.urlService.apiBaseUrl + '/screenshot'
+            await this.httpClient.postAsync(apiUrl, { imageDataUrl });
         }
 
         private playSE(typeOfCoin: CoinType): void {
