@@ -12,14 +12,14 @@ var NaaS;
         tweetScore(tweetType, context, countOfLike, countOfDis) {
             let title = context.title || '';
             title = title == '' ? 'この枠' : `「${title}」`;
-            const col = context.countOfLike || countOfLike || 0;
-            const cod = context.countOfDis || countOfDis || 0;
+            const col = (context.countOfLike || countOfLike || 0).toLocaleString();
+            const cod = (context.countOfDis || countOfDis || 0).toLocaleString();
             const text = tweetType == 0 ?
-                `${title}に${col}円分の投げ銭` +
-                    (context.allowDisCoin ? `と${cod}Dis` : '') +
+                `${title}に ${col} ${context.unitOfLikeCoin} 分の投げ銭` +
+                    (context.allowDisCoin ? `と ${cod} ${context.unitOfDisCoin}` : '') +
                     `が集まりました☆` :
-                `${title}に${col}円分の投げ銭` +
-                    (context.allowDisCoin ? `と${cod}Dis` : '') +
+                `${title} に ${col} ${context.unitOfLikeCoin} 分の投げ銭` +
+                    (context.allowDisCoin ? `と ${cod} ${context.unitOfDisCoin}` : '') +
                     `をしました☆`;
             const url = this.urlService.controllerUrl + '/screenshot?' +
                 `session=${context.sessionID}&` +
