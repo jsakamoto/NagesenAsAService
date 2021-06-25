@@ -98,15 +98,17 @@ namespace NagesenAsAService.Hubs
             if (room == null) return;
             if (room.Authorize(this.Context.User) == false) return;
 
+            var newSessionId = default(Guid);
             await this.Repository.ArchiveRoomAsync(roomNumber);
             await this.Repository.UpdateRoomAsync(roomNumber, r =>
             {
                 r.Reset();
+                newSessionId = r.SessionID;
                 return true;
             });
 
-            await Clients.Groups(roomNumber.ToString(), roomNumber.ToString() + "/controller")
-                .ResetedScore(room.SessionID);
+            var groups = Clients.Groups(roomNumber.ToString(), roomNumber.ToString() + "/controller");
+            await groups.ResetedScore(newSessionId);
         }
     }
 }

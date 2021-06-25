@@ -64,7 +64,6 @@
                 context.countOfDis = 0;
             });
         }
-
     }
 
     export const roomContextService = new RoomContextService(urlService, hubConnService);
