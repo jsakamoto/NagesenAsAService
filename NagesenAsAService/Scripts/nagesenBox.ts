@@ -13,10 +13,19 @@ namespace b2 {
     export import DebugDraw = Box2D.Dynamics.b2DebugDraw;
 }
 
+/** コインの半径 */
+const radiusOfCoin = 15;
+/** 満杯と判断されるコインの総枚数 */
+const maxNumberOfCoins = 580;
+/** コイン 1枚あたりの単価 */
+const unitPriceOfCoin = 10;
+
 namespace NaaS {
 
     interface CoinState {
         sessionId: string,
+        countOfLikeCoin?: number,
+        countOfDisCoin?: number,
         coins: {
             x: number;
             y: number;
@@ -37,8 +46,8 @@ namespace NaaS {
         private titleElement!: HTMLElement;
 
         private coinAssets: CoinAsset[] = [
-            new CoinAsset(CoinType.Like, '/images/like-coin.png', 15),
-            new CoinAsset(CoinType.Dis, '/images/dis-coin.png', 15)
+            new CoinAsset(CoinType.Like, '/images/like-coin.png', radiusOfCoin),
+            new CoinAsset(CoinType.Dis, '/images/dis-coin.png', radiusOfCoin)
         ];
 
         private worker!: Worker;
@@ -52,8 +61,17 @@ namespace NaaS {
         private throwingBandHeight = 120;
         private worldScale = 30.0;
         private frameRate = 60;
-        /** ボックスがコインで満杯になったかどうかの、render()メソッドでの判定結果を保持します。
-            (動かなくなったコインで、中心座標が投入域の1/2.5の高さにまで達したものがあれば、満杯であると判定します) */
+
+        /** 投入可能な空き位置 */
+        private throwingPoints: { index: number, used: boolean }[] = [];
+
+        private currentCountOfLikeCoin: number = 0;
+        private currentCountOfDisCoin: number = 0;
+
+        /** ボックスがコインで満杯になったかどうかの判定結果 (以下のいずれか) を保持します。
+            (a) render()メソッド内で、動かなくなったコインの内、中心座標が投入域の1/2.5の高さにまで達したものがあれば、満杯であると判定
+            (b) レンダリングされるコイン枚数が 定数 maxNumberOfCoins 毎を超えたら、満杯であると判定
+        */
         private boxIsFull: boolean = false;
 
         private sePlayers: { [key: number]: { audio: HTMLMediaElement[], i: number } } = {};
@@ -102,6 +120,10 @@ namespace NaaS {
             this.context = canvas.getContext('2d')!;
             this.worldWidth = canvas.width;
             this.worldHeight = canvas.height + this.throwingBandHeight;
+
+            // ボックスの幅が決まったら、コインの直径で割って、投入位置配列を初期化する
+            const numOfThrowingPoints = (0 | this.worldWidth / (radiusOfCoin * 2));
+            this.throwingPoints = Array(numOfThrowingPoints).fill(0).map((_, i) => ({ index: i, used: false }));
 
             this.initWorld();
             this.restoreCoinsState();
@@ -152,33 +174,66 @@ namespace NaaS {
 
         private onEnqueueThrowing(args: ThrowCoinEventArgs) {
 
-            const coinAsset = this.coinAssets[args.typeOfCoin];
-            this.playSE(args.typeOfCoin);
-            //if (coinAsset.seUrl != null) (new Audio(coinAsset.seUrl)).play();
-
+            // 表示金額を更新
             this.roomContext.countOfLike = Math.max(this.roomContext.countOfLike, args.countOfLike);
             this.roomContext.countOfDis = Math.max(this.roomContext.countOfDis, args.countOfDis);
             this.update();
 
-            // ボックスが満杯と判定されていたら、効果音の再生とコイン数の表示更新だけとして、コイン投入のアニメーションはスキップする。
-            // ※ただしコイン数表示の更新は発生するので、スクリーンショットの再取得を行う
-            if (this.boxIsFull) {
-                this.takeScreenShotDebounced(5000);
-                return;
-            }
+            const deltaOfLike = this.roomContext.countOfLike - this.currentCountOfLikeCoin;
+            const deltaOfDis = this.roomContext.countOfDis - this.currentCountOfDisCoin;
+            const deltaSet = [
+                { typeOfCoin: CoinType.Like, delta: deltaOfLike, increment: (n: number) => { this.currentCountOfLikeCoin += n; } },
+                { typeOfCoin: CoinType.Dis, delta: deltaOfDis, increment: (n: number) => { this.currentCountOfDisCoin += n; } }];
 
-            const radius = coinAsset.radius;
-            this.createCoin({
-                x: radius + (0 | ((this.worldWidth - 2 * radius) * args.throwPoint)),
-                y: -radius,
-                a: 0,
-                t: coinAsset.coinType
-            });
+            //console.log('start', { Like: this.currentCountOfLikeCoin, Dis: this.currentCountOfDisCoin });
+            //console.log('delta', { Like: deltaOfLike, Dis: deltaOfDis });
+
+            for (var delta of deltaSet) {
+                const typeOfCoin = delta.typeOfCoin;
+
+                for (var i = 0; i < delta.delta; i += unitPriceOfCoin) {
+
+                    this.playSE(typeOfCoin);
+
+                    delta.increment(unitPriceOfCoin);
+
+                    if ((this.currentCountOfLikeCoin + this.currentCountOfDisCoin) / unitPriceOfCoin > maxNumberOfCoins) {
+                        this.boxIsFull = true;
+                        //console.log('BOX-IS-FULL!')
+                    }
+
+                    // ボックスが満杯の場合は、音を鳴らすだけで、実コインの作成は行なわない
+                    if (this.boxIsFull) {
+                        this.takeScreenShotDebounced(5000);
+                        continue;
+                    }
+
+                    // 直近で未投下の空き位置を収集
+                    let availablePoints = this.throwingPoints.filter(p => !p.used);
+                    if (availablePoints.length == 0) {
+                        for (var p of this.throwingPoints) { p.used = false; }
+                        availablePoints = this.throwingPoints;
+                    }
+
+                    // 空き位置のうちいずれかを乱数で選択することで、コインの投下位置 (X座標) を決定
+                    const px = Math.floor(Math.random() * availablePoints.length);
+                    const throwingPoint = availablePoints[px];
+                    throwingPoint.used = true;
+                    const x = radiusOfCoin + (radiusOfCoin * 2) * throwingPoint.index;
+
+                    // 投下位置にコインを新規作成
+                    this.createCoin({ x: x, y: -radiusOfCoin, a: 0, t: typeOfCoin });
+                }
+            }
+            // console.log('thrown', { Like: this.currentCountOfLikeCoin, Dis: this.currentCountOfDisCoin });
 
             this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
         }
 
         private initWorld(): void {
+            this.currentCountOfLikeCoin = 0;
+            this.currentCountOfDisCoin = 0;
+
             this.boxIsFull = false;
             this.world = new b2.World(
                 new b2.Vec2(0, 50), // 重力方向
@@ -300,6 +355,8 @@ namespace NaaS {
 
                 const coinsState: CoinState = {
                     sessionId: this.roomContext.sessionID,
+                    countOfLikeCoin: this.currentCountOfLikeCoin,
+                    countOfDisCoin: this.currentCountOfDisCoin,
                     coins: []
                 };
                 for (var bodyItem = this.world.GetBodyList(); bodyItem; bodyItem = bodyItem.GetNext()) {
@@ -336,6 +393,8 @@ namespace NaaS {
             }
 
             coinsState.coins.forEach(state => this.createCoin(state));
+            this.currentCountOfLikeCoin = coinsState.countOfLikeCoin || (coinsState.coins.filter(c => c.t === CoinType.Like).length * unitPriceOfCoin);
+            this.currentCountOfDisCoin = coinsState.countOfDisCoin || (coinsState.coins.filter(c => c.t === CoinType.Dis).length * unitPriceOfCoin);
 
             const coinAssetCompletions = this.coinAssets.map(asset => asset.completeAsync);
             for (const completion of coinAssetCompletions) {

@@ -11,6 +11,9 @@ var b2;
     b2.CircleShape = Box2D.Collision.Shapes.b2CircleShape;
     b2.DebugDraw = Box2D.Dynamics.b2DebugDraw;
 })(b2 || (b2 = {}));
+const radiusOfCoin = 15;
+const maxNumberOfCoins = 580;
+const unitPriceOfCoin = 10;
 var NaaS;
 (function (NaaS) {
     class NagesenBoxController {
@@ -21,14 +24,17 @@ var NaaS;
             this.hubConn = hubConn;
             this.tweeter = tweeter;
             this.coinAssets = [
-                new NaaS.CoinAsset(0, '/images/like-coin.png', 15),
-                new NaaS.CoinAsset(1, '/images/dis-coin.png', 15)
+                new NaaS.CoinAsset(0, '/images/like-coin.png', radiusOfCoin),
+                new NaaS.CoinAsset(1, '/images/dis-coin.png', radiusOfCoin)
             ];
             this.worldWidth = 0;
             this.worldHeight = 0;
             this.throwingBandHeight = 120;
             this.worldScale = 30.0;
             this.frameRate = 60;
+            this.throwingPoints = [];
+            this.currentCountOfLikeCoin = 0;
+            this.currentCountOfDisCoin = 0;
             this.boxIsFull = false;
             this.sePlayers = {};
             this.saveCoinsStateDebounceTimerId = -1;
@@ -63,6 +69,8 @@ var NaaS;
             this.context = canvas.getContext('2d');
             this.worldWidth = canvas.width;
             this.worldHeight = canvas.height + this.throwingBandHeight;
+            const numOfThrowingPoints = (0 | this.worldWidth / (radiusOfCoin * 2));
+            this.throwingPoints = Array(numOfThrowingPoints).fill(0).map((_, i) => ({ index: i, used: false }));
             this.initWorld();
             this.restoreCoinsState();
             this.worker = new Worker('/scripts/nagesenBox.worker.min.js');
@@ -102,25 +110,46 @@ var NaaS;
             }
         }
         onEnqueueThrowing(args) {
-            const coinAsset = this.coinAssets[args.typeOfCoin];
-            this.playSE(args.typeOfCoin);
             this.roomContext.countOfLike = Math.max(this.roomContext.countOfLike, args.countOfLike);
             this.roomContext.countOfDis = Math.max(this.roomContext.countOfDis, args.countOfDis);
             this.update();
-            if (this.boxIsFull) {
-                this.takeScreenShotDebounced(5000);
-                return;
+            const deltaOfLike = this.roomContext.countOfLike - this.currentCountOfLikeCoin;
+            const deltaOfDis = this.roomContext.countOfDis - this.currentCountOfDisCoin;
+            const deltaSet = [
+                { typeOfCoin: 0, delta: deltaOfLike, increment: (n) => { this.currentCountOfLikeCoin += n; } },
+                { typeOfCoin: 1, delta: deltaOfDis, increment: (n) => { this.currentCountOfDisCoin += n; } }
+            ];
+            for (var delta of deltaSet) {
+                const typeOfCoin = delta.typeOfCoin;
+                for (var i = 0; i < delta.delta; i += unitPriceOfCoin) {
+                    this.playSE(typeOfCoin);
+                    delta.increment(unitPriceOfCoin);
+                    if ((this.currentCountOfLikeCoin + this.currentCountOfDisCoin) / unitPriceOfCoin > maxNumberOfCoins) {
+                        this.boxIsFull = true;
+                    }
+                    if (this.boxIsFull) {
+                        this.takeScreenShotDebounced(5000);
+                        continue;
+                    }
+                    let availablePoints = this.throwingPoints.filter(p => !p.used);
+                    if (availablePoints.length == 0) {
+                        for (var p of this.throwingPoints) {
+                            p.used = false;
+                        }
+                        availablePoints = this.throwingPoints;
+                    }
+                    const px = Math.floor(Math.random() * availablePoints.length);
+                    const throwingPoint = availablePoints[px];
+                    throwingPoint.used = true;
+                    const x = radiusOfCoin + (radiusOfCoin * 2) * throwingPoint.index;
+                    this.createCoin({ x: x, y: -radiusOfCoin, a: 0, t: typeOfCoin });
+                }
             }
-            const radius = coinAsset.radius;
-            this.createCoin({
-                x: radius + (0 | ((this.worldWidth - 2 * radius) * args.throwPoint)),
-                y: -radius,
-                a: 0,
-                t: coinAsset.coinType
-            });
             this.worker.postMessage({ cmd: 'Start', fps: this.frameRate });
         }
         initWorld() {
+            this.currentCountOfLikeCoin = 0;
+            this.currentCountOfDisCoin = 0;
             this.boxIsFull = false;
             this.world = new b2.World(new b2.Vec2(0, 50), true);
             this.createFixedBox(0, 0, 2, this.worldHeight);
@@ -204,6 +233,8 @@ var NaaS;
                 this.saveCoinsStateDebounceTimerId = -1;
                 const coinsState = {
                     sessionId: this.roomContext.sessionID,
+                    countOfLikeCoin: this.currentCountOfLikeCoin,
+                    countOfDisCoin: this.currentCountOfDisCoin,
                     coins: []
                 };
                 for (var bodyItem = this.world.GetBodyList(); bodyItem; bodyItem = bodyItem.GetNext()) {
@@ -234,6 +265,8 @@ var NaaS;
                 return;
             }
             coinsState.coins.forEach(state => this.createCoin(state));
+            this.currentCountOfLikeCoin = coinsState.countOfLikeCoin || (coinsState.coins.filter(c => c.t === 0).length * unitPriceOfCoin);
+            this.currentCountOfDisCoin = coinsState.countOfDisCoin || (coinsState.coins.filter(c => c.t === 1).length * unitPriceOfCoin);
             const coinAssetCompletions = this.coinAssets.map(asset => asset.completeAsync);
             for (const completion of coinAssetCompletions) {
                 await completion;
