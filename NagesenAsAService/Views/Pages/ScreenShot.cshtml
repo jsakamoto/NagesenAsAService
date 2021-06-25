@@ -9,7 +9,7 @@
         $"t={room.UpdateScreenSnapshotAt.Ticks}";
     var roomTitle = room.Title.IsNullOrEmpty() ? $"Room {room.RoomNumber} " : $"「{room.Title}」";
     var caption = $"{roomTitle}に {room.CountOfNageSen:#,0} {room.UnitOfLikeCoin} 分の投げ銭";
-    if (room.AllowDisCoin) caption += $"と {room.CountOfAoriSen} {room.UnitOfDisCoin}";
+    if (room.AllowDisCoin) caption += $"と {room.CountOfAoriSen:#,0} {room.UnitOfDisCoin}";
     caption += "が集まりました⭐";
 
     ViewBag.OgpTitle = room.Title.IsNullOrEmpty() ? $"Room {room.RoomNumber} " : room.Title;
