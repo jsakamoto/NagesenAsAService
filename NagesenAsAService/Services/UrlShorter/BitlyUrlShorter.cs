@@ -42,7 +42,7 @@ namespace NagesenAsAService.Services.UrlShorter
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 var res = await httpClient.PostAsJsonAsync("https://api-ssl.bitly.com/v4/shorten", new
                 {
-                    Domain = "j.mp",
+                    Domain = "bit.ly",
                     Long_url = url
                 });
 
