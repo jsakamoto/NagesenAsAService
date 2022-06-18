@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-using System.Drawing.Imaging;
-using System.Net;
+﻿using System.Net;
 using System.Text.Json;
 using System.Web;
 using Microsoft.AspNetCore.Mvc;
@@ -9,6 +7,7 @@ using NagesenAsAService.Models;
 using NagesenAsAService.Services.RoomRepository;
 using NagesenAsAService.Services.UrlShorter;
 using QRCoder;
+using SkiaSharp;
 using Toolbelt.Web;
 
 namespace NagesenAsAService.Controllers;
@@ -140,25 +139,23 @@ public class RoomsApiController : ControllerBase
     {
         var pictureImageBytes = picture.GetImageBytes();
         if (forOgpImage == false) return pictureImageBytes;
-        if (!OperatingSystem.IsWindows()) return pictureImageBytes;
 
-        using var originalImageStream = new MemoryStream(pictureImageBytes);
-        using var originalImage = Image.FromStream(originalImageStream);
+        using var originalImage = SKBitmap.Decode(pictureImageBytes);
 
         var margin = (int)(originalImage.Height * 0.027);
-
-        using var resizedImage = new Bitmap(
+        using var resizedImage = new SKBitmap(
             width: (originalImage.Height + margin * 2) * 2,
             height: (originalImage.Height + margin * 2));
 
-        using var g = Graphics.FromImage(resizedImage);
-        g.FillRectangle(Brushes.LightGray, x: 0, y: 0, resizedImage.Width, resizedImage.Height);
-        g.DrawImageUnscaled(originalImage,
+        using var g = new SKCanvas(resizedImage);
+        var brush = new SKPaint { Color = SKColors.LightGray };
+        g.DrawRect(x: 0, y: 0, resizedImage.Width, resizedImage.Height, brush);
+        g.DrawBitmap(originalImage,
             x: (resizedImage.Width - originalImage.Width) / 2,
             y: (resizedImage.Height - originalImage.Height) / 2);
 
         using var resizedImageStream = new MemoryStream();
-        resizedImage.Save(resizedImageStream, ImageFormat.Jpeg);
+        resizedImage.Encode(resizedImageStream, SKEncodedImageFormat.Jpeg, quality: 90);
 
         return resizedImageStream.ToArray();
     }
