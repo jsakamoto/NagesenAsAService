@@ -2,7 +2,7 @@
 @using System.Text.Encodings.Web
 @{
     var room = Model;
-    var isOwner = room.OwnerUserID == this.User.Identity.Name;
+    var isOwner = room.OwnerUserID == this.User?.Identity?.Name;
 }
 @section head {
 <link href="~/styles/nagesenBox.min.css" rel="stylesheet" />

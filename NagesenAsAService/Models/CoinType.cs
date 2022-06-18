@@ -1,8 +1,7 @@
-﻿namespace NagesenAsAService.Models
+﻿namespace NagesenAsAService.Models;
+
+public enum CoinType
 {
-    public enum CoinType
-    {
-        Like = 0,
-        Dis = 1
-    }
+    Like = 0,
+    Dis = 1
 }

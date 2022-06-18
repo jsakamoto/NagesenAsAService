@@ -1,15 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
-using NagesenAsAService.Models;
+﻿using NagesenAsAService.Models;
 
-namespace NagesenAsAService.Hubs
+namespace NagesenAsAService.Hubs;
+
+public interface INaaSHubEvents
 {
-    public interface INaaSHubEvents
-    {
-        Task UpdatedRoomSettings(RoomContextSummary settings);
+    Task UpdatedRoomSettings(RoomContextSummary settings);
 
-        Task ResetedScore(Guid sessionId);
+    Task ResetedScore(Guid sessionId);
 
-        Task Throw(ThrowCoinEventArgs args);
-    }
+    Task Throw(ThrowCoinEventArgs args);
 }

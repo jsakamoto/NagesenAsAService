@@ -1,9 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿namespace NagesenAsAService.Services.UrlShorter;
 
-namespace NagesenAsAService.Services.UrlShorter
+public interface IUrlShorter
 {
-    public interface IUrlShorter
-    {
-        Task<string> ShortenUrlAsync(string url);
-    }
+    Task<string> ShortenUrlAsync(string url);
 }

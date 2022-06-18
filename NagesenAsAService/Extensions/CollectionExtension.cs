@@ -1,22 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿namespace NagesenAsAService.Extensions;
 
-namespace NagesenAsAService.Extensions
+public static class CollectionExtension
 {
-    public static class CollectionExtension
+    public static IEnumerable<T> ToEnumerable<T>(this Random random, Func<Random, T> generator)
     {
-        public static IEnumerable<T> ToEnumerable<T>(this Random random, Func<Random, T> generator)
+        for (; ; )
         {
-            for (; ; )
-            {
-                yield return generator(random);
-            }
+            yield return generator(random);
         }
+    }
 
-        public static IEnumerable<string> Except(this IEnumerable<string> first, params string[] seconds)
-        {
-            return Enumerable.Except(first, seconds);
-        }
+    public static IEnumerable<string> Except(this IEnumerable<string> first, params string[] seconds)
+    {
+        return Enumerable.Except(first, seconds);
     }
 }
