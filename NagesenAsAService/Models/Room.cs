@@ -78,7 +78,7 @@ public class Room : ITableEntity
     public void Reset()
     {
         this.SessionID = Guid.NewGuid();
-        this.UpdateScreenSnapshotAt = DateTime.MaxValue;
+        this.UpdateScreenSnapshotAt = DateTime.MaxValue.ToUniversalTime();
         this.CountOfNageSen = 0;
         this.CountOfAoriSen = 0;
     }

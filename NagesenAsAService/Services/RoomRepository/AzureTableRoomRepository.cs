@@ -33,8 +33,12 @@ public class AzureTableRoomRepository : IRoomRepository
     public bool RoomExists(int roomNumber)
     {
         var (partitionKey, rowKey) = Room.GetKeys(roomNumber);
-        var room = (Room)this.Rooms.GetEntity<Room>(partitionKey, rowKey);
-        return room != null;
+        try
+        {
+            var room = (Room)this.Rooms.GetEntity<Room>(partitionKey, rowKey);
+            return room != null;
+        }
+        catch (RequestFailedException e) when (e.Status == 404) { return false; }
     }
 
     public Task AddRoomAsync(Room room)
@@ -45,7 +49,8 @@ public class AzureTableRoomRepository : IRoomRepository
     public async Task<Room?> FindRoomAsync(int roomNumber)
     {
         var (partitionKey, rowKey) = Room.GetKeys(roomNumber);
-        return await this.Rooms.GetEntityAsync<Room>(partitionKey, rowKey);
+        try { return await this.Rooms.GetEntityAsync<Room>(partitionKey, rowKey); }
+        catch (RequestFailedException e) when (e.Status == 404) { return null; }
     }
 
     public async Task<Room?> FindRoomIncludesArchivedAsync(int roomNumber, Guid sessionId)
@@ -54,7 +59,8 @@ public class AzureTableRoomRepository : IRoomRepository
         if (activeRoom != null && activeRoom.SessionID == sessionId) return activeRoom;
 
         var (partitionKey, rowKey) = Room.GetKeysForArchived(roomNumber, sessionId);
-        return await this.ArchivedRooms.GetEntityAsync<Room>(partitionKey, rowKey);
+        try { return await this.ArchivedRooms.GetEntityAsync<Room>(partitionKey, rowKey); }
+        catch (RequestFailedException e) when (e.Status == 404) { return null; }
     }
 
     public async Task<Room?> UpdateRoomAsync(int roomNumber, Func<Room, bool> action)
@@ -80,11 +86,6 @@ public class AzureTableRoomRepository : IRoomRepository
             var rate = this.RandomNumberGenerator.Next(10, 50);
             await Task.Delay(10 * rate);
         }
-    }
-
-    private Task UpdateRoomAsync(Room room)
-    {
-        return this.Rooms.UpdateEntityAsync(room, room.ETag, TableUpdateMode.Replace);
     }
 
     public async Task ArchiveRoomAsync(int roomNumber)
