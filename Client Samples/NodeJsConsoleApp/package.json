@@ -1,0 +1,20 @@
+{
+  "name": "nodejs-console-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js",
+    "prestart": "tsc"
+  },
+  "author": "",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "@types/node": "^18.6.3",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "@microsoft/signalr": "^6.0.7"
+  }
+}
